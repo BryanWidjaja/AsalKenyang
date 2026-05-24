@@ -4,6 +4,7 @@ import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/login_page.dart';
 import 'features/auth/presentation/register_page.dart';
 import 'features/auth/presentation/splash_page.dart';
+import 'features/budget/presentation/about_page.dart';
 import 'features/budget/presentation/spending_history_page.dart';
 import 'features/recipes/presentation/favorites_page.dart';
 import 'features/recipes/presentation/recipe_detail_page.dart';
@@ -33,6 +34,7 @@ class AsalKenyangApp extends StatelessWidget {
         FavoritesPage.route: (_) => const FavoritesPage(),
         RecipeDetailPage.route: (_) => const RecipeDetailPage(),
         SpendingHistoryPage.route: (_) => const SpendingHistoryPage(),
+        AboutPage.route: (_) => const AboutPage(),
       },
     );
   }

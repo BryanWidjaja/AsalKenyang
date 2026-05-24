@@ -10,6 +10,7 @@ import '../../../shared/widgets/settings_tile.dart';
 import '../../../shared/widgets/spending_history_row.dart';
 import '../../../shared/widgets/top_bar.dart';
 import '../../recipes/presentation/favorites_page.dart';
+import 'about_page.dart';
 import 'spending_history_page.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -139,7 +140,7 @@ class _SettingsGrid extends StatelessWidget {
               child: SettingsTile(
                 icon: Icons.help_rounded,
                 label: 'Bantuan',
-                onTap: () {},
+                onTap: () => Navigator.of(context).pushNamed(AboutPage.route),
               ),
             ),
           ],
