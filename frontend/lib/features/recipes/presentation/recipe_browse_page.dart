@@ -4,8 +4,10 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/filter_pill.dart';
 import '../../../shared/widgets/recipe_card.dart';
+import '../../../shared/widgets/round_icon_button.dart';
 import '../../../shared/widgets/search_field.dart';
 import '../../../shared/widgets/top_bar.dart';
+import 'favorites_page.dart';
 
 class _Filter {
   const _Filter(this.label, this.icon);
@@ -70,7 +72,19 @@ class _RecipeBrowsePageState extends State<RecipeBrowsePage> {
                 AppSpacing.xl,
               ),
               children: [
-                const SearchField(),
+                Row(
+                  children: [
+                    const Expanded(child: SearchField()),
+                    const SizedBox(width: AppSpacing.sm),
+                    RoundIconButton(
+                      icon: Icons.favorite_border_rounded,
+                      color: AppColors.primary,
+                      tooltip: 'Resep tersimpan',
+                      onPressed: () => Navigator.of(context)
+                          .pushNamed(FavoritesPage.route),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: AppSpacing.md),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
