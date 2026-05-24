@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
-import 'core/theme/app_typography.dart';
+import 'features/auth/presentation/login_page.dart';
+import 'features/auth/presentation/register_page.dart';
+import 'features/auth/presentation/splash_page.dart';
 
 void main() {
   runApp(const AsalKenyangApp());
@@ -16,7 +19,13 @@ class AsalKenyangApp extends StatelessWidget {
       title: 'AsalKenyang',
       theme: AppTheme.light,
       debugShowCheckedModeBanner: false,
-      home: const _PlaceholderHome(),
+      initialRoute: SplashPage.route,
+      routes: {
+        SplashPage.route: (_) => const SplashPage(),
+        LoginPage.route: (_) => const LoginPage(),
+        RegisterPage.route: (_) => const RegisterPage(),
+        '/home': (_) => const _PlaceholderHome(),
+      },
     );
   }
 }
@@ -26,21 +35,6 @@ class _PlaceholderHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('AsalKenyang', style: AppTypography.budgetHero.copyWith(color: scheme.primary)),
-            const SizedBox(height: 8),
-            Text(
-              'Masak dari sisa bahan, sesuai isi dompet.',
-              style: AppTypography.body.copyWith(color: scheme.onSurfaceVariant),
-            ),
-          ],
-        ),
-      ),
-    );
+    return const Scaffold(backgroundColor: AppColors.riceWhite);
   }
 }
