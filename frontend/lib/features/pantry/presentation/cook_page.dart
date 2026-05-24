@@ -10,6 +10,7 @@ import '../../../shared/widgets/filter_pill.dart';
 import '../../../shared/widgets/ingredient_tile.dart';
 import '../../../shared/widgets/toggle_switch.dart';
 import '../../../shared/widgets/top_bar.dart';
+import '../../recipes/presentation/search_results_page.dart';
 
 class _Ingredient {
   const _Ingredient(this.label, this.icon, this.category);
@@ -62,8 +63,9 @@ class _CookPageState extends State<CookPage> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints:
-                const BoxConstraints(maxWidth: AppSpacing.screenMaxWidth),
+            constraints: const BoxConstraints(
+              maxWidth: AppSpacing.screenMaxWidth,
+            ),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.edge,
@@ -93,10 +95,7 @@ class _CookPageState extends State<CookPage> {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                Text(
-                  'Pilih Bahan yang Ada',
-                  style: AppTypography.titleMd,
-                ),
+                Text('Pilih Bahan yang Ada', style: AppTypography.titleMd),
                 const SizedBox(height: AppSpacing.md),
                 _IngredientsGrid(
                   ingredients: _visible,
@@ -111,12 +110,13 @@ class _CookPageState extends State<CookPage> {
         ),
       ),
       floatingActionButton: _selected.isEmpty
-          ? null
-          : CariMenuFab(
-              label: 'Cari Menu',
-              badgeCount: _selected.length,
-              onPressed: () {},
-            ),
+        ? null
+        : CariMenuFab(
+            label: 'Cari Menu',
+            badgeCount: _selected.length,
+            onPressed: () =>
+                Navigator.of(context).pushNamed(SearchResultsPage.route),
+          ),
     );
   }
 }
@@ -146,10 +146,7 @@ class _BudgetToggleCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  'Atur Uang Tersedia',
-                  style: AppTypography.titleMd,
-                ),
+                Text('Atur Uang Tersedia', style: AppTypography.titleMd),
                 const SizedBox(height: 2),
                 Text(
                   'Sesuaikan budget masak hari ini',
