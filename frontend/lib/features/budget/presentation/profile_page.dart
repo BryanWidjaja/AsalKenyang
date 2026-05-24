@@ -10,6 +10,7 @@ import '../../../shared/widgets/settings_tile.dart';
 import '../../../shared/widgets/spending_history_row.dart';
 import '../../../shared/widgets/top_bar.dart';
 import '../../recipes/presentation/favorites_page.dart';
+import 'spending_history_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -57,7 +58,8 @@ class ProfilePage extends StatelessWidget {
                 SectionHeader(
                   title: 'Riwayat Belanja',
                   actionLabel: 'Lihat Semua',
-                  onAction: () {},
+                  onAction: () => Navigator.of(context)
+                      .pushNamed(SpendingHistoryPage.route),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 const SpendingHistoryRow(
