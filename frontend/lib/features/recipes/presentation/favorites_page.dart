@@ -6,6 +6,7 @@ import '../../../shared/widgets/filter_pill.dart';
 import '../../../shared/widgets/recipe_card.dart';
 import '../../../shared/widgets/round_icon_button.dart';
 import '../../../shared/widgets/top_bar.dart';
+import 'recipe_detail_page.dart';
 
 const _segments = ['Semua', 'Sarapan', 'Makan Siang', 'Makan Malam', 'Cemilan'];
 
@@ -126,7 +127,8 @@ class _SavedGrid extends StatelessWidget {
                   timeText: s.time,
                   favorite: favorited.contains(s.title),
                   onFavoriteToggle: () => onToggle(s.title),
-                  onTap: () {},
+                  onTap: () =>
+                      Navigator.of(context).pushNamed(RecipeDetailPage.route),
                 ),
               ),
           ],

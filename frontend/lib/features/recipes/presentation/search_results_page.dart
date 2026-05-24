@@ -6,6 +6,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/filter_pill.dart';
 import '../../../shared/widgets/match_result_row.dart';
 import '../../../shared/widgets/top_bar.dart';
+import 'recipe_detail_page.dart';
 
 class _Result {
   const _Result(this.title, this.missing, this.match);
@@ -43,8 +44,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         top: false,
         child: Center(
           child: ConstrainedBox(
-            constraints:
-                const BoxConstraints(maxWidth: AppSpacing.screenMaxWidth),
+            constraints: const BoxConstraints(
+              maxWidth: AppSpacing.screenMaxWidth,
+            ),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.edge,
@@ -97,7 +99,8 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                     title: r.title,
                     missing: r.missing,
                     matchPercent: r.match,
-                    onTap: () {},
+                    onTap: () =>
+                        Navigator.of(context).pushNamed(RecipeDetailPage.route),
                   ),
                   const SizedBox(height: AppSpacing.md),
                 ],

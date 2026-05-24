@@ -8,6 +8,7 @@ import '../../../shared/widgets/round_icon_button.dart';
 import '../../../shared/widgets/search_field.dart';
 import '../../../shared/widgets/top_bar.dart';
 import 'favorites_page.dart';
+import 'recipe_detail_page.dart';
 
 class _Filter {
   const _Filter(this.label, this.icon);
@@ -110,7 +111,8 @@ class _RecipeBrowsePageState extends State<RecipeBrowsePage> {
                   timeText: '10 mnt',
                   equipmentIcon: Icons.soup_kitchen_rounded,
                   dotsFilled: 2,
-                  onTap: () {},
+                  onTap: () =>
+                      Navigator.of(context).pushNamed(RecipeDetailPage.route),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 _RecipeGrid(recipes: _recipes),
@@ -147,7 +149,8 @@ class _RecipeGrid extends StatelessWidget {
                   priceState: r.state,
                   timeText: r.time,
                   pedas: r.pedas,
-                  onTap: () {},
+                  onTap: () =>
+                      Navigator.of(context).pushNamed(RecipeDetailPage.route),
                 ),
               ),
           ],
