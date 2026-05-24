@@ -10,11 +10,11 @@ enum _TopBarVariant { shell, nested, detail }
 class TopBar extends StatelessWidget implements PreferredSizeWidget {
   const TopBar.shell({
     super.key,
-    required this.budgetText,
+    this.budgetText,
     this.onWalletTap,
     this.onBudgetTap,
   })  : _variant = _TopBarVariant.shell,
-        title = 'Warung Hangat',
+        title = 'AsalKenyang',
         onBack = null,
         trailing = null,
         isFavorited = false,
@@ -120,13 +120,14 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
         ),
-        Align(
-          alignment: Alignment.centerRight,
-          child: BudgetChip(
-            amount: budgetText ?? 'Rp 0',
-            onTap: onBudgetTap,
+        if (budgetText != null)
+          Align(
+            alignment: Alignment.centerRight,
+            child: BudgetChip(
+              amount: budgetText!,
+              onTap: onBudgetTap,
+            ),
           ),
-        ),
       ],
     );
   }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/login_page.dart';
 import 'features/auth/presentation/register_page.dart';
 import 'features/auth/presentation/splash_page.dart';
+import 'features/shell/presentation/home_shell.dart';
 
 void main() {
   runApp(const AsalKenyangApp());
@@ -24,17 +24,8 @@ class AsalKenyangApp extends StatelessWidget {
         SplashPage.route: (_) => const SplashPage(),
         LoginPage.route: (_) => const LoginPage(),
         RegisterPage.route: (_) => const RegisterPage(),
-        '/home': (_) => const _PlaceholderHome(),
+        HomeShell.route: (_) => const HomeShell(),
       },
     );
-  }
-}
-
-class _PlaceholderHome extends StatelessWidget {
-  const _PlaceholderHome();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(backgroundColor: AppColors.riceWhite);
   }
 }
