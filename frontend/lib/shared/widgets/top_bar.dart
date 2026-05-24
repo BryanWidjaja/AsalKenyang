@@ -11,7 +11,6 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   const TopBar.shell({
     super.key,
     this.budgetText,
-    this.onWalletTap,
     this.onBudgetTap,
   })  : _variant = _TopBarVariant.shell,
         title = 'AsalKenyang',
@@ -27,7 +26,6 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
     this.trailing,
   })  : _variant = _TopBarVariant.nested,
         budgetText = null,
-        onWalletTap = null,
         onBudgetTap = null,
         isFavorited = false,
         onFavoriteToggle = null;
@@ -41,13 +39,11 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   })  : _variant = _TopBarVariant.detail,
         trailing = null,
         budgetText = null,
-        onWalletTap = null,
         onBudgetTap = null;
 
   final _TopBarVariant _variant;
   final String title;
   final String? budgetText;
-  final VoidCallback? onWalletTap;
   final VoidCallback? onBudgetTap;
   final VoidCallback? onBack;
   final Widget? trailing;
@@ -95,11 +91,9 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _shell() {
-    return Stack(
-      alignment: Alignment.center,
+    return Row(
       children: [
-        Align(
-          alignment: Alignment.center,
+        Expanded(
           child: Text(
             title,
             style: AppTypography.h3.copyWith(
@@ -110,24 +104,8 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: IconButton(
-            onPressed: onWalletTap,
-            icon: const Icon(
-              Icons.account_balance_wallet_rounded,
-              color: AppColors.primary,
-            ),
-          ),
-        ),
         if (budgetText != null)
-          Align(
-            alignment: Alignment.centerRight,
-            child: BudgetChip(
-              amount: budgetText!,
-              onTap: onBudgetTap,
-            ),
-          ),
+          BudgetChip(amount: budgetText!, onTap: onBudgetTap),
       ],
     );
   }
