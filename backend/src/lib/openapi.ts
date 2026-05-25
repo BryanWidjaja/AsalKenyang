@@ -14,6 +14,12 @@ import {
   spendingListDto,
   spendingQuerySchema,
 } from "../schemas/spending.js";
+import {
+  createFavoriteSchema,
+  favoriteDto,
+  favoriteParamsSchema,
+  favoritesListDto,
+} from "../schemas/favorites.js";
 
 export const registry = new OpenAPIRegistry();
 
@@ -123,6 +129,53 @@ registry.registerPath({
       content: { "application/json": { schema: spendingEntryDto } },
     },
     400: { description: "Validation error" },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/favorites",
+  tags: ["favorites"],
+  summary: "List the user's favorite recipes",
+  security: [{ bearerAuth: [] }],
+  responses: {
+    200: {
+      description: "Favorite recipe references",
+      content: { "application/json": { schema: favoritesListDto } },
+    },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/favorites",
+  tags: ["favorites"],
+  summary: "Favorite a recipe (idempotent)",
+  security: [{ bearerAuth: [] }],
+  request: {
+    body: { content: { "application/json": { schema: createFavoriteSchema } } },
+  },
+  responses: {
+    201: {
+      description: "Favorited",
+      content: { "application/json": { schema: favoriteDto } },
+    },
+    400: { description: "Validation error" },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "delete",
+  path: "/api/v1/favorites/{recipeId}",
+  tags: ["favorites"],
+  summary: "Unfavorite a recipe (idempotent)",
+  security: [{ bearerAuth: [] }],
+  request: { params: favoriteParamsSchema },
+  responses: {
+    204: { description: "Removed" },
     401: { description: "Unauthorized" },
   },
 });
