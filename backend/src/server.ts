@@ -1,3 +1,8 @@
-// Entry point — placeholder during the init phase (no implementation yet).
-// Wired into package.json "dev" (tsx watch) and "start" (node dist/server.js).
-export {};
+import { createApp } from "./app.js";
+import { env } from "./lib/env.js";
+
+const app = createApp();
+
+app.listen(env.PORT, () => {
+  console.log(`🚀 AsalKenyang API on http://localhost:${env.PORT}  (docs: /docs)`);
+});

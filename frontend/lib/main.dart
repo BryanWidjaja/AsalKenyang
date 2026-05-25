@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/login_page.dart';
@@ -12,7 +13,7 @@ import 'features/recipes/presentation/search_results_page.dart';
 import 'features/shell/presentation/home_shell.dart';
 
 void main() {
-  runApp(const AsalKenyangApp());
+  runApp(const ProviderScope(child: AsalKenyangApp()));
 }
 
 class AsalKenyangApp extends StatelessWidget {

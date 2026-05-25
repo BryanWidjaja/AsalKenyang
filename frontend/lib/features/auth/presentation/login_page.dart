@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -8,17 +9,20 @@ import '../../../shared/widgets/brand_mark.dart';
 import '../../../shared/widgets/password_field.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../../shared/widgets/text_link.dart';
+import '../../shell/presentation/home_shell.dart';
+import '../application/auth_controller.dart';
+import 'register_page.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   static const String route = '/login';
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
 
@@ -29,12 +33,31 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _submit() {
-    Navigator.of(context).pushReplacementNamed('/home');
+  Future<void> _submit() async {
+    FocusScope.of(context).unfocus();
+    final email = _emailCtrl.text.trim();
+    final password = _passwordCtrl.text;
+    if (email.isEmpty || password.isEmpty) {
+      _showSnack('Lengkapi email dan kata sandi.');
+      return;
+    }
+    await ref.read(authControllerProvider.notifier).login(email, password);
+    if (!mounted) return;
+    final state = ref.read(authControllerProvider);
+    if (state.hasError) {
+      _showSnack(authErrorMessage(state.error!));
+    } else if (state.value != null) {
+      Navigator.of(context).pushReplacementNamed(HomeShell.route);
+    }
+  }
+
+  void _showSnack(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   @override
   Widget build(BuildContext context) {
+    final loading = ref.watch(authControllerProvider).isLoading;
     return Scaffold(
       backgroundColor: AppColors.riceWhite,
       body: SafeArea(
@@ -49,10 +72,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const BrandMark(
-                    size: 80,
-                    icon: Icons.restaurant_rounded,
-                  ),
+                  const BrandMark(size: 80, icon: Icons.restaurant_rounded),
                   const SizedBox(height: AppSpacing.md),
                   Text(
                     'AsalKenyang',
@@ -76,6 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                     controller: _emailCtrl,
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
+                    enabled: !loading,
                   ),
                   const SizedBox(height: AppSpacing.md),
                   PasswordField(
@@ -90,13 +111,13 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: AppSpacing.sm),
                   Align(
                     alignment: Alignment.centerRight,
-                    child: TextLink(
-                      text: 'Lupa kata sandi?',
-                      onTap: () {},
-                    ),
+                    child: TextLink(text: 'Lupa kata sandi?', onTap: () {}),
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                  PrimaryButton(label: 'Masuk', onPressed: _submit),
+                  PrimaryButton(
+                    label: loading ? 'Memuat...' : 'Masuk',
+                    onPressed: loading ? null : _submit,
+                  ),
                   const SizedBox(height: AppSpacing.lg),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -110,8 +131,9 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(width: 4),
                       TextLink(
                         text: 'Daftar di sini',
-                        onTap: () =>
-                            Navigator.of(context).pushNamed('/register'),
+                        onTap: () => Navigator.of(
+                          context,
+                        ).pushNamed(RegisterPage.route),
                       ),
                     ],
                   ),

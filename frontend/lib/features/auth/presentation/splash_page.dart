@@ -1,38 +1,42 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/brand_mark.dart';
 import '../../../shared/widgets/indeterminate_bar.dart';
+import '../../shell/presentation/home_shell.dart';
+import '../application/auth_controller.dart';
+import 'login_page.dart';
 
-class SplashPage extends StatefulWidget {
+class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
 
   static const String route = '/';
 
   @override
-  State<SplashPage> createState() => _SplashPageState();
+  ConsumerState<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> {
-  Timer? _timer;
-
+class _SplashPageState extends ConsumerState<SplashPage> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer(const Duration(milliseconds: 1500), () {
-      if (!mounted) return;
-      Navigator.of(context).pushReplacementNamed('/login');
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _bootstrap());
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+  Future<void> _bootstrap() async {
+    final repo = ref.read(authRepositoryProvider);
+    final results = await Future.wait<dynamic>([
+      repo.hasSession(),
+      Future<void>.delayed(const Duration(milliseconds: 800)),
+    ]);
+    if (!mounted) return;
+    final hasSession = results[0] as bool;
+    Navigator.of(context).pushReplacementNamed(
+      hasSession ? HomeShell.route : LoginPage.route,
+    );
   }
 
   @override
@@ -42,7 +46,9 @@ class _SplashPageState extends State<SplashPage> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: AppSpacing.screenMaxWidth),
+            constraints: const BoxConstraints(
+              maxWidth: AppSpacing.screenMaxWidth,
+            ),
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.edge,

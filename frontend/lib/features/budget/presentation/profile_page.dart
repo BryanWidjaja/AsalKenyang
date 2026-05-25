@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -9,15 +10,17 @@ import '../../../shared/widgets/section_header.dart';
 import '../../../shared/widgets/settings_tile.dart';
 import '../../../shared/widgets/spending_history_row.dart';
 import '../../../shared/widgets/top_bar.dart';
+import '../../auth/application/auth_controller.dart';
+import '../../auth/presentation/login_page.dart';
 import '../../recipes/presentation/favorites_page.dart';
 import 'about_page.dart';
 import 'spending_history_page.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: AppColors.riceWhite,
       appBar: const TopBar.shell(budgetText: 'Rp 125.000'),
@@ -80,8 +83,14 @@ class ProfilePage extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 TextButton(
-                  onPressed: () => Navigator.of(context)
-                      .pushNamedAndRemoveUntil('/login', (_) => false),
+                  onPressed: () async {
+                    await ref.read(authControllerProvider.notifier).logout();
+                    if (!context.mounted) return;
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      LoginPage.route,
+                      (_) => false,
+                    );
+                  },
                   child: Text(
                     'Keluar',
                     style: AppTypography.label.copyWith(color: AppColors.error),
