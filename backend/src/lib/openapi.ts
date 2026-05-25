@@ -8,6 +8,12 @@ import {
   monthQuerySchema,
   putBudgetSchema,
 } from "../schemas/budget.js";
+import {
+  createSpendingSchema,
+  spendingEntryDto,
+  spendingListDto,
+  spendingQuerySchema,
+} from "../schemas/spending.js";
 
 export const registry = new OpenAPIRegistry();
 
@@ -80,6 +86,41 @@ registry.registerPath({
     200: {
       description: "Budget upserted",
       content: { "application/json": { schema: budgetDto } },
+    },
+    400: { description: "Validation error" },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/budget/spending",
+  tags: ["budget"],
+  summary: "List spending entries for a month (default: current UTC month)",
+  security: [{ bearerAuth: [] }],
+  request: { query: spendingQuerySchema },
+  responses: {
+    200: {
+      description: "Spending list + month total",
+      content: { "application/json": { schema: spendingListDto } },
+    },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/api/v1/budget/spending",
+  tags: ["budget"],
+  summary: "Record a spending entry (cook or manual)",
+  security: [{ bearerAuth: [] }],
+  request: {
+    body: { content: { "application/json": { schema: createSpendingSchema } } },
+  },
+  responses: {
+    201: {
+      description: "Spending entry created",
+      content: { "application/json": { schema: spendingEntryDto } },
     },
     400: { description: "Validation error" },
     401: { description: "Unauthorized" },

@@ -20,6 +20,7 @@ model User {
   updatedAt    DateTime @updatedAt
 
   budgets      Budget[]
+  spending     SpendingEntry[]
 }
 
 model Budget {
@@ -32,4 +33,24 @@ model Budget {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, month])
+}
+
+enum SpendingKind {
+  cook
+  manual
+}
+
+model SpendingEntry {
+  id        String       @id @default(cuid())
+  userId    String
+  amount    Int
+  kind      SpendingKind
+  recipeId  String?
+  note      String?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
