@@ -2,9 +2,20 @@ import {
   OpenAPIRegistry,
   OpenApiGeneratorV3,
 } from "@asteasolutions/zod-to-openapi";
-import { registerSchema, loginSchema, authResponse } from "../schemas/auth.js";
+import { authResponse, loginSchema, registerSchema } from "../schemas/auth.js";
+import {
+  budgetDto,
+  monthQuerySchema,
+  putBudgetSchema,
+} from "../schemas/budget.js";
 
 export const registry = new OpenAPIRegistry();
+
+registry.registerComponent("securitySchemes", "bearerAuth", {
+  type: "http",
+  scheme: "bearer",
+  bearerFormat: "JWT",
+});
 
 registry.registerPath({
   method: "post",
@@ -37,6 +48,41 @@ registry.registerPath({
       content: { "application/json": { schema: authResponse } },
     },
     401: { description: "Invalid credentials" },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/budget",
+  tags: ["budget"],
+  summary: "Get the user's budget for a month (default: current UTC month)",
+  security: [{ bearerAuth: [] }],
+  request: { query: monthQuerySchema },
+  responses: {
+    200: {
+      description: "Budget for the month (null if not set)",
+      content: { "application/json": { schema: budgetDto.nullable() } },
+    },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "put",
+  path: "/api/v1/budget",
+  tags: ["budget"],
+  summary: "Set/update the budget for a month",
+  security: [{ bearerAuth: [] }],
+  request: {
+    body: { content: { "application/json": { schema: putBudgetSchema } } },
+  },
+  responses: {
+    200: {
+      description: "Budget upserted",
+      content: { "application/json": { schema: budgetDto } },
+    },
+    400: { description: "Validation error" },
+    401: { description: "Unauthorized" },
   },
 });
 
