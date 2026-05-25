@@ -22,6 +22,7 @@ model User {
   budgets      Budget[]
   spending     SpendingEntry[]
   favorites    Favorite[]
+  pantry       Pantry?
 }
 
 model Budget {
@@ -65,4 +66,13 @@ model Favorite {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, recipeId])
+}
+
+model Pantry {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  bahanKeys String[]
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

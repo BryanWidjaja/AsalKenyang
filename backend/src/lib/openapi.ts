@@ -20,6 +20,7 @@ import {
   favoriteParamsSchema,
   favoritesListDto,
 } from "../schemas/favorites.js";
+import { pantryDto, putPantrySchema } from "../schemas/pantry.js";
 
 export const registry = new OpenAPIRegistry();
 
@@ -176,6 +177,40 @@ registry.registerPath({
   request: { params: favoriteParamsSchema },
   responses: {
     204: { description: "Removed" },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/pantry",
+  tags: ["pantry"],
+  summary: "Get the user's pantry (selected ingredient keys)",
+  security: [{ bearerAuth: [] }],
+  responses: {
+    200: {
+      description: "Pantry (items empty + updatedAt null if never set)",
+      content: { "application/json": { schema: pantryDto } },
+    },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "put",
+  path: "/api/v1/pantry",
+  tags: ["pantry"],
+  summary: "Replace the user's pantry with the given ingredient keys",
+  security: [{ bearerAuth: [] }],
+  request: {
+    body: { content: { "application/json": { schema: putPantrySchema } } },
+  },
+  responses: {
+    200: {
+      description: "Pantry replaced",
+      content: { "application/json": { schema: pantryDto } },
+    },
+    400: { description: "Validation error" },
     401: { description: "Unauthorized" },
   },
 });
