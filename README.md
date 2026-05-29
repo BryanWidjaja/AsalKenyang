@@ -1,59 +1,48 @@
 # AsalKenyang
 
-AsalKenyang is an Android-first Flutter app for Indonesian boarding-house students (`anak kos`) who need to cook from leftover ingredients, limited cash, and simple kitchen tools. The product pitch from `.notes` is:
+AsalKenyang is a Flutter app for Indonesian boarding-house students who want to cook from available ingredients, keep meals within budget, plan weekly menus, and track grocery needs.
 
-> Aplikasi dapur buat anak kos yang bantu kamu masak dari sisa bahan, sesuai isi dompet, pakai alat seadanya.
+The project includes a local-first Flutter frontend and an Express/TypeScript backend for authenticated sync.
 
-The app combines recipe matching, a living monthly food budget, weekly meal planning, a grocery checklist, favorites, and an authenticated backend for per-user sync.
+## Features
 
-## Current Status
-
-This codebase is **not fully done yet**. It has a substantial frontend and backend scaffold, but it is not currently in a clean demo-ready state.
-
-What is in place:
-
-- Flutter frontend with auth screens, bottom-tab shell, Masak, Resep, Rencana, Belanja, Profil/Anggaran, Favorites, Detail, Spending History, and About screens.
-- Local-first frontend architecture using Riverpod, Drift, Dio, secure token storage, local repositories, and an outbox-style sync engine.
-- Bundled recipe loading from `frontend/assets/data/recipes.json`.
-- Express/TypeScript backend with JWT auth, Prisma/PostgreSQL models, zod validation, OpenAPI/Swagger docs, and routes for auth, budget, spending, pantry, meal-plan, grocery, and favorites.
-- Backend TypeScript build passes with `npm.cmd run build`.
-
-Known gaps from the latest check:
-
-- The frontend has a Dart syntax error in `frontend/lib/features/budget/data/budget_remote_source.dart` around the `recipeId` payload.
-- `recipes.json` currently has 15 `mock_*` recipes, while `.notes` describes an MVP target of roughly 80-150 curated recipes.
-- The backend grocery API is partial: it returns recipe counts from the weekly plan, and checklist updates are accepted but not persisted.
-- Backend tests currently fail because Prisma cannot authenticate to the configured local Postgres database.
-- Flutter verification was not completed in this environment because `flutter`/`dart` commands did not return.
+- Recipe matching from saved ingredients
+- Recipe detail pages with ingredients, estimated price, calories, and cooking steps
+- Monthly budget tracking and spending history
+- Weekly meal planning
+- Grocery list aggregation from planned meals
+- Saved ingredients with editable quantities
+- Favorite recipes
+- Authenticated backend sync for user data
 
 ## Tech Stack
 
 Frontend:
 
 - Flutter / Dart
-- Riverpod for state and dependency injection
-- Drift for local SQLite state
-- Dio for API calls
-- `flutter_secure_storage` for JWT storage
-- Freezed and json_serializable for models
+- Riverpod
+- Drift SQLite
+- Dio
+- Freezed and json_serializable
+- flutter_secure_storage
 
 Backend:
 
-- Node.js 24+ / Express 5 / TypeScript
-- Prisma 7 with PostgreSQL
-- JWT auth with bcrypt password hashing
-- zod request validation
-- OpenAPI docs with `@asteasolutions/zod-to-openapi` and Swagger UI
-- Vitest + Supertest tests
+- Node.js / Express / TypeScript
+- Prisma
+- PostgreSQL
+- JWT authentication
+- Zod validation
+- OpenAPI / Swagger UI
+- Vitest and Supertest
 
-## Repository Layout
+## Project Structure
 
 ```text
 .
-+-- backend/              Express API, Prisma schema, tests, Docker Compose
-+-- frontend/             Flutter app
-+-- .notes/               Product, feature, design, data, and tech notes
-+-- tools/                Data-prep and supporting tooling notes/assets
++-- backend/      Express API, Prisma schema, tests, Docker setup
++-- frontend/     Flutter app
++-- tools/        Supporting scripts and data tooling
 +-- README.md
 ```
 
@@ -82,7 +71,7 @@ npm run prisma:generate
 npx prisma db push
 ```
 
-Run the API:
+Run the backend:
 
 ```bash
 npm run dev
@@ -101,10 +90,11 @@ npm run build
 npm test
 ```
 
-On Windows PowerShell, if `npm` is blocked by execution policy, use `npm.cmd`, for example:
+On Windows PowerShell, use `npm.cmd` if script execution policy blocks `npm`:
 
 ```bash
 npm.cmd run build
+npm.cmd test
 ```
 
 ## Frontend Setup
@@ -116,7 +106,7 @@ flutter pub get
 flutter run --dart-define-from-file=config/dev.json
 ```
 
-`frontend/config/dev.json` currently points to:
+The default dev config is:
 
 ```json
 {
@@ -124,9 +114,9 @@ flutter run --dart-define-from-file=config/dev.json
 }
 ```
 
-Use `10.0.2.2` for an Android emulator talking to a backend on the host machine. For Chrome or a local desktop target, use `http://localhost:3000`. For a physical phone, use the host machine's LAN IP.
+Use `10.0.2.2` for Android emulator access to a backend running on the host machine. For Chrome or desktop targets, use `http://localhost:3000`. For a physical phone, use the host machine's LAN IP.
 
-Useful frontend checks:
+Frontend checks:
 
 ```bash
 flutter analyze
@@ -134,16 +124,16 @@ flutter test
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-## API Surface
+## API Routes
 
 All feature routes are under `/api/v1`.
 
-Public:
+Public routes:
 
 - `POST /auth/register`
 - `POST /auth/login`
 
-JWT-protected:
+Protected routes:
 
 - `GET /budget`
 - `PUT /budget`
@@ -159,26 +149,18 @@ JWT-protected:
 - `POST /favorites`
 - `DELETE /favorites/:recipeId`
 
-## MVP Completion Checklist
+## Recipe Data
 
-Based on `.notes/features.md`, `.notes/techstack.md`, and `.notes/todolist.md`, the project should only be treated as done when:
+Bundled recipes live in:
 
-- The Flutter app builds, analyzes, and tests cleanly.
-- The Dart syntax error in the budget remote source is fixed.
-- Login/register work against the backend and offline local state still works without the backend.
-- Budget, spending, pantry, meal-plan, grocery checklist, and favorites sync reliably through the backend.
-- Grocery aggregation is ingredient-based, not just recipe-count-based.
-- The bundled recipe catalog is expanded from the current 15 mock recipes toward the documented curated MVP dataset.
-- Backend tests pass against a reproducible Postgres setup.
-- The demo flow can run end-to-end: register/login, select pantry ingredients, find matching recipes, cook/spend budget, add to plan, generate grocery list, favorite recipes, and view spending history.
+```text
+frontend/assets/data/recipes.json
+```
 
-## Notes
+Each recipe includes basic metadata, estimated price, estimated calories, ingredients, ingredient prices, cooking steps, tags, and image URL.
 
-The `.notes/` directory is the source of product intent:
+## Development Notes
 
-- `.notes/idea.md` defines the app concept and pitch.
-- `.notes/features.md` defines MVP screens, flows, and API surface.
-- `.notes/techstack.md` defines architecture and stack decisions.
-- `.notes/DESIGN.md` defines the visual system.
-- `.notes/todolist.md` defines page-by-page frontend completion criteria.
-- `.notes/gaps.md` says research gaps are closed, but implementation gaps still remain in the codebase.
+- The frontend is local-first and writes user actions to local storage before syncing.
+- The backend stores per-user budget, spending, pantry, meal-plan, grocery, and favorite data.
+- Generated Dart files should be refreshed after model changes with `build_runner`.
