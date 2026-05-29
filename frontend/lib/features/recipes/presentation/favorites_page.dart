@@ -1,45 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/filter_pill.dart';
 import '../../../shared/widgets/recipe_card.dart';
 import '../../../shared/widgets/round_icon_button.dart';
+import '../../../shared/widgets/search_field.dart';
 import '../../../shared/widgets/top_bar.dart';
+import '../application/recipe_providers.dart';
+import '../application/favorites_controller.dart';
+import '../data/recipe_models.dart';
 import 'recipe_detail_page.dart';
 
 const _segments = ['Semua', 'Sarapan', 'Makan Siang', 'Makan Malam', 'Cemilan'];
 
-class _Saved {
-  const _Saved(this.title, this.price, this.state, this.time);
-  final String title;
-  final String price;
-  final PriceState state;
-  final String time;
-}
-
-const _saved = <_Saved>[
-  _Saved('Nasi Goreng Spesial Tanggal Tua', 'Rp 12.000', PriceState.affordable, '15m'),
-  _Saved('Mie Tek Tek Ala Abang-abang', 'Rp 8.500', PriceState.affordable, '10m'),
-  _Saved('Sayur Sop Bening Segar', 'Rp 15.000', PriceState.mid, '25m'),
-  _Saved('Telur Dadar Crispy Warteg', 'Rp 5.000', PriceState.affordable, '5m'),
-];
-
-class FavoritesPage extends StatefulWidget {
+class FavoritesPage extends ConsumerStatefulWidget {
   const FavoritesPage({super.key});
 
   static const String route = '/favorites';
 
   @override
-  State<FavoritesPage> createState() => _FavoritesPageState();
+  ConsumerState<FavoritesPage> createState() => _FavoritesPageState();
 }
 
-class _FavoritesPageState extends State<FavoritesPage> {
+class _FavoritesPageState extends ConsumerState<FavoritesPage> {
   String _segment = 'Semua';
-  final Set<String> _favorited = _saved.map((s) => s.title).toSet();
+  String _query = '';
+  bool _showSearch = false;
 
   @override
   Widget build(BuildContext context) {
+    final favoritesAsync = ref.watch(favoritedRecipesProvider);
+
     return Scaffold(
       backgroundColor: AppColors.riceWhite,
       appBar: TopBar.nested(
@@ -47,15 +41,16 @@ class _FavoritesPageState extends State<FavoritesPage> {
         trailing: RoundIconButton(
           icon: Icons.search_rounded,
           color: AppColors.onSurfaceVariant,
-          onPressed: () {},
+          onPressed: () => setState(() => _showSearch = !_showSearch),
         ),
       ),
       body: SafeArea(
         top: false,
         child: Center(
           child: ConstrainedBox(
-            constraints:
-                const BoxConstraints(maxWidth: AppSpacing.screenMaxWidth),
+            constraints: const BoxConstraints(
+              maxWidth: AppSpacing.screenMaxWidth,
+            ),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.edge,
@@ -79,13 +74,41 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     ],
                   ),
                 ),
+                if (_showSearch) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  SearchField(
+                    onChanged: (value) => setState(() => _query = value),
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.lg),
-                _SavedGrid(
-                  saved: _saved,
-                  favorited: _favorited,
-                  onToggle: (title) => setState(() {
-                    if (!_favorited.add(title)) _favorited.remove(title);
-                  }),
+                favoritesAsync.when(
+                  data: (recipes) {
+                    final visible = recipes.where((r) {
+                      final matchesSegment =
+                          _segment == 'Semua' ||
+                          r.tags.contains(_segment.toLowerCase());
+                      final matchesQuery =
+                          _query.trim().isEmpty ||
+                          r.name.toLowerCase().contains(_query.toLowerCase());
+                      return matchesSegment && matchesQuery;
+                    }).toList();
+
+                    if (visible.isEmpty) {
+                      return const Center(
+                        child: Text('Belum ada resep tersimpan'),
+                      );
+                    }
+
+                    return _SavedGrid(
+                      saved: visible,
+                      onToggle: (id) => ref
+                          .read(favoritesControllerProvider.notifier)
+                          .toggleFavorite(id),
+                    );
+                  },
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => Center(child: Text('Error: $e')),
                 ),
               ],
             ),
@@ -97,18 +120,19 @@ class _FavoritesPageState extends State<FavoritesPage> {
 }
 
 class _SavedGrid extends StatelessWidget {
-  const _SavedGrid({
-    required this.saved,
-    required this.favorited,
-    required this.onToggle,
-  });
+  const _SavedGrid({required this.saved, required this.onToggle});
 
-  final List<_Saved> saved;
-  final Set<String> favorited;
+  final List<Recipe> saved;
   final ValueChanged<String> onToggle;
 
   @override
   Widget build(BuildContext context) {
+    final fmt = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+
     return LayoutBuilder(
       builder: (context, constraints) {
         const gap = AppSpacing.md;
@@ -117,18 +141,20 @@ class _SavedGrid extends StatelessWidget {
           spacing: gap,
           runSpacing: gap,
           children: [
-            for (final s in saved)
+            for (final r in saved)
               SizedBox(
                 width: colWidth,
                 child: RecipeCard.compact(
-                  title: s.title,
-                  priceText: s.price,
-                  priceState: s.state,
-                  timeText: s.time,
-                  favorite: favorited.contains(s.title),
-                  onFavoriteToggle: () => onToggle(s.title),
-                  onTap: () =>
-                      Navigator.of(context).pushNamed(RecipeDetailPage.route),
+                  title: r.name,
+                  priceText: '${fmt.format(_perServingPrice(r)).trim()}/porsi',
+                  priceState: PriceState.affordable,
+                  timeText: '${r.cookTime} mnt',
+                  favorite: true,
+                  pedas: r.tags.contains('pedas'),
+                  onFavoriteToggle: () => onToggle(r.id),
+                  onTap: () => Navigator.of(
+                    context,
+                  ).pushNamed(RecipeDetailPage.route, arguments: r.id),
                 ),
               ),
           ],
@@ -136,4 +162,9 @@ class _SavedGrid extends StatelessWidget {
       },
     );
   }
+}
+
+int _perServingPrice(Recipe recipe) {
+  if (recipe.porsi <= 0) return recipe.estPrice;
+  return (recipe.estPrice / recipe.porsi).round();
 }

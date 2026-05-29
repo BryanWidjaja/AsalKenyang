@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/filter_pill.dart';
 import '../../../shared/widgets/recipe_card.dart';
 import '../../../shared/widgets/round_icon_button.dart';
 import '../../../shared/widgets/search_field.dart';
 import '../../../shared/widgets/top_bar.dart';
+import '../../budget/application/budget_controller.dart';
+import '../application/recipe_providers.dart';
+import '../application/favorites_controller.dart';
+import '../data/recipe_models.dart';
 import 'favorites_page.dart';
 import 'recipe_detail_page.dart';
+import '../../plan/application/plan_controller.dart';
 
 class _Filter {
   const _Filter(this.label, this.icon);
@@ -18,53 +26,42 @@ class _Filter {
 
 const _filters = <_Filter>[
   _Filter('Semua', null),
-  _Filter('Rice Cooker', Icons.rice_bowl_rounded),
+  _Filter('Rice Cooker Aja', Icons.rice_bowl_rounded),
   _Filter('Tanpa Kompor', Icons.kitchen_rounded),
-  _Filter('< Rp 10rb', Icons.savings_rounded),
-  _Filter('Kilat (10mnt)', Icons.schedule_rounded),
+  _Filter('<Rp 10rb', Icons.payments_rounded),
+  _Filter('Kilat', Icons.timer_rounded),
 ];
 
-class _Recipe {
-  const _Recipe(this.title, this.price, this.state, this.time, {this.pedas = false});
-  final String title;
-  final String price;
-  final PriceState state;
-  final String time;
-  final bool pedas;
-}
-
-const _recipes = <_Recipe>[
-  _Recipe('Mie Tek Tek Kuah', 'Rp 8.000/porsi', PriceState.mid, '15m'),
-  _Recipe('Tumis Sarden Pedas', 'Rp 12.000/porsi', PriceState.unaffordable, '12m',
-      pedas: true),
-  _Recipe('Telur Dadar Warteg', 'Rp 5.000/porsi', PriceState.affordable, '5m'),
-  _Recipe('Sayur Sop Bening', 'Rp 9.500/porsi', PriceState.mid, '25m'),
-  _Recipe('Tempe Orek Kecap', 'Rp 7.000/porsi', PriceState.affordable, '10m'),
-  _Recipe('Ayam Goreng Sambal', 'Rp 15.000/porsi', PriceState.unaffordable, '30m',
-      pedas: true),
-];
-
-class RecipeBrowsePage extends StatefulWidget {
+class RecipeBrowsePage extends ConsumerWidget {
   const RecipeBrowsePage({super.key});
 
-  @override
-  State<RecipeBrowsePage> createState() => _RecipeBrowsePageState();
-}
-
-class _RecipeBrowsePageState extends State<RecipeBrowsePage> {
-  String _filter = 'Semua';
+  static const String route = '/recipe-browse';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    final selectForDate = args is DateTime ? args : null;
+
+    final filter = ref.watch(recipeFilterProvider);
+    final recipesAsync = ref.watch(filteredRecipesProvider);
+    final budgetState = ref.watch(budgetControllerProvider);
+    final fmt = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
     return Scaffold(
       backgroundColor: AppColors.riceWhite,
-      appBar: const TopBar.shell(budgetText: 'Rp 47.000'),
+      appBar: selectForDate != null
+          ? const TopBar.nested(title: 'Pilih Resep')
+          : TopBar.shell(budgetText: fmt.format(budgetState.remainingBudget)),
       body: SafeArea(
         top: false,
         child: Center(
           child: ConstrainedBox(
-            constraints:
-                const BoxConstraints(maxWidth: AppSpacing.screenMaxWidth),
+            constraints: const BoxConstraints(
+              maxWidth: AppSpacing.screenMaxWidth,
+            ),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.edge,
@@ -75,14 +72,20 @@ class _RecipeBrowsePageState extends State<RecipeBrowsePage> {
               children: [
                 Row(
                   children: [
-                    const Expanded(child: SearchField()),
+                    Expanded(
+                      child: SearchField(
+                        onChanged: (val) => ref
+                            .read(recipeSearchQueryProvider.notifier)
+                            .updateState(val),
+                      ),
+                    ),
                     const SizedBox(width: AppSpacing.sm),
                     RoundIconButton(
                       icon: Icons.favorite_border_rounded,
                       color: AppColors.primary,
                       tooltip: 'Resep tersimpan',
-                      onPressed: () => Navigator.of(context)
-                          .pushNamed(FavoritesPage.route),
+                      onPressed: () =>
+                          Navigator.of(context).pushNamed(FavoritesPage.route),
                     ),
                   ],
                 ),
@@ -95,8 +98,10 @@ class _RecipeBrowsePageState extends State<RecipeBrowsePage> {
                         FilterPill(
                           label: f.label,
                           icon: f.icon,
-                          selected: _filter == f.label,
-                          onTap: () => setState(() => _filter = f.label),
+                          selected: filter == f.label,
+                          onTap: () => ref
+                              .read(recipeFilterProvider.notifier)
+                              .updateState(f.label),
                         ),
                         const SizedBox(width: AppSpacing.sm),
                       ],
@@ -105,17 +110,55 @@ class _RecipeBrowsePageState extends State<RecipeBrowsePage> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 RecipeCard.feature(
-                  title: 'Nasi Telur Pontianak',
-                  priceText: 'Rp 5.500/porsi',
-                  priceState: PriceState.affordable,
+                  title: 'Nasi Goreng Kosan',
+                  priceText: 'Rp 5.440/porsi',
+                  priceState: _priceStateFor(5440, budgetState.remainingBudget),
                   timeText: '10 mnt',
                   equipmentIcon: Icons.soup_kitchen_rounded,
                   dotsFilled: 2,
-                  onTap: () =>
-                      Navigator.of(context).pushNamed(RecipeDetailPage.route),
+                  onTap: () async {
+                    if (selectForDate != null) {
+                      final waktu = await _showWaktuMakanSheet(context);
+                      if (waktu == null) return;
+                      try {
+                        await ref
+                            .read(planControllerProvider)
+                            .addMeal(selectForDate, 'mock_01', waktu);
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Berhasil menambahkan ke rencana!'),
+                          ),
+                        );
+                        Navigator.of(context).pop();
+                      } catch (error) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Gagal menambahkan ke rencana: $error',
+                            ),
+                          ),
+                        );
+                      }
+                    } else {
+                      Navigator.of(
+                        context,
+                      ).pushNamed(RecipeDetailPage.route, arguments: 'mock_01');
+                    }
+                  },
                 ),
                 const SizedBox(height: AppSpacing.md),
-                _RecipeGrid(recipes: _recipes),
+                recipesAsync.when(
+                  data: (recipes) => _RecipeGrid(
+                    recipes: recipes,
+                    selectForDate: selectForDate,
+                    remainingBudget: budgetState.remainingBudget,
+                  ),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (e, _) => Center(child: Text('Error: $e')),
+                ),
               ],
             ),
           ),
@@ -125,13 +168,27 @@ class _RecipeBrowsePageState extends State<RecipeBrowsePage> {
   }
 }
 
-class _RecipeGrid extends StatelessWidget {
-  const _RecipeGrid({required this.recipes});
+class _RecipeGrid extends ConsumerWidget {
+  const _RecipeGrid({
+    required this.recipes,
+    required this.remainingBudget,
+    this.selectForDate,
+  });
 
-  final List<_Recipe> recipes;
+  final List<Recipe> recipes;
+  final int remainingBudget;
+  final DateTime? selectForDate;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final favorites = ref.watch(favoritesControllerProvider).value ?? [];
+    final favoriteIds = favorites.map((favorite) => favorite.recipeId).toSet();
+    final fmt = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+
     return LayoutBuilder(
       builder: (context, constraints) {
         const gap = AppSpacing.md;
@@ -144,13 +201,46 @@ class _RecipeGrid extends StatelessWidget {
               SizedBox(
                 width: colWidth,
                 child: RecipeCard.compact(
-                  title: r.title,
-                  priceText: r.price,
-                  priceState: r.state,
-                  timeText: r.time,
-                  pedas: r.pedas,
-                  onTap: () =>
-                      Navigator.of(context).pushNamed(RecipeDetailPage.route),
+                  title: r.name,
+                  priceText: '${fmt.format(_perServingPrice(r)).trim()}/porsi',
+                  priceState: _priceStateFor(r.estPrice, remainingBudget),
+                  timeText: '${r.cookTime} mnt',
+                  pedas: r.tags.contains('pedas'),
+                  favorite: favoriteIds.contains(r.id),
+                  onFavoriteToggle: () => ref
+                      .read(favoritesControllerProvider.notifier)
+                      .toggleFavorite(r.id),
+                  onTap: () async {
+                    if (selectForDate != null) {
+                      final waktu = await _showWaktuMakanSheet(context);
+                      if (waktu == null) return;
+                      try {
+                        await ref
+                            .read(planControllerProvider)
+                            .addMeal(selectForDate!, r.id, waktu);
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Berhasil menambahkan ke rencana!'),
+                          ),
+                        );
+                        Navigator.of(context).pop();
+                      } catch (error) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Gagal menambahkan ke rencana: $error',
+                            ),
+                          ),
+                        );
+                      }
+                    } else {
+                      Navigator.of(
+                        context,
+                      ).pushNamed(RecipeDetailPage.route, arguments: r.id);
+                    }
+                  },
                 ),
               ),
           ],
@@ -158,4 +248,57 @@ class _RecipeGrid extends StatelessWidget {
       },
     );
   }
+}
+
+PriceState _priceStateFor(int price, int remainingBudget) {
+  if (remainingBudget <= 0 || price <= remainingBudget) {
+    return PriceState.affordable;
+  }
+  if (price <= remainingBudget * 1.2) return PriceState.mid;
+  return PriceState.unaffordable;
+}
+
+int _perServingPrice(Recipe recipe) {
+  if (recipe.porsi <= 0) return recipe.estPrice;
+  return (recipe.estPrice / recipe.porsi).round();
+}
+
+Future<String?> _showWaktuMakanSheet(BuildContext context) {
+  return showModalBottomSheet<String>(
+    context: context,
+    backgroundColor: AppColors.surfaceContainerLowest,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (context) {
+      return Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Pilih Waktu Makan', style: AppTypography.h3),
+            const SizedBox(height: AppSpacing.md),
+            ListTile(
+              title: const Text('Pagi', style: AppTypography.bodyLg),
+              onTap: () => Navigator.of(context).pop('pagi'),
+            ),
+            ListTile(
+              title: const Text('Siang', style: AppTypography.bodyLg),
+              onTap: () => Navigator.of(context).pop('siang'),
+            ),
+            ListTile(
+              title: const Text('Sore', style: AppTypography.bodyLg),
+              onTap: () => Navigator.of(context).pop('sore'),
+            ),
+            ListTile(
+              title: const Text('Malam', style: AppTypography.bodyLg),
+              onTap: () => Navigator.of(context).pop('malam'),
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
+        ),
+      );
+    },
+  );
 }
