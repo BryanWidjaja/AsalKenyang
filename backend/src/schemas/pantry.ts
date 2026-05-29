@@ -5,16 +5,22 @@ extendZodWithOpenApi(z);
 
 export const putPantrySchema = z.object({
   items: z
-    .array(z.string().min(1))
-    .openapi({ example: ["ayam", "telur", "cabai"] }),
+    .array(
+      z.object({
+        bahanKey: z.string().min(1),
+        quantity: z.string().nullable().optional(),
+      })
+    )
+    .openapi({ example: [{ bahanKey: "ayam", quantity: "1" }] }),
 });
 
 export const pantryDto = z.object({
-  items: z.array(z.string()),
-  updatedAt: z
-    .string()
-    .nullable()
-    .openapi({ description: "ISO 8601 timestamp, null if never set" }),
+  items: z.array(
+    z.object({
+      bahanKey: z.string(),
+      quantity: z.string().nullable(),
+    })
+  ),
 });
 
 export type PutPantryInput = z.infer<typeof putPantrySchema>;
