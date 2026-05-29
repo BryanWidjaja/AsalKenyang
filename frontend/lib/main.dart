@@ -10,7 +10,10 @@ import 'features/budget/presentation/spending_history_page.dart';
 import 'features/recipes/presentation/favorites_page.dart';
 import 'features/recipes/presentation/recipe_detail_page.dart';
 import 'features/recipes/presentation/search_results_page.dart';
+import 'features/recipes/presentation/recipe_browse_page.dart';
 import 'features/shell/presentation/home_shell.dart';
+import 'features/pantry/presentation/pantry_page.dart';
+import 'features/notifications/presentation/notifications_page.dart';
 
 void main() {
   runApp(const ProviderScope(child: AsalKenyangApp()));
@@ -34,8 +37,11 @@ class AsalKenyangApp extends StatelessWidget {
         SearchResultsPage.route: (_) => const SearchResultsPage(),
         FavoritesPage.route: (_) => const FavoritesPage(),
         RecipeDetailPage.route: (_) => const RecipeDetailPage(),
+        RecipeBrowsePage.route: (_) => const RecipeBrowsePage(),
         SpendingHistoryPage.route: (_) => const SpendingHistoryPage(),
         AboutPage.route: (_) => const AboutPage(),
+        PantryPage.route: (_) => const PantryPage(),
+        NotificationsPage.route: (_) => const NotificationsPage(),
       },
     );
   }
