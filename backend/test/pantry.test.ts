@@ -16,7 +16,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await prisma.pantry.deleteMany({
+  await prisma.pantryItem.deleteMany({
     where: { user: { email: { startsWith: "vitest_pantry_" } } },
   });
   await prisma.user.deleteMany({
@@ -33,36 +33,57 @@ describe("/api/v1/pantry (guarded)", () => {
     expect(res.status).toBe(401);
   });
 
-  it("returns empty items and null updatedAt when never set", async () => {
+  it("returns empty items when never set", async () => {
     const res = await request(app).get("/api/v1/pantry").set(auth());
     expect(res.status).toBe(200);
     expect(res.body.items).toEqual([]);
-    expect(res.body.updatedAt).toBeNull();
   });
 
   it("PUT sets the pantry items", async () => {
     const res = await request(app)
       .put("/api/v1/pantry")
       .set(auth())
-      .send({ items: ["ayam", "telur", "cabai"] });
+      .send({
+        items: [
+          { bahanKey: "ayam", quantity: "1 potong" },
+          { bahanKey: "telur", quantity: "2 butir" },
+          { bahanKey: "cabai", quantity: null },
+        ],
+      });
     expect(res.status).toBe(200);
-    expect(res.body.items).toEqual(["ayam", "telur", "cabai"]);
-    expect(typeof res.body.updatedAt).toBe("string");
+    expect(res.body.items).toEqual([
+      { bahanKey: "ayam", quantity: "1 potong" },
+      { bahanKey: "telur", quantity: "2 butir" },
+      { bahanKey: "cabai", quantity: null },
+    ]);
   });
 
   it("GET returns the saved items", async () => {
     const res = await request(app).get("/api/v1/pantry").set(auth());
     expect(res.status).toBe(200);
-    expect(res.body.items).toEqual(["ayam", "telur", "cabai"]);
+    expect(res.body.items).toEqual([
+      { bahanKey: "ayam", quantity: "1 potong" },
+      { bahanKey: "telur", quantity: "2 butir" },
+      { bahanKey: "cabai", quantity: null },
+    ]);
   });
 
   it("PUT replaces (not merges) and de-duplicates", async () => {
     const res = await request(app)
       .put("/api/v1/pantry")
       .set(auth())
-      .send({ items: ["tahu", "tahu", "tempe"] });
+      .send({
+        items: [
+          { bahanKey: "tahu", quantity: "2 buah" },
+          { bahanKey: "tahu", quantity: "99 buah" },
+          { bahanKey: "tempe", quantity: "1 papan" },
+        ],
+      });
     expect(res.status).toBe(200);
-    expect(res.body.items).toEqual(["tahu", "tempe"]);
+    expect(res.body.items).toEqual([
+      { bahanKey: "tahu", quantity: "2 buah" },
+      { bahanKey: "tempe", quantity: "1 papan" },
+    ]);
   });
 
   it("rejects a non-array items with 400", async () => {
