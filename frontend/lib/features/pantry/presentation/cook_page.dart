@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_elevation.dart';
@@ -10,56 +12,45 @@ import '../../../shared/widgets/filter_pill.dart';
 import '../../../shared/widgets/ingredient_tile.dart';
 import '../../../shared/widgets/toggle_switch.dart';
 import '../../../shared/widgets/top_bar.dart';
+import '../../budget/application/budget_controller.dart';
+import '../../recipes/application/cook_controller.dart';
 import '../../recipes/presentation/search_results_page.dart';
+import '../application/pantry_controller.dart';
 
-class _Ingredient {
-  const _Ingredient(this.label, this.icon, this.category);
-  final String label;
-  final IconData icon;
-  final String category;
-}
+import '../data/ingredient_catalog.dart';
 
-const _categories = ['Semua', 'Protein', 'Sayur', 'Bumbu', 'Karbohidrat'];
-
-const _ingredients = <_Ingredient>[
-  _Ingredient('Telur', Icons.egg_rounded, 'Protein'),
-  _Ingredient('Ikan', Icons.set_meal_rounded, 'Protein'),
-  _Ingredient('Ayam', Icons.kebab_dining_rounded, 'Protein'),
-  _Ingredient('Tahu', Icons.lunch_dining_rounded, 'Protein'),
-  _Ingredient('Tempe', Icons.bakery_dining_rounded, 'Protein'),
-  _Ingredient('Sawi', Icons.eco_rounded, 'Sayur'),
-  _Ingredient('Wortel', Icons.local_florist_rounded, 'Sayur'),
-  _Ingredient('Tomat', Icons.circle_rounded, 'Sayur'),
-  _Ingredient('Bawang', Icons.grass_rounded, 'Bumbu'),
-  _Ingredient('Cabai', Icons.local_fire_department_rounded, 'Bumbu'),
-  _Ingredient('Kecap', Icons.water_drop_rounded, 'Bumbu'),
-  _Ingredient('Nasi', Icons.rice_bowl_rounded, 'Karbohidrat'),
-  _Ingredient('Mie', Icons.ramen_dining_rounded, 'Karbohidrat'),
-  _Ingredient('Roti', Icons.cookie_rounded, 'Karbohidrat'),
-];
-
-class CookPage extends StatefulWidget {
+class CookPage extends ConsumerStatefulWidget {
   const CookPage({super.key});
 
   @override
-  State<CookPage> createState() => _CookPageState();
+  ConsumerState<CookPage> createState() => _CookPageState();
 }
 
-class _CookPageState extends State<CookPage> {
+class _CookPageState extends ConsumerState<CookPage> {
   String _category = 'Semua';
-  bool _budgetCapEnabled = true;
-  final Set<String> _selected = {'Telur', 'Ayam', 'Bawang'};
 
-  List<_Ingredient> get _visible {
-    if (_category == 'Semua') return _ingredients;
-    return _ingredients.where((i) => i.category == _category).toList();
+  List<IngredientDef> get _visible {
+    if (_category == 'Semua') return ingredientCatalog;
+    return ingredientCatalog.where((i) => i.category == _category).toList();
   }
 
   @override
   Widget build(BuildContext context) {
+    final pantryState = ref.watch(pantryControllerProvider);
+    final cookState = ref.watch(cookControllerProvider);
+    final budgetState = ref.watch(budgetControllerProvider);
+
+    final savedKeys = pantryState.items.map((e) => e.bahanKey).toSet();
+    final selectedKeys = cookState.selectedIngredientKeys ?? savedKeys;
+    final fmt = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+
     return Scaffold(
       backgroundColor: AppColors.riceWhite,
-      appBar: const TopBar.shell(budgetText: 'Rp 47.000'),
+      appBar: TopBar.shell(budgetText: fmt.format(budgetState.remainingBudget)),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -75,15 +66,17 @@ class _CookPageState extends State<CookPage> {
               ),
               children: [
                 _BudgetToggleCard(
-                  value: _budgetCapEnabled,
-                  onChanged: (v) => setState(() => _budgetCapEnabled = v),
+                  value: cookState.useBudgetFilter,
+                  onChanged: (v) => ref
+                      .read(cookControllerProvider.notifier)
+                      .toggleBudgetFilter(v),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      for (final c in _categories) ...[
+                      for (final c in ingredientCategories) ...[
                         FilterPill(
                           label: c,
                           selected: _category == c,
@@ -99,24 +92,24 @@ class _CookPageState extends State<CookPage> {
                 const SizedBox(height: AppSpacing.md),
                 _IngredientsGrid(
                   ingredients: _visible,
-                  selected: _selected,
-                  onToggle: (label) => setState(() {
-                    if (!_selected.add(label)) _selected.remove(label);
-                  }),
+                  selected: selectedKeys,
+                  onToggle: (label) => ref
+                      .read(cookControllerProvider.notifier)
+                      .toggleIngredient(label, savedKeys),
                 ),
               ],
             ),
           ),
         ),
       ),
-      floatingActionButton: _selected.isEmpty
-        ? null
-        : CariMenuFab(
-            label: 'Cari Menu',
-            badgeCount: _selected.length,
-            onPressed: () =>
-                Navigator.of(context).pushNamed(SearchResultsPage.route),
-          ),
+      floatingActionButton: selectedKeys.isEmpty
+          ? null
+          : CariMenuFab(
+              label: 'Cari Menu',
+              badgeCount: selectedKeys.length,
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(SearchResultsPage.route),
+            ),
     );
   }
 }
@@ -146,10 +139,10 @@ class _BudgetToggleCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Atur Uang Tersedia', style: AppTypography.titleMd),
+                Text('Atur Resep Sesuai Budget', style: AppTypography.titleMd),
                 const SizedBox(height: 2),
                 Text(
-                  'Sesuaikan budget masak hari ini',
+                  'Sembunyikan resep yang melebihi sisa uang',
                   style: AppTypography.caption,
                 ),
               ],
@@ -169,7 +162,7 @@ class _IngredientsGrid extends StatelessWidget {
     required this.onToggle,
   });
 
-  final List<_Ingredient> ingredients;
+  final List<IngredientDef> ingredients;
   final Set<String> selected;
   final ValueChanged<String> onToggle;
 
@@ -177,8 +170,8 @@ class _IngredientsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        const columns = 4;
         const gap = AppSpacing.md;
+        final columns = constraints.maxWidth < 360 ? 3 : 4;
         final tileWidth =
             (constraints.maxWidth - gap * (columns - 1)) / columns;
         return Wrap(
@@ -191,8 +184,8 @@ class _IngredientsGrid extends StatelessWidget {
                 child: IngredientTile(
                   label: ing.label,
                   icon: ing.icon,
-                  selected: selected.contains(ing.label),
-                  onTap: () => onToggle(ing.label),
+                  selected: selected.contains(ing.key),
+                  onTap: () => onToggle(ing.key),
                 ),
               ),
           ],
