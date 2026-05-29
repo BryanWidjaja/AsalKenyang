@@ -1,65 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_elevation.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_typography.dart';
-import '../../../shared/widgets/budget_gauge.dart';
+import '../../../shared/widgets/budget_summary_strip.dart';
 import '../../../shared/widgets/grocery_item.dart';
 import '../../../shared/widgets/section_header.dart';
 import '../../../shared/widgets/top_bar.dart';
+import '../../budget/application/budget_controller.dart';
 
-class _Item {
-  const _Item(this.name, this.note, this.price);
-  final String name;
-  final String note;
-  final String price;
-}
+import '../application/grocery_controller.dart';
 
-class _Category {
-  const _Category(this.icon, this.title, this.items);
-  final IconData icon;
-  final String title;
-  final List<_Item> items;
-}
-
-const _categories = <_Category>[
-  _Category(Icons.local_florist_rounded, 'Sayuran & Bumbu', [
-    _Item('Bawang Merah (250g)', 'Untuk Nasi Goreng', 'Rp 5.000'),
-    _Item('Sawi Hijau (1 ikat)', 'Menu Sehat', 'Rp 8.000'),
-    _Item('Cabai Rawit (100g)', 'Opsional', 'Rp 3.000'),
-  ]),
-  _Category(Icons.set_meal_rounded, 'Lauk Pauk', [
-    _Item('Telur Ayam (1/2 kg)', 'Stok Mingguan', 'Rp 15.000'),
-    _Item('Tempe (2 papan)', 'Protein Murah', 'Rp 12.000'),
-  ]),
-  _Category(Icons.rice_bowl_rounded, 'Kebutuhan Pokok', [
-    _Item('Beras Putih', 'Cek sisa di kosan', '-'),
-  ]),
-];
-
-class GroceryPage extends StatefulWidget {
+class GroceryPage extends ConsumerWidget {
   const GroceryPage({super.key});
 
   @override
-  State<GroceryPage> createState() => _GroceryPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final items = ref.watch(groceryListProvider);
+    final totalCost = ref.watch(groceryTotalCostProvider);
+    final budgetState = ref.watch(budgetControllerProvider);
+    final fmt = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+    final groupedItems = _groupItems(items);
+    final remainingAfterShopping = budgetState.remainingBudget - totalCost;
+    final totalBudget = budgetState.wallet?.totalBudget ?? 0;
+    final remainingPercent = totalBudget == 0
+        ? 0.0
+        : (remainingAfterShopping / totalBudget).clamp(0, 1).toDouble();
 
-class _GroceryPageState extends State<GroceryPage> {
-  final Set<String> _checked = {'Bawang Merah (250g)', 'Tempe (2 papan)'};
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.riceWhite,
-      appBar: const TopBar.shell(budgetText: 'Rp 47.000'),
+      appBar: TopBar.shell(budgetText: fmt.format(totalCost)),
       body: SafeArea(
         top: false,
         child: Center(
           child: ConstrainedBox(
-            constraints:
-                const BoxConstraints(maxWidth: AppSpacing.screenMaxWidth),
+            constraints: const BoxConstraints(
+              maxWidth: AppSpacing.screenMaxWidth,
+            ),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.edge,
@@ -68,20 +52,37 @@ class _GroceryPageState extends State<GroceryPage> {
                 AppSpacing.xl,
               ),
               children: [
-                const _BudgetCard(),
+                BudgetSummaryStrip(
+                  estimasiText: fmt.format(totalCost),
+                  sisaText: fmt.format(remainingAfterShopping),
+                  remainingPercent: remainingPercent,
+                ),
                 const SizedBox(height: AppSpacing.lg),
-                for (final c in _categories) ...[
-                  SectionHeader(title: c.title, icon: c.icon),
-                  const SizedBox(height: AppSpacing.md),
-                  _CategoryCard(
-                    items: c.items,
-                    checked: _checked,
-                    onToggle: (name) => setState(() {
-                      if (!_checked.add(name)) _checked.remove(name);
-                    }),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                ],
+                if (items.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.all(AppSpacing.xl),
+                    child: Center(
+                      child: Text('Belum ada barang di daftar belanja.'),
+                    ),
+                  )
+                else
+                  for (final entry in groupedItems.entries) ...[
+                    SectionHeader(
+                      title: entry.key,
+                      icon: Icons.shopping_bag_rounded,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    _CategoryCard(
+                      items: entry.value,
+                      onToggle: (bahanKey, isChecked) {
+                        ref
+                            .read(groceryControllerProvider)
+                            .toggleCheck(bahanKey, isChecked);
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                  ],
+                const SizedBox(height: AppSpacing.lg),
               ],
             ),
           ),
@@ -91,74 +92,20 @@ class _GroceryPageState extends State<GroceryPage> {
   }
 }
 
-class _BudgetCard extends StatelessWidget {
-  const _BudgetCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainerLow,
-        borderRadius: AppRadii.brMd,
-        border: Border.all(
-          color: AppColors.outlineVariant.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('Estimasi Belanja', style: AppTypography.titleMd),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            'Budget sisa: Rp 120.000',
-            style: AppTypography.body.copyWith(
-              color: AppColors.onSurfaceVariant,
-              fontFeatures: AppTypography.tnum,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          const BudgetGauge(percent: 0.72),
-          const SizedBox(height: AppSpacing.sm),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Rp 47.000 terpakai',
-                  style: AppTypography.caption.copyWith(
-                    fontFeatures: AppTypography.tnum,
-                  ),
-                ),
-              ),
-              Text(
-                'Aman',
-                style: AppTypography.caption.copyWith(
-                  color: AppColors.secondary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _CategoryCard extends StatelessWidget {
-  const _CategoryCard({
-    required this.items,
-    required this.checked,
-    required this.onToggle,
-  });
+  const _CategoryCard({required this.items, required this.onToggle});
 
-  final List<_Item> items;
-  final Set<String> checked;
-  final ValueChanged<String> onToggle;
+  final List<GroceryAggregatedItem> items;
+  final void Function(String bahanKey, bool isChecked) onToggle;
 
   @override
   Widget build(BuildContext context) {
+    final fmt = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surfaceContainerLowest,
@@ -175,17 +122,59 @@ class _CategoryCard extends StatelessWidget {
             for (var i = 0; i < items.length; i++) ...[
               GroceryItem(
                 name: items[i].name,
-                note: items[i].note,
-                price: items[i].price,
-                checked: checked.contains(items[i].name),
-                onChanged: (_) => onToggle(items[i].name),
+                quantity: items[i].quantity,
+                note: 'Total estimasi: ${fmt.format(items[i].price)}',
+                price: '${fmt.format(items[i].unitPrice)}/${items[i].unitName}',
+                checked: items[i].isChecked,
+                onChanged: (val) => onToggle(items[i].bahanKey, val),
               ),
               if (i != items.length - 1)
-                const Divider(height: 1, indent: AppSpacing.md, endIndent: AppSpacing.md),
+                const Divider(
+                  height: 1,
+                  indent: AppSpacing.md,
+                  endIndent: AppSpacing.md,
+                ),
             ],
           ],
         ),
       ),
     );
   }
+}
+
+Map<String, List<GroceryAggregatedItem>> _groupItems(
+  List<GroceryAggregatedItem> items,
+) {
+  final groups = <String, List<GroceryAggregatedItem>>{
+    'Sayuran & Bumbu': [],
+    'Lauk Pauk': [],
+    'Kebutuhan Pokok': [],
+  };
+
+  for (final item in items) {
+    groups[_categoryFor(item.name)]!.add(item);
+  }
+
+  groups.removeWhere((_, value) => value.isEmpty);
+  return groups;
+}
+
+String _categoryFor(String name) {
+  final lower = name.toLowerCase();
+  if (lower.contains('ayam') ||
+      lower.contains('ikan') ||
+      lower.contains('telur') ||
+      lower.contains('tahu') ||
+      lower.contains('tempe') ||
+      lower.contains('udang')) {
+    return 'Lauk Pauk';
+  }
+  if (lower.contains('nasi') ||
+      lower.contains('beras') ||
+      lower.contains('mie') ||
+      lower.contains('roti') ||
+      lower.contains('tepung')) {
+    return 'Kebutuhan Pokok';
+  }
+  return 'Sayuran & Bumbu';
 }

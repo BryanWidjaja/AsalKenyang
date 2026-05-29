@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
@@ -6,65 +8,18 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/spending_history_row.dart';
 import '../../../shared/widgets/top_bar.dart';
+import '../application/budget_controller.dart';
 
-class _Entry {
-  const _Entry(
-    this.title,
-    this.subtitle,
-    this.amount,
-    this.icon, {
-    this.iconBackground = AppColors.surfaceContainerHighest,
-    this.iconColor = AppColors.onSurfaceVariant,
-  });
-
-  final String title;
-  final String subtitle;
-  final String amount;
-  final IconData icon;
-  final Color iconBackground;
-  final Color iconColor;
-}
-
-const _entries = <_Entry>[
-  _Entry(
-    'Belanja Sayur Lodeh',
-    '24 Okt 2023 • Pasar Tradisional',
-    '- Rp 25.000',
-    Icons.shopping_basket_rounded,
-    iconBackground: AppColors.kunyitContainer,
-    iconColor: AppColors.primary,
-  ),
-  _Entry(
-    'Minyak Goreng 1L',
-    '22 Okt 2023 • Warung Pak Kumis',
-    '- Rp 16.500',
-    Icons.local_mall_rounded,
-  ),
-  _Entry(
-    'Bumbu Dapur (Bawang, Cabe)',
-    '20 Okt 2023 • Tukang Sayur Keliling',
-    '- Rp 12.000',
-    Icons.eco_rounded,
-    iconBackground: AppColors.pandanContainer,
-    iconColor: AppColors.secondary,
-  ),
-  _Entry(
-    'Bahan Nasi Goreng Gila',
-    '15 Okt 2023 • Supermarket Mini',
-    '- Rp 45.000',
-    Icons.restaurant_menu_rounded,
-    iconBackground: AppColors.kunyitContainer,
-    iconColor: AppColors.primary,
-  ),
-];
-
-class SpendingHistoryPage extends StatelessWidget {
+class SpendingHistoryPage extends ConsumerWidget {
   const SpendingHistoryPage({super.key});
 
   static const String route = '/spending-history';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final budgetState = ref.watch(budgetControllerProvider);
+    final fmt = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ', decimalDigits: 0);
+
     return Scaffold(
       backgroundColor: AppColors.riceWhite,
       appBar: const TopBar.nested(title: 'Riwayat Belanja'),
@@ -99,7 +54,7 @@ class SpendingHistoryPage extends StatelessWidget {
                       ),
                       const SizedBox(height: AppSpacing.sm),
                       Text(
-                        '- Rp 345.500',
+                        '- ${fmt.format(budgetState.totalSpendings)}',
                         style: AppTypography.budgetHero.copyWith(
                           color: AppColors.primary,
                         ),
@@ -110,16 +65,19 @@ class SpendingHistoryPage extends StatelessWidget {
                 const SizedBox(height: AppSpacing.lg),
                 Text('Riwayat Belanja', style: AppTypography.titleMd),
                 const SizedBox(height: AppSpacing.md),
-                for (var i = 0; i < _entries.length; i++) ...[
-                  SpendingHistoryRow(
-                    title: _entries[i].title,
-                    subtitle: _entries[i].subtitle,
-                    amount: _entries[i].amount,
-                    icon: _entries[i].icon,
-                    iconBackground: _entries[i].iconBackground,
-                    iconColor: _entries[i].iconColor,
+                if (budgetState.spendings.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+                    child: Text('Belum ada riwayat belanja.', textAlign: TextAlign.center),
                   ),
-                  if (i != _entries.length - 1)
+                for (var i = 0; i < budgetState.spendings.length; i++) ...[
+                  SpendingHistoryRow(
+                    title: budgetState.spendings[i].title,
+                    subtitle: DateFormat('dd MMM yyyy').format(budgetState.spendings[i].date),
+                    amount: '- ${fmt.format(budgetState.spendings[i].amount)}',
+                    icon: Icons.receipt_long_rounded,
+                  ),
+                  if (i != budgetState.spendings.length - 1)
                     const SizedBox(height: AppSpacing.md),
                 ],
               ],
