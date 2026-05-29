@@ -87,7 +87,7 @@ class _AppInfoCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const BrandMark(size: 96, icon: Icons.restaurant_rounded),
+          const BrandMark(size: 96),
           const SizedBox(height: AppSpacing.sm),
           Text('AsalKenyang', style: AppTypography.h2),
           const SizedBox(height: AppSpacing.xs),

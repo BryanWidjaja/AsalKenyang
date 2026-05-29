@@ -1,0 +1,20 @@
+<svg width="960" height="256" viewBox="0 0 960 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(32 32)">
+    <rect width="192" height="192" rx="62" fill="#FFDBCA"/>
+    <g transform="translate(21 21) scale(1.5)">
+      <path d="M32 45L43 56L68 29" stroke="#2C694D" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M50 21C64 20 74 29 75 45C61 45 51 36 50 21Z" fill="#2C694D"/>
+      <path d="M56 28C61 33 65 37 70 42" stroke="#B6EFCF" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="70" cy="35" r="10" fill="#FFDF9C"/>
+      <circle cx="70" cy="35" r="4.5" fill="#8E6604"/>
+      <path d="M27 51C33 40 42 35 52 35C65 35 74 43 77 51Z" fill="#FCF8F4"/>
+      <rect x="20" y="47" width="60" height="17" rx="8.5" fill="#FCF8F4" stroke="#9B2F00" stroke-width="3"/>
+      <path d="M39 47L45 44M51 44L57 47M61 50L67 48" stroke="#C2410C" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M23 56C32 61 68 61 77 56C75 73 64 82 50 82C36 82 25 73 23 56Z" fill="#9B2F00"/>
+      <path d="M34 66C42 71 58 72 66 66" stroke="#FFB59D" stroke-width="4" stroke-linecap="round"/>
+      <rect x="37" y="79" width="26" height="6" rx="3" fill="#C2410C"/>
+    </g>
+  </g>
+  <text x="264" y="119" fill="#9B2F00" font-family="Plus Jakarta Sans, Inter, Arial, sans-serif" font-size="56" font-weight="700">AsalKenyang</text>
+  <text x="267" y="163" fill="#59413A" font-family="Plus Jakarta Sans, Inter, Arial, sans-serif" font-size="24" font-weight="600">Masak hemat, tetap kenyang</text>
+</svg>

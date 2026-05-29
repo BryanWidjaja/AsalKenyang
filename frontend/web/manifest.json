@@ -3,9 +3,9 @@
     "short_name": "asalkenyang",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FCF8F4",
+    "theme_color": "#9B2F00",
+    "description": "AsalKenyang - masak hemat, tetap kenyang.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -72,7 +72,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const BrandMark(size: 80, icon: Icons.restaurant_rounded),
+                  const BrandMark(size: 80),
                   const SizedBox(height: AppSpacing.md),
                   Text(
                     'AsalKenyang',
