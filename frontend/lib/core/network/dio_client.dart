@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 const _apiHost = String.fromEnvironment(
   'API_URL',
-  defaultValue: 'http://10.0.2.2:3000',
+  defaultValue: 'http://localhost:3000',
 );
 
 Dio createDio() {
