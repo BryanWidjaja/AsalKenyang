@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_elevation.dart';
@@ -11,51 +13,83 @@ import '../../../shared/widgets/secondary_button.dart';
 import '../../../shared/widgets/step_card.dart';
 import '../../../shared/widgets/top_bar.dart';
 
-class _Bahan {
-  const _Bahan(this.name, this.amount, this.price, this.icon);
-  final String name;
-  final String amount;
-  final String price;
-  final IconData icon;
-}
+import '../../budget/application/budget_controller.dart';
+import '../../plan/application/plan_controller.dart';
+import '../application/favorites_controller.dart';
+import '../application/recipe_providers.dart';
+import '../data/recipe_models.dart';
 
-const _bahan = <_Bahan>[
-  _Bahan('Labu Siam', '250g', 'Rp 4.000', Icons.shopping_bag_rounded),
-  _Bahan('Kacang Panjang', '1 ikat', 'Rp 3.000', Icons.grass_rounded),
-  _Bahan('Cabai Merah', '50g', 'Rp 5.000', Icons.local_fire_department_rounded),
-  _Bahan('Bawang Merah', '5 siung', 'Rp 4.000', Icons.spa_rounded),
-];
-
-const _steps = <String>[
-  'Potong dadu labu siam dan iris tipis kacang panjang seukuran korek api. '
-      'Cuci bersih semua sayuran dengan air mengalir.',
-  'Didihkan 500ml air di panci, masukkan bumbu racik lodeh dan santan instan. '
-      'Aduk perlahan agar santan tidak pecah dan tercampur rata.',
-  'Masukkan sayuran yang sudah dipotong. Masak dengan api sedang selama 5-7 '
-      'menit hingga sayur empuk. Sajikan selagi hangat.',
-];
-
-class RecipeDetailPage extends StatefulWidget {
+class RecipeDetailPage extends ConsumerWidget {
   const RecipeDetailPage({super.key});
 
   static const String route = '/recipe-detail';
 
   @override
-  State<RecipeDetailPage> createState() => _RecipeDetailPageState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is Recipe) return _RecipeDetailBody(recipe: args);
+
+    final recipesAsync = ref.watch(allRecipesProvider);
+    return recipesAsync.when(
+      data: (recipes) {
+        final recipe = _findRecipe(recipes, args);
+        if (recipe == null) {
+          return const Scaffold(body: Center(child: Text('Recipe not found')));
+        }
+        return _RecipeDetailBody(recipe: recipe);
+      },
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
+    );
+  }
 }
 
-class _RecipeDetailPageState extends State<RecipeDetailPage> {
-  bool _favorited = false;
+Recipe? _findRecipe(List<Recipe> recipes, Object? args) {
+  if (args is String) {
+    for (final recipe in recipes) {
+      if (recipe.id == args) return recipe;
+    }
+    return null;
+  }
+  return recipes.isEmpty ? null : recipes.first;
+}
+
+class _RecipeDetailBody extends ConsumerWidget {
+  const _RecipeDetailBody({required this.recipe});
+
+  final Recipe recipe;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final fmt = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+    final perServing = recipe.porsi <= 0
+        ? recipe.estPrice
+        : (recipe.estPrice / recipe.porsi).round();
+    final caloriesPerServing = recipe.porsi <= 0
+        ? recipe.estCalories
+        : (recipe.estCalories / recipe.porsi).round();
+
+    final favorites = ref.watch(favoritesControllerProvider).value ?? [];
+    final isFavorited = favorites.any(
+      (favorite) => favorite.recipeId == recipe.id,
+    );
+
     return Scaffold(
       backgroundColor: AppColors.riceWhite,
       appBar: TopBar.detail(
-        isFavorited: _favorited,
-        onFavoriteToggle: () => setState(() => _favorited = !_favorited),
+        isFavorited: isFavorited,
+        onFavoriteToggle: () async {
+          await ref
+              .read(favoritesControllerProvider.notifier)
+              .toggleFavorite(recipe.id);
+        },
       ),
-      bottomNavigationBar: const _ActionBar(),
+      bottomNavigationBar: _ActionBar(recipe: recipe),
       body: SafeArea(
         top: false,
         child: ListView(
@@ -69,13 +103,21 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    _Hero(),
-                    _TitleMeta(),
-                    _BahanSection(),
-                    _StepsSection(),
-                    _Disclaimer(),
-                    SizedBox(height: AppSpacing.lg),
+                  children: [
+                    _Hero(
+                      imageUrl: recipe.imageUrl,
+                      priceText: 'Aman (${fmt.format(perServing)}/porsi)',
+                    ),
+                    _TitleMeta(
+                      name: recipe.name,
+                      time: '${recipe.cookTime} Menit',
+                      servings: '${recipe.porsi} Porsi',
+                      calories: '$caloriesPerServing kkal/porsi',
+                    ),
+                    _BahanSection(price: recipe.estPrice, bahan: recipe.bahan),
+                    _StepsSection(steps: recipe.langkah),
+                    const _Disclaimer(),
+                    const SizedBox(height: AppSpacing.lg),
                   ],
                 ),
               ),
@@ -88,7 +130,9 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
 }
 
 class _Hero extends StatelessWidget {
-  const _Hero();
+  const _Hero({required this.imageUrl, required this.priceText});
+  final String imageUrl;
+  final String priceText;
 
   @override
   Widget build(BuildContext context) {
@@ -100,11 +144,18 @@ class _Hero extends StatelessWidget {
           Container(
             color: AppColors.surfaceVariant,
             alignment: Alignment.center,
-            child: const Icon(
-              Icons.restaurant_rounded,
-              size: 48,
-              color: AppColors.outline,
-            ),
+            // Fallback for missing images in MVP
+            child: imageUrl.isEmpty
+                ? const Icon(
+                    Icons.restaurant_rounded,
+                    size: 48,
+                    color: AppColors.outline,
+                  )
+                : Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (c, e, s) => const Icon(Icons.broken_image),
+                  ),
           ),
           DecoratedBox(
             decoration: BoxDecoration(
@@ -134,10 +185,14 @@ class _Hero extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.eco_rounded, size: 18, color: AppColors.secondary),
+                  const Icon(
+                    Icons.eco_rounded,
+                    size: 18,
+                    color: AppColors.secondary,
+                  ),
                   const SizedBox(width: AppSpacing.xs),
                   Text(
-                    'Aman (Rp 12.000/porsi)',
+                    priceText,
                     style: AppTypography.label.copyWith(
                       fontFeatures: AppTypography.tnum,
                     ),
@@ -153,7 +208,17 @@ class _Hero extends StatelessWidget {
 }
 
 class _TitleMeta extends StatelessWidget {
-  const _TitleMeta();
+  const _TitleMeta({
+    required this.name,
+    required this.time,
+    required this.servings,
+    required this.calories,
+  });
+
+  final String name;
+  final String time;
+  final String servings;
+  final String calories;
 
   @override
   Widget build(BuildContext context) {
@@ -167,13 +232,18 @@ class _TitleMeta extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Sayur Lodeh Tanggal Tua', style: AppTypography.h1),
+          Text(name, style: AppTypography.h1),
           const SizedBox(height: AppSpacing.sm),
-          Row(
-            children: const [
-              _MetaItem(icon: Icons.timer_outlined, label: '20 Menit'),
-              SizedBox(width: AppSpacing.lg),
-              _MetaItem(icon: Icons.restaurant_rounded, label: '2 Porsi'),
+          Wrap(
+            spacing: AppSpacing.lg,
+            runSpacing: AppSpacing.sm,
+            children: [
+              _MetaItem(icon: Icons.timer_outlined, label: time),
+              _MetaItem(icon: Icons.restaurant_rounded, label: servings),
+              _MetaItem(
+                icon: Icons.local_fire_department_outlined,
+                label: calories,
+              ),
             ],
           ),
         ],
@@ -205,10 +275,19 @@ class _MetaItem extends StatelessWidget {
 }
 
 class _BahanSection extends StatelessWidget {
-  const _BahanSection();
+  const _BahanSection({required this.price, required this.bahan});
+
+  final int price;
+  final List<Bahan> bahan;
 
   @override
   Widget build(BuildContext context) {
+    final fmt = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.edge,
@@ -224,7 +303,7 @@ class _BahanSection extends StatelessWidget {
                 child: Text('Bahan-bahan', style: AppTypography.titleMd),
               ),
               Text(
-                'Total: Rp 24.000',
+                'Total: ${fmt.format(price)}',
                 style: AppTypography.label.copyWith(
                   color: AppColors.primary,
                   fontFeatures: AppTypography.tnum,
@@ -241,26 +320,19 @@ class _BahanSection extends StatelessWidget {
                 spacing: gap,
                 runSpacing: gap,
                 children: [
-                  for (final b in _bahan)
+                  for (final b in bahan)
                     SizedBox(
                       width: colWidth,
                       child: BahanCard(
-                        name: b.name,
-                        amount: b.amount,
-                        price: b.price,
-                        icon: b.icon,
+                        name: b.nama,
+                        amount: b.jumlah,
+                        price: b.harga > 0
+                            ? '${fmt.format(b.harga)} total'
+                            : 'Gratis',
+                        unitPrice: _unitPriceLabel(b, fmt),
+                        icon: Icons.kitchen_rounded,
                       ),
                     ),
-                  SizedBox(
-                    width: constraints.maxWidth,
-                    child: const BahanCard.wide(
-                      name: 'Santan Instan',
-                      amount: '65ml',
-                      price: 'Rp 3.500',
-                      icon: Icons.water_drop_rounded,
-                      gaugePercent: 1,
-                    ),
-                  ),
                 ],
               );
             },
@@ -271,8 +343,40 @@ class _BahanSection extends StatelessWidget {
   }
 }
 
+String? _unitPriceLabel(Bahan bahan, NumberFormat fmt) {
+  if (bahan.harga <= 0) return null;
+
+  final parsed = _parseQuantity(bahan.jumlah);
+  if (parsed == null || parsed.amount <= 0) return null;
+
+  final unitPrice = (bahan.harga / parsed.amount).round();
+  return '${fmt.format(unitPrice)}/${parsed.unit}';
+}
+
+_ParsedQuantity? _parseQuantity(String quantity) {
+  final match = RegExp(
+    r'^\s*(\d+(?:[,.]\d+)?)\s*(.*)$',
+    caseSensitive: false,
+  ).firstMatch(quantity);
+  if (match == null) return null;
+
+  final amount = double.tryParse(match.group(1)!.replaceAll(',', '.'));
+  final unit = match.group(2)!.trim().toLowerCase();
+  if (amount == null || unit.isEmpty) return null;
+
+  return _ParsedQuantity(amount, unit);
+}
+
+class _ParsedQuantity {
+  const _ParsedQuantity(this.amount, this.unit);
+
+  final double amount;
+  final String unit;
+}
+
 class _StepsSection extends StatelessWidget {
-  const _StepsSection();
+  const _StepsSection({required this.steps});
+  final List<String> steps;
 
   @override
   Widget build(BuildContext context) {
@@ -286,10 +390,9 @@ class _StepsSection extends StatelessWidget {
         children: [
           Text('Cara Memasak', style: AppTypography.titleMd),
           const SizedBox(height: AppSpacing.md),
-          for (var i = 0; i < _steps.length; i++) ...[
-            StepCard(index: i + 1, text: _steps[i]),
-            if (i != _steps.length - 1)
-              const SizedBox(height: AppSpacing.md),
+          for (var i = 0; i < steps.length; i++) ...[
+            StepCard(index: i + 1, text: steps[i]),
+            if (i != steps.length - 1) const SizedBox(height: AppSpacing.md),
           ],
         ],
       ),
@@ -319,11 +422,12 @@ class _Disclaimer extends StatelessWidget {
   }
 }
 
-class _ActionBar extends StatelessWidget {
-  const _ActionBar();
+class _ActionBar extends ConsumerWidget {
+  const _ActionBar({required this.recipe});
+  final Recipe recipe;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.riceWhite,
@@ -353,13 +457,78 @@ class _ActionBar extends StatelessWidget {
                       PrimaryButton(
                         label: 'Masak',
                         icon: Icons.soup_kitchen_rounded,
-                        onPressed: () {},
+                        onPressed: () async {
+                          try {
+                            await ref
+                                .read(budgetControllerProvider.notifier)
+                                .addSpending(
+                                  recipe.estPrice,
+                                  'Masak: ${recipe.name}',
+                                  ['cook', 'recipe:${recipe.id}'],
+                                );
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Berhasil menambahkan pengeluaran!',
+                                ),
+                              ),
+                            );
+                            Navigator.of(
+                              context,
+                            ).popUntil((route) => route.isFirst);
+                          } catch (error) {
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Gagal menyimpan pengeluaran: $error',
+                                ),
+                              ),
+                            );
+                          }
+                        },
                       ),
                       const SizedBox(height: AppSpacing.sm),
                       SecondaryButton(
                         label: 'Tambah ke rencana',
                         icon: Icons.calendar_month_rounded,
-                        onPressed: () {},
+                        onPressed: () async {
+                          final date = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime.now().add(
+                              const Duration(days: 365),
+                            ),
+                          );
+                          if (date != null && context.mounted) {
+                            final waktu = await _showWaktuMakanSheet(context);
+                            if (waktu == null) return;
+                            try {
+                              await ref
+                                  .read(planControllerProvider)
+                                  .addMeal(date, recipe.id, waktu);
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Berhasil menambahkan ke rencana!',
+                                  ),
+                                ),
+                              );
+                            } catch (error) {
+                              if (!context.mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Gagal menambahkan ke rencana: $error',
+                                  ),
+                                ),
+                              );
+                            }
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -371,4 +540,44 @@ class _ActionBar extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<String?> _showWaktuMakanSheet(BuildContext context) {
+  return showModalBottomSheet<String>(
+    context: context,
+    backgroundColor: AppColors.surfaceContainerLowest,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (context) {
+      return Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Pilih Waktu Makan', style: AppTypography.h3),
+            const SizedBox(height: AppSpacing.md),
+            ListTile(
+              title: const Text('Pagi', style: AppTypography.bodyLg),
+              onTap: () => Navigator.of(context).pop('pagi'),
+            ),
+            ListTile(
+              title: const Text('Siang', style: AppTypography.bodyLg),
+              onTap: () => Navigator.of(context).pop('siang'),
+            ),
+            ListTile(
+              title: const Text('Sore', style: AppTypography.bodyLg),
+              onTap: () => Navigator.of(context).pop('sore'),
+            ),
+            ListTile(
+              title: const Text('Malam', style: AppTypography.bodyLg),
+              onTap: () => Navigator.of(context).pop('malam'),
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
+        ),
+      );
+    },
+  );
 }
