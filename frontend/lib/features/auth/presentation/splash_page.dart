@@ -6,6 +6,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../shared/widgets/brand_mark.dart';
 import '../../../shared/widgets/indeterminate_bar.dart';
+import '../../../core/sync/sync_engine.dart';
 import '../../shell/presentation/home_shell.dart';
 import '../application/auth_controller.dart';
 import 'login_page.dart';
@@ -34,6 +35,10 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     ]);
     if (!mounted) return;
     final hasSession = results[0] as bool;
+    if (hasSession) {
+      // Fire and forget sync
+      ref.read(syncEngineProvider).syncOutbox();
+    }
     Navigator.of(context).pushReplacementNamed(
       hasSession ? HomeShell.route : LoginPage.route,
     );

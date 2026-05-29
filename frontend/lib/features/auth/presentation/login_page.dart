@@ -111,7 +111,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   const SizedBox(height: AppSpacing.sm),
                   Align(
                     alignment: Alignment.centerRight,
-                    child: TextLink(text: 'Lupa kata sandi?', onTap: () {}),
+                    child: TextLink(
+                      text: 'Lupa kata sandi?',
+                      onTap: () => _showSnack(
+                        'Hubungi admin kelas untuk reset akun demo.',
+                      ),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   PrimaryButton(
