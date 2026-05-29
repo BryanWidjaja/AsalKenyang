@@ -1,22 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../data/ingredient_catalog.dart';
 import '../data/pantry_models.dart';
 import '../data/pantry_repository.dart';
 
 class PantryState {
-  const PantryState({
-    this.items = const [],
-    this.isLoading = false,
-  });
+  const PantryState({this.items = const [], this.isLoading = false});
 
   final List<PantryItem> items;
   final bool isLoading;
 
-  PantryState copyWith({
-    List<PantryItem>? items,
-    bool? isLoading,
-  }) {
+  PantryState copyWith({List<PantryItem>? items, bool? isLoading}) {
     return PantryState(
       items: items ?? this.items,
       isLoading: isLoading ?? this.isLoading,
@@ -70,29 +65,6 @@ class PantryController extends Notifier<PantryState> {
     debugPrint('[Pantry] refreshed from server: ${refreshed.length} items');
   }
 
-String _getDefaultQuantity(String bahanKey) {
-  final lower = bahanKey.toLowerCase();
-  if (lower.contains('bawang merah') || lower.contains('bawang putih')) {
-    return '1 siung';
-  }
-  if (lower.contains('telur')) {
-    return '1 butir';
-  }
-  if (lower.contains('cabe') || lower.contains('cabai')) {
-    return '1 buah';
-  }
-  if (lower.contains('bawang bombay') || lower.contains('tomat') || lower.contains('jeruk')) {
-    return '1 buah';
-  }
-  if (lower.contains('daun')) {
-    return '1 lembar';
-  }
-  if (lower.contains('ayam') || lower.contains('daging') || lower.contains('ikan')) {
-    return '1 ekor'; // or 1 potong, but generic enough
-  }
-  return '1';
-}
-
   Future<void> addItem(String bahanKey, {String? quantity}) async {
     _gen++;
     debugPrint('[Pantry] addItem($bahanKey) gen=$_gen');
@@ -103,7 +75,7 @@ String _getDefaultQuantity(String bahanKey) {
       return;
     }
 
-    final qtyToUse = quantity ?? _getDefaultQuantity(bahanKey);
+    final qtyToUse = quantity ?? defaultQuantityForIngredient(bahanKey);
 
     // Optimistic in-memory update
     final newItem = PantryItem(
