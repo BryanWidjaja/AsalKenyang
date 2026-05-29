@@ -21,6 +21,16 @@ import {
   favoritesListDto,
 } from "../schemas/favorites.js";
 import { pantryDto, putPantrySchema } from "../schemas/pantry.js";
+import {
+  mealPlanDto,
+  putMealPlanSchema,
+  weekQuerySchema,
+} from "../schemas/meal-plan.js";
+import {
+  groceryListDto,
+  groceryQuerySchema,
+  putGroceryCheckSchema,
+} from "../schemas/grocery.js";
 
 export const registry = new OpenAPIRegistry();
 
@@ -209,6 +219,78 @@ registry.registerPath({
     200: {
       description: "Pantry replaced",
       content: { "application/json": { schema: pantryDto } },
+    },
+    400: { description: "Validation error" },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/meal-plan",
+  tags: ["meal-plan"],
+  summary: "Get the user's meal plan for a week (default: current week)",
+  security: [{ bearerAuth: [] }],
+  request: { query: weekQuerySchema },
+  responses: {
+    200: {
+      description: "Meal plan for the week (null if not set)",
+      content: { "application/json": { schema: mealPlanDto.nullable() } },
+    },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "put",
+  path: "/api/v1/meal-plan",
+  tags: ["meal-plan"],
+  summary: "Replace the meal plan for a week",
+  security: [{ bearerAuth: [] }],
+  request: {
+    body: { content: { "application/json": { schema: putMealPlanSchema } } },
+  },
+  responses: {
+    200: {
+      description: "Meal plan replaced",
+      content: { "application/json": { schema: mealPlanDto } },
+    },
+    400: { description: "Validation error" },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/api/v1/grocery",
+  tags: ["grocery"],
+  summary: "Get the grocery list derived from the week's meal plan",
+  security: [{ bearerAuth: [] }],
+  request: { query: groceryQuerySchema },
+  responses: {
+    200: {
+      description: "Aggregated recipe list for the week",
+      content: { "application/json": { schema: groceryListDto } },
+    },
+    401: { description: "Unauthorized" },
+  },
+});
+
+registry.registerPath({
+  method: "put",
+  path: "/api/v1/grocery",
+  tags: ["grocery"],
+  summary: "Persist a local grocery checklist toggle",
+  security: [{ bearerAuth: [] }],
+  request: {
+    body: {
+      content: { "application/json": { schema: putGroceryCheckSchema } },
+    },
+  },
+  responses: {
+    200: {
+      description: "Checklist state accepted",
+      content: { "application/json": { schema: putGroceryCheckSchema } },
     },
     400: { description: "Validation error" },
     401: { description: "Unauthorized" },
