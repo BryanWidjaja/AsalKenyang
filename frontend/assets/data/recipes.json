@@ -1,0 +1,1214 @@
+[
+  {
+    "id": "mock_01",
+    "name": "Nasi Goreng Kosan",
+    "kategori": "nasi",
+    "porsi": 1,
+    "cookTime": 15,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Nasi_goreng_indonesia.jpg/800px-Nasi_goreng_indonesia.jpg",
+    "bahan": [
+      {
+        "nama": "nasi",
+        "jumlah": "1 piring",
+        "key": "nasi",
+        "gram": 150.0,
+        "harga": 3000
+      },
+      {
+        "nama": "bawang merah",
+        "jumlah": "2 siung",
+        "key": "bawang merah",
+        "gram": 8.0,
+        "harga": 160
+      },
+      {
+        "nama": "bawang putih",
+        "jumlah": "1 siung",
+        "key": "bawang putih",
+        "gram": 4.0,
+        "harga": 80
+      },
+      {
+        "nama": "cabai rawit",
+        "jumlah": "3 buah",
+        "key": "cabai rawit",
+        "gram": 30.0,
+        "harga": 600
+      },
+      {
+        "nama": "telur",
+        "jumlah": "1 butir",
+        "key": "telur",
+        "gram": 50.0,
+        "harga": 1000
+      },
+      {
+        "nama": "kecap manis",
+        "jumlah": "1 sdm",
+        "key": "kecap",
+        "gram": 15.0,
+        "harga": 300
+      },
+      {
+        "nama": "minyak goreng",
+        "jumlah": "1 sdm",
+        "key": "minyak goreng",
+        "gram": 15.0,
+        "harga": 300
+      }
+    ],
+    "langkah": [
+      "Iris bawang dan cabai.",
+      "Panaskan minyak, tumis bumbu hingga wangi.",
+      "Masukkan telur, orak-arik.",
+      "Masukkan nasi dan kecap manis, aduk rata lalu goreng hingga matang."
+    ],
+    "bahanKey": [
+      "cabai rawit",
+      "nasi",
+      "bawang merah",
+      "bawang putih",
+      "telur",
+      "kecap",
+      "minyak goreng"
+    ],
+    "estPrice": 5440,
+    "estCalories": 408,
+    "alat": [
+      "kompor",
+      "wajan"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "cepat",
+      "pedas",
+      "vegetarian"
+    ]
+  },
+  {
+    "id": "mock_02",
+    "name": "Telur Balado",
+    "kategori": "telur",
+    "porsi": 2,
+    "cookTime": 20,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Telur_Balado.jpg/800px-Telur_Balado.jpg",
+    "bahan": [
+      {
+        "nama": "telur",
+        "jumlah": "4 butir",
+        "key": "telur",
+        "gram": 200.0,
+        "harga": 3999
+      },
+      {
+        "nama": "cabai merah",
+        "jumlah": "5 buah",
+        "key": "cabai merah",
+        "gram": 50.0,
+        "harga": 999
+      },
+      {
+        "nama": "bawang merah",
+        "jumlah": "4 siung",
+        "key": "bawang merah",
+        "gram": 16.0,
+        "harga": 320
+      },
+      {
+        "nama": "bawang putih",
+        "jumlah": "2 siung",
+        "key": "bawang putih",
+        "gram": 8.0,
+        "harga": 160
+      },
+      {
+        "nama": "tomat",
+        "jumlah": "1 buah",
+        "key": "tomat",
+        "gram": 10.0,
+        "harga": 200
+      },
+      {
+        "nama": "gula pasir",
+        "jumlah": "1 sdt",
+        "key": "gula",
+        "gram": 5.0,
+        "harga": 100
+      },
+      {
+        "nama": "minyak goreng",
+        "jumlah": "3 sdm",
+        "key": "minyak goreng",
+        "gram": 45.0,
+        "harga": 900
+      }
+    ],
+    "langkah": [
+      "Goreng telur ceplok atau rebus sesuai selera.",
+      "Haluskan cabai, bawang merah, bawang putih, dan tomat.",
+      "Tumis bumbu halus hingga matang dan harum.",
+      "Masukkan telur, aduk hingga bumbu meresap."
+    ],
+    "bahanKey": [
+      "bawang merah",
+      "bawang putih",
+      "gula",
+      "cabai merah",
+      "telur",
+      "minyak goreng",
+      "tomat"
+    ],
+    "estPrice": 6680,
+    "estCalories": 501,
+    "alat": [
+      "kompor",
+      "panci",
+      "wajan"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "cepat",
+      "pedas",
+      "vegetarian"
+    ]
+  },
+  {
+    "id": "mock_03",
+    "name": "Salad Buah Segar",
+    "kategori": "camilan",
+    "porsi": 1,
+    "cookTime": 10,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Fruit_salad_in_a_bowl.jpg/800px-Fruit_salad_in_a_bowl.jpg",
+    "bahan": [
+      {
+        "nama": "apel",
+        "jumlah": "1 buah",
+        "key": "apel",
+        "gram": 10.0,
+        "harga": 200
+      },
+      {
+        "nama": "melon",
+        "jumlah": "1 mangkok",
+        "key": "melon",
+        "gram": 100.0,
+        "harga": 2000
+      },
+      {
+        "nama": "yoghurt",
+        "jumlah": "2 sdm",
+        "key": "yoghurt",
+        "gram": 30.0,
+        "harga": 600
+      },
+      {
+        "nama": "susu kental manis",
+        "jumlah": "1 sdm",
+        "key": "susu kental manis",
+        "gram": 15.0,
+        "harga": 300
+      },
+      {
+        "nama": "keju",
+        "jumlah": "1 ptg",
+        "key": "keju",
+        "gram": 50.0,
+        "harga": 1000
+      }
+    ],
+    "langkah": [
+      "Potong dadu semua buah-buahan seperti apel dan melon.",
+      "Campur yoghurt dan susu kental manis sebagai saus.",
+      "Tuang saus ke atas buah, aduk rata.",
+      "Taburi parutan keju di atasnya. Sajikan dingin."
+    ],
+    "bahanKey": [
+      "apel",
+      "keju",
+      "yoghurt",
+      "susu kental manis",
+      "melon"
+    ],
+    "estPrice": 4100,
+    "estCalories": 307,
+    "alat": [
+      "tanpa kompor"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "cepat",
+      "vegetarian",
+      "tanpa kompor"
+    ]
+  },
+  {
+    "id": "mock_04",
+    "name": "Nasi Tim Ayam Jamur",
+    "kategori": "nasi",
+    "porsi": 2,
+    "cookTime": 40,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Nasi_Tim_Ayam.jpg/800px-Nasi_Tim_Ayam.jpg",
+    "bahan": [
+      {
+        "nama": "beras",
+        "jumlah": "1 gls",
+        "key": "beras",
+        "gram": 200.0,
+        "harga": 4000
+      },
+      {
+        "nama": "ayam fillet",
+        "jumlah": "1 ptg",
+        "key": "ayam",
+        "gram": 50.0,
+        "harga": 1000
+      },
+      {
+        "nama": "jamur",
+        "jumlah": "5 ptg",
+        "key": "jamur",
+        "gram": 250.0,
+        "harga": 5000
+      },
+      {
+        "nama": "bawang putih",
+        "jumlah": "2 siung",
+        "key": "bawang putih",
+        "gram": 8.0,
+        "harga": 160
+      },
+      {
+        "nama": "kecap manis",
+        "jumlah": "2 sdm",
+        "key": "kecap",
+        "gram": 30.0,
+        "harga": 600
+      },
+      {
+        "nama": "minyak wijen",
+        "jumlah": "1 sdt",
+        "key": "minyak wijen",
+        "gram": 5.0,
+        "harga": 100
+      }
+    ],
+    "langkah": [
+      "Cuci beras hingga bersih.",
+      "Potong dadu ayam dan jamur, cincang bawang putih.",
+      "Masukkan beras, air, ayam, jamur, dan semua bumbu ke dalam rice cooker.",
+      "Aduk rata, lalu tekan tombol cook dan tunggu hingga matang."
+    ],
+    "bahanKey": [
+      "ayam",
+      "bawang putih",
+      "kecap",
+      "beras",
+      "minyak wijen",
+      "jamur"
+    ],
+    "estPrice": 10860,
+    "estCalories": 814,
+    "alat": [
+      "rice cooker aja"
+    ],
+    "tags": [
+      "murah",
+      "mudah"
+    ]
+  },
+  {
+    "id": "mock_05",
+    "name": "Ayam Bakar Bumbu Rujak",
+    "kategori": "ayam",
+    "porsi": 4,
+    "cookTime": 60,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Ayam_Bakar_Bumbu_Rujak.jpg/800px-Ayam_Bakar_Bumbu_Rujak.jpg",
+    "bahan": [
+      {
+        "nama": "ayam",
+        "jumlah": "4 ptg",
+        "key": "ayam",
+        "gram": 200.0,
+        "harga": 4000
+      },
+      {
+        "nama": "cabai merah",
+        "jumlah": "5 buah",
+        "key": "cabai merah",
+        "gram": 50.0,
+        "harga": 1000
+      },
+      {
+        "nama": "bawang merah",
+        "jumlah": "5 siung",
+        "key": "bawang merah",
+        "gram": 20.0,
+        "harga": 400
+      },
+      {
+        "nama": "bawang putih",
+        "jumlah": "3 siung",
+        "key": "bawang putih",
+        "gram": 12.0,
+        "harga": 239
+      },
+      {
+        "nama": "gula merah",
+        "jumlah": "1 sdm",
+        "key": "gula aren",
+        "gram": 15.0,
+        "harga": 300
+      },
+      {
+        "nama": "santan",
+        "jumlah": "1 gelas",
+        "key": "santan",
+        "gram": 200.0,
+        "harga": 4000
+      }
+    ],
+    "langkah": [
+      "Haluskan bumbu: cabai, bawang merah, bawang putih.",
+      "Tumis bumbu halus, masukkan ayam dan santan, ungkep hingga air menyusut.",
+      "Siapkan panggangan atau bara api.",
+      "Bakar ayam sambil sesekali diolesi sisa bumbu hingga harum."
+    ],
+    "bahanKey": [
+      "ayam",
+      "santan",
+      "bawang merah",
+      "bawang putih",
+      "cabai merah",
+      "gula aren"
+    ],
+    "estPrice": 9940,
+    "estCalories": 745,
+    "alat": [
+      "bakar",
+      "kompor",
+      "oven",
+      "panci",
+      "wajan"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "sehat",
+      "pedas"
+    ]
+  },
+  {
+    "id": "mock_06",
+    "name": "Opor Ayam Kuning",
+    "kategori": "ayam",
+    "porsi": 4,
+    "cookTime": 45,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Opor_Ayam.jpg/800px-Opor_Ayam.jpg",
+    "bahan": [
+      {
+        "nama": "ayam",
+        "jumlah": "4 ptg",
+        "key": "ayam",
+        "gram": 200.0,
+        "harga": 3999
+      },
+      {
+        "nama": "santan",
+        "jumlah": "2 gelas",
+        "key": "santan",
+        "gram": 400.0,
+        "harga": 7999
+      },
+      {
+        "nama": "bawang merah",
+        "jumlah": "6 siung",
+        "key": "bawang merah",
+        "gram": 24.0,
+        "harga": 480
+      },
+      {
+        "nama": "bawang putih",
+        "jumlah": "4 siung",
+        "key": "bawang putih",
+        "gram": 16.0,
+        "harga": 320
+      },
+      {
+        "nama": "kunyit",
+        "jumlah": "1 ruas",
+        "key": "kunyit",
+        "gram": 5.0,
+        "harga": 100
+      },
+      {
+        "nama": "ketumbar",
+        "jumlah": "1 sdt",
+        "key": "ketumbar",
+        "gram": 5.0,
+        "harga": 100
+      },
+      {
+        "nama": "serai",
+        "jumlah": "1 btg",
+        "key": "serai",
+        "gram": 10.0,
+        "harga": 200
+      },
+      {
+        "nama": "daun jeruk",
+        "jumlah": "2 lbr",
+        "key": "daun jeruk",
+        "gram": 2.0,
+        "harga": 40
+      }
+    ],
+    "langkah": [
+      "Haluskan bawang merah, bawang putih, kunyit, dan ketumbar.",
+      "Tumis bumbu halus bersama serai dan daun jeruk di dalam panci hingga harum.",
+      "Masukkan ayam, aduk hingga berubah warna.",
+      "Tuang santan, rebus dengan api kecil hingga ayam empuk dan kuah mengental."
+    ],
+    "bahanKey": [
+      "serai",
+      "kunyit",
+      "ayam",
+      "santan",
+      "bawang putih",
+      "bawang merah",
+      "ketumbar",
+      "daun jeruk"
+    ],
+    "estPrice": 13240,
+    "estCalories": 993,
+    "alat": [
+      "kompor",
+      "panci",
+      "wajan"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "sehat"
+    ]
+  },
+  {
+    "id": "mock_07",
+    "name": "Tumis Kangkung Terasi",
+    "kategori": "sayur",
+    "porsi": 2,
+    "cookTime": 10,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Tumis_kangkung.jpg/800px-Tumis_kangkung.jpg",
+    "bahan": [
+      {
+        "nama": "kangkung",
+        "jumlah": "1 ikat",
+        "key": "kangkung",
+        "gram": 150.0,
+        "harga": 3000
+      },
+      {
+        "nama": "bawang putih",
+        "jumlah": "2 siung",
+        "key": "bawang putih",
+        "gram": 8.0,
+        "harga": 160
+      },
+      {
+        "nama": "cabai rawit",
+        "jumlah": "3 buah",
+        "key": "cabai rawit",
+        "gram": 30.0,
+        "harga": 600
+      },
+      {
+        "nama": "terasi",
+        "jumlah": "1 ptg",
+        "key": "terasi",
+        "gram": 50.0,
+        "harga": 1000
+      },
+      {
+        "nama": "saus tiram",
+        "jumlah": "1 sdm",
+        "key": "saus tiram",
+        "gram": 15.0,
+        "harga": 300
+      }
+    ],
+    "langkah": [
+      "Petik kangkung dan cuci bersih.",
+      "Iris bawang putih dan cabai rawit.",
+      "Panaskan sedikit minyak, tumis bawang, cabai, dan terasi hingga harum.",
+      "Besarkan api, masukkan kangkung dan saus tiram, aduk cepat hingga layu lalu angkat."
+    ],
+    "bahanKey": [
+      "terasi",
+      "kangkung",
+      "cabai rawit",
+      "bawang putih",
+      "saus tiram"
+    ],
+    "estPrice": 5060,
+    "estCalories": 379,
+    "alat": [
+      "kompor",
+      "wajan"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "cepat",
+      "pedas"
+    ]
+  },
+  {
+    "id": "mock_08",
+    "name": "Sup Makaroni Wortel",
+    "kategori": "sayur",
+    "porsi": 3,
+    "cookTime": 25,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Macaroni_soup.jpg/800px-Macaroni_soup.jpg",
+    "bahan": [
+      {
+        "nama": "makaroni",
+        "jumlah": "1 mangkok",
+        "key": "makaroni",
+        "gram": 100.0,
+        "harga": 2000
+      },
+      {
+        "nama": "wortel",
+        "jumlah": "1 buah",
+        "key": "wortel",
+        "gram": 10.0,
+        "harga": 200
+      },
+      {
+        "nama": "bawang putih",
+        "jumlah": "2 siung",
+        "key": "bawang putih",
+        "gram": 8.0,
+        "harga": 160
+      },
+      {
+        "nama": "daun bawang",
+        "jumlah": "1 btg",
+        "key": "daun bawang",
+        "gram": 10.0,
+        "harga": 200
+      },
+      {
+        "nama": "kaldu ayam",
+        "jumlah": "1 bks",
+        "key": "kaldu ayam",
+        "gram": 80.0,
+        "harga": 1600
+      }
+    ],
+    "langkah": [
+      "Rebus air di dalam panci hingga mendidih.",
+      "Masukkan makaroni dan potongan wortel, rebus hingga empuk.",
+      "Tambahkan irisan bawang putih yang sudah ditumis sebentar, kaldu ayam, dan daun bawang.",
+      "Aduk rata, koreksi rasa, dan sajikan selagi hangat."
+    ],
+    "bahanKey": [
+      "wortel",
+      "bawang putih",
+      "daun bawang",
+      "makaroni",
+      "kaldu ayam"
+    ],
+    "estPrice": 4160,
+    "estCalories": 312,
+    "alat": [
+      "kompor",
+      "panci",
+      "wajan"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "sehat"
+    ]
+  },
+  {
+    "id": "mock_09",
+    "name": "Telur Dadar Daun Bawang",
+    "kategori": "telur",
+    "porsi": 1,
+    "cookTime": 5,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Telur_dadar.jpg/800px-Telur_dadar.jpg",
+    "bahan": [
+      {
+        "nama": "telur",
+        "jumlah": "2 butir",
+        "key": "telur",
+        "gram": 100.0,
+        "harga": 2000
+      },
+      {
+        "nama": "daun bawang",
+        "jumlah": "1 batang",
+        "key": "daun bawang",
+        "gram": 10.0,
+        "harga": 200
+      },
+      {
+        "nama": "garam",
+        "jumlah": "secukupnya",
+        "key": "garam",
+        "gram": 0,
+        "harga": 700
+      },
+      {
+        "nama": "minyak goreng",
+        "jumlah": "2 sdm",
+        "key": "minyak goreng",
+        "gram": 30.0,
+        "harga": 600
+      }
+    ],
+    "langkah": [
+      "Kocok lepas telur bersama irisan daun bawang dan garam.",
+      "Panaskan minyak di atas teflon atau wajan.",
+      "Tuang adonan telur, goreng hingga kecoklatan di satu sisi.",
+      "Balik telur, goreng sebentar lalu angkat."
+    ],
+    "bahanKey": [
+      "daun bawang",
+      "minyak goreng",
+      "garam",
+      "telur"
+    ],
+    "estPrice": 2800,
+    "estCalories": 210,
+    "alat": [
+      "kompor",
+      "wajan"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "cepat",
+      "vegetarian"
+    ]
+  },
+  {
+    "id": "mock_10",
+    "name": "Roti Panggang Cokelat",
+    "kategori": "camilan",
+    "porsi": 1,
+    "cookTime": 5,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Toast_with_butter.jpg/800px-Toast_with_butter.jpg",
+    "bahan": [
+      {
+        "nama": "roti tawar",
+        "jumlah": "2 lbr",
+        "key": "roti tawar",
+        "gram": 2.0,
+        "harga": 40
+      },
+      {
+        "nama": "margarin",
+        "jumlah": "1 sdm",
+        "key": "margarin",
+        "gram": 15.0,
+        "harga": 300
+      },
+      {
+        "nama": "meises cokelat",
+        "jumlah": "2 sdm",
+        "key": "meises cokelat",
+        "gram": 30.0,
+        "harga": 600
+      }
+    ],
+    "langkah": [
+      "Olesi roti tawar dengan margarin di kedua sisi.",
+      "Taburkan meises cokelat di salah satu roti, lalu tutup dengan roti lainnya.",
+      "Panggang roti di atas teflon atau pan anti lengket hingga kecoklatan.",
+      "Angkat dan potong menjadi dua bagian."
+    ],
+    "bahanKey": [
+      "meises cokelat",
+      "roti tawar",
+      "margarin"
+    ],
+    "estPrice": 940,
+    "estCalories": 70,
+    "alat": [
+      "oven"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "cepat",
+      "sehat",
+      "vegetarian"
+    ]
+  },
+  {
+    "id": "mock_11",
+    "name": "Mie Rebus Spesial Anak Kos",
+    "kategori": "mie",
+    "porsi": 1,
+    "cookTime": 10,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Mie_rebus.jpg/800px-Mie_rebus.jpg",
+    "bahan": [
+      {
+        "nama": "mie instan",
+        "jumlah": "1 bks",
+        "key": "mie instan",
+        "gram": 80.0,
+        "harga": 1600
+      },
+      {
+        "nama": "telur",
+        "jumlah": "1 butir",
+        "key": "telur",
+        "gram": 50.0,
+        "harga": 1000
+      },
+      {
+        "nama": "sawi hijau",
+        "jumlah": "1 ikat",
+        "key": "sawi hijau",
+        "gram": 150.0,
+        "harga": 3000
+      },
+      {
+        "nama": "cabai rawit",
+        "jumlah": "3 buah",
+        "key": "cabai rawit",
+        "gram": 30.0,
+        "harga": 600
+      }
+    ],
+    "langkah": [
+      "Rebus air di dalam panci hingga mendidih.",
+      "Masukkan telur, biarkan setengah matang.",
+      "Masukkan mie instan, irisan cabai, dan potongan sawi hijau.",
+      "Rebus selama 3 menit, masukkan bumbu instan, aduk rata lalu matikan api."
+    ],
+    "bahanKey": [
+      "cabai rawit",
+      "sawi hijau",
+      "telur",
+      "mie instan"
+    ],
+    "estPrice": 6200,
+    "estCalories": 465,
+    "alat": [
+      "kompor",
+      "panci"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "cepat",
+      "sehat",
+      "pedas",
+      "vegetarian"
+    ]
+  },
+  {
+    "id": "mock_12",
+    "name": "Perkedel Tahu Sederhana",
+    "kategori": "tahu",
+    "porsi": 3,
+    "cookTime": 20,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Perkedel_tahu.jpg/800px-Perkedel_tahu.jpg",
+    "bahan": [
+      {
+        "nama": "tahu",
+        "jumlah": "4 ptg",
+        "key": "tahu",
+        "gram": 200.0,
+        "harga": 4000
+      },
+      {
+        "nama": "bawang putih",
+        "jumlah": "2 siung",
+        "key": "bawang putih",
+        "gram": 8.0,
+        "harga": 160
+      },
+      {
+        "nama": "telur",
+        "jumlah": "1 butir",
+        "key": "telur",
+        "gram": 50.0,
+        "harga": 1000
+      },
+      {
+        "nama": "daun bawang",
+        "jumlah": "1 btg",
+        "key": "daun bawang",
+        "gram": 10.0,
+        "harga": 199
+      },
+      {
+        "nama": "minyak goreng",
+        "jumlah": "secukupnya",
+        "key": "minyak goreng",
+        "gram": 0,
+        "harga": 1072
+      }
+    ],
+    "langkah": [
+      "Haluskan tahu menggunakan garpu.",
+      "Haluskan bawang putih, iris tipis daun bawang.",
+      "Campur tahu, telur, bawang putih, daun bawang, garam, dan lada. Aduk rata.",
+      "Bentuk adonan menjadi bulat pipih.",
+      "Goreng dalam minyak panas hingga kuning keemasan."
+    ],
+    "bahanKey": [
+      "bawang putih",
+      "daun bawang",
+      "telur",
+      "minyak goreng",
+      "tahu"
+    ],
+    "estPrice": 5360,
+    "estCalories": 402,
+    "alat": [
+      "kompor",
+      "wajan"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "cepat",
+      "vegetarian"
+    ]
+  },
+  {
+    "id": "mock_13",
+    "name": "Tempe Orek Manis",
+    "kategori": "tempe",
+    "porsi": 3,
+    "cookTime": 20,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Orek_tempe.jpg/800px-Orek_tempe.jpg",
+    "bahan": [
+      {
+        "nama": "tempe",
+        "jumlah": "1 ptg",
+        "key": "tempe",
+        "gram": 50.0,
+        "harga": 1000
+      },
+      {
+        "nama": "bawang merah",
+        "jumlah": "3 siung",
+        "key": "bawang merah",
+        "gram": 12.0,
+        "harga": 240
+      },
+      {
+        "nama": "bawang putih",
+        "jumlah": "2 siung",
+        "key": "bawang putih",
+        "gram": 8.0,
+        "harga": 160
+      },
+      {
+        "nama": "kecap manis",
+        "jumlah": "3 sdm",
+        "key": "kecap",
+        "gram": 45.0,
+        "harga": 900
+      },
+      {
+        "nama": "minyak goreng",
+        "jumlah": "secukupnya",
+        "key": "minyak goreng",
+        "gram": 0,
+        "harga": 460
+      }
+    ],
+    "langkah": [
+      "Potong tempe kecil-kecil, goreng hingga setengah kering, angkat.",
+      "Tumis irisan bawang merah dan bawang putih hingga harum.",
+      "Masukkan tempe goreng, tambahkan kecap manis dan sedikit air.",
+      "Masak hingga bumbu meresap dan kering."
+    ],
+    "bahanKey": [
+      "bawang merah",
+      "tempe",
+      "kecap",
+      "bawang putih",
+      "minyak goreng"
+    ],
+    "estPrice": 2300,
+    "estCalories": 172,
+    "alat": [
+      "kompor",
+      "wajan"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "cepat",
+      "vegetarian"
+    ]
+  },
+  {
+    "id": "mock_14",
+    "name": "Bubur Ayam Praktis",
+    "kategori": "nasi",
+    "porsi": 2,
+    "cookTime": 45,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Bubur_ayam_1.jpg/800px-Bubur_ayam_1.jpg",
+    "bahan": [
+      {
+        "nama": "beras",
+        "jumlah": "1 gls",
+        "key": "beras",
+        "gram": 200.0,
+        "harga": 4000
+      },
+      {
+        "nama": "air",
+        "jumlah": "5 gls",
+        "key": "air",
+        "gram": 1000.0,
+        "harga": 20000
+      },
+      {
+        "nama": "kaldu ayam",
+        "jumlah": "1 bks",
+        "key": "kaldu ayam",
+        "gram": 80.0,
+        "harga": 1600
+      },
+      {
+        "nama": "ayam",
+        "jumlah": "1 ptg",
+        "key": "ayam",
+        "gram": 50.0,
+        "harga": 1000
+      }
+    ],
+    "langkah": [
+      "Cuci beras hingga bersih.",
+      "Masukkan beras, air yang banyak, ayam, dan kaldu ke dalam rice cooker.",
+      "Masak dan sering-sering aduk agar bagian bawah tidak gosong.",
+      "Jika ayam sudah matang, angkat dan suwir-suwir. Lanjutkan memasak beras hingga menjadi bubur.",
+      "Sajikan bubur dengan suwiran ayam."
+    ],
+    "bahanKey": [
+      "kaldu ayam",
+      "beras",
+      "air",
+      "ayam"
+    ],
+    "estPrice": 26600,
+    "estCalories": 1995,
+    "alat": [
+      "rice cooker aja"
+    ],
+    "tags": [
+      "mudah"
+    ]
+  },
+  {
+    "id": "mock_15",
+    "name": "Es Teh Manis",
+    "kategori": "minuman",
+    "porsi": 1,
+    "cookTime": 5,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Iced_Tea_from_Lipton.jpg/800px-Iced_Tea_from_Lipton.jpg",
+    "bahan": [
+      {
+        "nama": "teh celup",
+        "jumlah": "1 bks",
+        "key": "teh celup",
+        "gram": 80.0,
+        "harga": 1600
+      },
+      {
+        "nama": "gula pasir",
+        "jumlah": "2 sdm",
+        "key": "gula",
+        "gram": 30.0,
+        "harga": 600
+      },
+      {
+        "nama": "air panas",
+        "jumlah": "1 gls",
+        "key": "air panas",
+        "gram": 200.0,
+        "harga": 4000
+      },
+      {
+        "nama": "es batu",
+        "jumlah": "secukupnya",
+        "key": "es batu",
+        "gram": 0,
+        "harga": 1550
+      }
+    ],
+    "langkah": [
+      "Seduh teh celup dengan air panas hingga warnanya pekat.--Masukkan gula pasir, aduk hingga larut.--Tambahkan es batu secukupnya dan sedikit air dingin jika perlu.--Sajikan dalam keadaan dingin."
+    ],
+    "bahanKey": [
+      "es batu",
+      "gula",
+      "air panas",
+      "teh celup"
+    ],
+    "estPrice": 6200,
+    "estCalories": 465,
+    "alat": [
+      "tanpa kompor"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "cepat",
+      "vegetarian",
+      "tanpa kompor"
+    ]
+  },
+  {
+    "id": "mock_16",
+    "name": "Ikan Goreng Kecap",
+    "kategori": "ikan",
+    "porsi": 2,
+    "cookTime": 20,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Ikan_goreng.JPG/800px-Ikan_goreng.JPG",
+    "bahan": [
+      {
+        "nama": "ikan",
+        "jumlah": "2 ekor",
+        "key": "ikan",
+        "gram": 300.0,
+        "harga": 12000
+      },
+      {
+        "nama": "bawang putih",
+        "jumlah": "2 siung",
+        "key": "bawang putih",
+        "gram": 8.0,
+        "harga": 160
+      },
+      {
+        "nama": "cabai rawit",
+        "jumlah": "3 buah",
+        "key": "cabai rawit",
+        "gram": 30.0,
+        "harga": 600
+      },
+      {
+        "nama": "kecap manis",
+        "jumlah": "2 sdm",
+        "key": "kecap",
+        "gram": 30.0,
+        "harga": 600
+      },
+      {
+        "nama": "minyak goreng",
+        "jumlah": "2 sdm",
+        "key": "minyak goreng",
+        "gram": 30.0,
+        "harga": 600
+      }
+    ],
+    "langkah": [
+      "Lumuri ikan dengan sedikit garam dan bawang putih halus.",
+      "Goreng ikan hingga matang dan kecoklatan.",
+      "Tumis cabai rawit sebentar, lalu tambahkan kecap manis.",
+      "Siram bumbu kecap ke atas ikan goreng dan sajikan."
+    ],
+    "bahanKey": [
+      "ikan",
+      "bawang putih",
+      "cabai rawit",
+      "kecap",
+      "minyak goreng"
+    ],
+    "estPrice": 13960,
+    "estCalories": 620,
+    "alat": [
+      "kompor",
+      "wajan"
+    ],
+    "tags": [
+      "mudah",
+      "pedas"
+    ]
+  },
+  {
+    "id": "mock_17",
+    "name": "Ikan Goreng Sederhana",
+    "kategori": "ikan",
+    "porsi": 1,
+    "cookTime": 15,
+    "halal": true,
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Ikan_goreng.JPG/800px-Ikan_goreng.JPG",
+    "bahan": [
+      {
+        "nama": "ikan",
+        "jumlah": "1 ekor",
+        "key": "ikan",
+        "gram": 150.0,
+        "harga": 6000
+      },
+      {
+        "nama": "garam",
+        "jumlah": "secukupnya",
+        "key": "garam",
+        "gram": 0,
+        "harga": 0
+      },
+      {
+        "nama": "minyak goreng",
+        "jumlah": "2 sdm",
+        "key": "minyak goreng",
+        "gram": 30.0,
+        "harga": 600
+      }
+    ],
+    "langkah": [
+      "Bersihkan ikan dan lumuri dengan garam.",
+      "Panaskan minyak di wajan.",
+      "Goreng ikan hingga matang dan kecoklatan.",
+      "Tiriskan, lalu sajikan dengan nasi hangat."
+    ],
+    "bahanKey": [
+      "ikan",
+      "garam",
+      "minyak goreng"
+    ],
+    "estPrice": 6600,
+    "estCalories": 320,
+    "alat": [
+      "kompor",
+      "wajan"
+    ],
+    "tags": [
+      "murah",
+      "mudah",
+      "cepat"
+    ]
+  }
+]
