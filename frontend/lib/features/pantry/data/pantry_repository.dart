@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/db/app_database.dart';
@@ -42,7 +43,9 @@ class PantryRemoteSource {
   }
 
   Future<List<PantryItem>> replaceItems(List<PantryItem> items) async {
-    final payload = items.map((i) => {'bahanKey': i.bahanKey, 'quantity': i.quantity}).toList();
+    final payload = items
+        .map((i) => {'bahanKey': i.bahanKey, 'quantity': i.quantity})
+        .toList();
     final res = await _dio.put('/pantry', data: {'items': payload});
     final data = Map<String, dynamic>.from(res.data as Map);
     final resItems = data['items'] as List? ?? const [];
@@ -62,10 +65,11 @@ class PantryRemoteSource {
 }
 
 class PantryRepository {
-  const PantryRepository(this._db, this._remote);
+  PantryRepository(this._db, this._remote);
 
   final AppDatabase _db;
   final PantryRemoteSource _remote;
+  Future<void> _pushQueue = Future.value();
 
   Future<List<PantryItem>> getLocalItems() async {
     final entries = await _db.select(_db.pantryTable).get();
@@ -104,6 +108,8 @@ class PantryRepository {
 
   Future<void> refreshItems() async {
     try {
+      if (await _hasPendingPantryOutbox()) return;
+
       final remoteItems = await _remote.getItems();
       await setLocalItems(remoteItems);
     } catch (_) {
@@ -136,12 +142,14 @@ class PantryRepository {
 
     // Queue
     final allItems = await getLocalItems();
-    await _queueOutbox('pantry', 'replace', {
-      'items': allItems.map((item) => {'bahanKey': item.bahanKey, 'quantity': item.quantity}).toList(),
+    final outboxId = await _queueOutbox('pantry', 'replace', {
+      'items': allItems
+          .map((item) => {'bahanKey': item.bahanKey, 'quantity': item.quantity})
+          .toList(),
     });
 
     // Push in the background
-    unawaited(_pushItems(allItems));
+    _enqueuePush(allItems, outboxId);
   }
 
   Future<void> addPantryItem(String bahanKey, {String quantity = '1'}) async {
@@ -154,34 +162,72 @@ class PantryRepository {
 
     // Queue
     final allItems = await getLocalItems();
-    await _queueOutbox('pantry', 'replace', {
-      'items': allItems.map((item) => {'bahanKey': item.bahanKey, 'quantity': item.quantity}).toList(),
+    final outboxId = await _queueOutbox('pantry', 'replace', {
+      'items': allItems
+          .map((item) => {'bahanKey': item.bahanKey, 'quantity': item.quantity})
+          .toList(),
     });
 
     // Push in the background
-    unawaited(_pushItems(allItems));
+    _enqueuePush(allItems, outboxId);
   }
 
-  Future<void> _pushItems(List<PantryItem> items) async {
+  void _enqueuePush(List<PantryItem> items, int outboxId) {
+    _pushQueue = _pushQueue.then((_) => _pushItems(items, outboxId));
+    unawaited(_pushQueue);
+  }
+
+  Future<void> _pushItems(List<PantryItem> items, int outboxId) async {
     try {
       await _remote.replaceItems(items);
+      await _markPantryOutboxDoneThrough(outboxId);
       // Don't overwrite local DB with server response — local is authoritative.
       // The outbox + refreshItems() on next app start will reconcile.
     } catch (_) {}
   }
 
-  Future<void> _queueOutbox(
+  Future<int> _queueOutbox(
     String entity,
     String op,
     Map<String, dynamic> payload,
   ) async {
-    await _db
+    return _db
         .into(_db.outboxTable)
         .insert(
           OutboxTableCompanion.insert(
             entity: entity,
             operation: op,
             payloadJson: jsonEncode(payload),
+          ),
+        );
+  }
+
+  Future<bool> _hasPendingPantryOutbox() async {
+    final pending =
+        await (_db.select(_db.outboxTable)
+              ..where(
+                (t) =>
+                    t.entity.equals('pantry') &
+                    t.operation.equals('replace') &
+                    t.status.equals('pending'),
+              )
+              ..limit(1))
+            .get();
+    return pending.isNotEmpty;
+  }
+
+  Future<void> _markPantryOutboxDoneThrough(int outboxId) async {
+    await (_db.update(_db.outboxTable)..where(
+          (t) =>
+              t.id.isSmallerOrEqualValue(outboxId) &
+              t.entity.equals('pantry') &
+              t.operation.equals('replace') &
+              t.status.equals('pending'),
+        ))
+        .write(
+          OutboxTableCompanion(
+            status: const drift.Value('done'),
+            updatedAt: drift.Value(DateTime.now()),
           ),
         );
   }
