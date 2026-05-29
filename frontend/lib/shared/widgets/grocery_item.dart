@@ -9,6 +9,7 @@ class GroceryItem extends StatelessWidget {
   const GroceryItem({
     super.key,
     required this.name,
+    required this.quantity,
     required this.price,
     required this.checked,
     this.note,
@@ -16,6 +17,7 @@ class GroceryItem extends StatelessWidget {
   });
 
   final String name;
+  final String quantity;
   final String price;
   final bool checked;
   final String? note;
@@ -38,27 +40,33 @@ class GroceryItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    name,
-                    style: AppTypography.body.copyWith(
-                      color: nameColor,
-                      decoration:
-                          checked ? TextDecoration.lineThrough : null,
-                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          name,
+                          style: AppTypography.body.copyWith(
+                            color: nameColor,
+                            decoration: checked
+                                ? TextDecoration.lineThrough
+                                : null,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Text(
+                        quantity,
+                        style: AppTypography.label.copyWith(
+                          color: priceColor,
+                          fontFeatures: AppTypography.tnum,
+                        ),
+                      ),
+                    ],
                   ),
-                  if (note != null) ...[
-                    const SizedBox(height: 2),
-                    Text(note!, style: AppTypography.caption),
-                  ],
+                  const SizedBox(height: 2),
+                  Text(price, style: AppTypography.caption),
+                  if (note != null) Text(note!, style: AppTypography.caption),
                 ],
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Text(
-              price,
-              style: AppTypography.label.copyWith(
-                color: priceColor,
-                fontFeatures: AppTypography.tnum,
               ),
             ),
           ],

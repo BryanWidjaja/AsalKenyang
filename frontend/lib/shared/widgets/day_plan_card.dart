@@ -61,13 +61,14 @@ class DayPlanCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
             if (recipes.isEmpty)
-              _EmptySlot(onAdd: onAdd)
-            else
+              _AddSlot(label: 'Pilih resep', onAdd: onAdd)
+            else ...[
               for (var i = 0; i < recipes.length; i++) ...[
                 recipes[i],
-                if (i != recipes.length - 1)
-                  const SizedBox(height: AppSpacing.sm),
+                const SizedBox(height: AppSpacing.sm),
               ],
+              _AddSlot(label: 'Tambah resep', onAdd: onAdd),
+            ],
           ],
         ),
       ),
@@ -75,72 +76,76 @@ class DayPlanCard extends StatelessWidget {
   }
 }
 
-class _EmptySlot extends StatelessWidget {
-  const _EmptySlot({this.onAdd});
+class _AddSlot extends StatelessWidget {
+  const _AddSlot({required this.label, this.onAdd});
 
+  final String label;
   final VoidCallback? onAdd;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.xs,
-        AppSpacing.xs,
-        AppSpacing.md,
-        AppSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainer,
+    return Material(
+      color: AppColors.surfaceContainer,
+      borderRadius: AppRadii.brSm,
+      child: InkWell(
+        onTap: onAdd,
         borderRadius: AppRadii.brSm,
-        border: Border.all(
-          color: AppColors.outlineVariant.withValues(alpha: 0.4),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.xs,
+            AppSpacing.xs,
+            AppSpacing.md,
+            AppSpacing.xs,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: AppRadii.brSm,
+            border: Border.all(
+              color: AppColors.outlineVariant.withValues(alpha: 0.4),
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceVariant,
+                  borderRadius: AppRadii.brSm,
+                ),
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.restaurant_rounded,
+                  size: 20,
+                  color: AppColors.outline,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Text(
+                  label,
+                  style: AppTypography.label.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              Container(
+                width: 32,
+                height: 32,
+                decoration: const BoxDecoration(
+                  color: AppColors.surfaceContainerHighest,
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: const Icon(
+                  Icons.add_rounded,
+                  size: 20,
+                  color: AppColors.primary,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppColors.surfaceVariant,
-              borderRadius: AppRadii.brSm,
-            ),
-            alignment: Alignment.center,
-            child: const Icon(
-              Icons.restaurant_rounded,
-              size: 20,
-              color: AppColors.outline,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(
-            child: Text(
-              'Belum ada rencana',
-              style: AppTypography.label.copyWith(
-                color: AppColors.onSurfaceVariant,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-          GestureDetector(
-            onTap: onAdd,
-            child: Container(
-              width: 32,
-              height: 32,
-              decoration: const BoxDecoration(
-                color: AppColors.surfaceContainerHighest,
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: const Icon(
-                Icons.add_rounded,
-                size: 20,
-                color: AppColors.primary,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
