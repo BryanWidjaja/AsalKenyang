@@ -21,76 +21,85 @@ class IngredientTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  color: selected
-                      ? AppColors.terracottaContainer
-                      : AppColors.surfaceContainerLowest,
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: AppColors.primary.withValues(
-                      alpha: selected ? 0.1 : 0.04,
-                    ),
-                  ),
-                  boxShadow: AppElevation.level1,
-                ),
-                alignment: Alignment.center,
-                child: Icon(
-                  icon,
-                  size: 32,
-                  color: selected
-                      ? AppColors.primary
-                      : AppColors.onSurfaceVariant,
-                ),
-              ),
-              if (selected)
-                Positioned(
-                  top: -4,
-                  right: -4,
-                  child: Container(
-                    width: 20,
-                    height: 20,
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 72,
+                    height: 72,
                     decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
+                      color: selected
+                          ? AppColors.terracottaContainer
+                          : AppColors.surfaceContainerLowest,
+                      borderRadius: BorderRadius.circular(24),
                       border: Border.all(
-                        color: AppColors.riceWhite,
-                        width: 2,
+                        color: AppColors.primary.withValues(
+                          alpha: selected ? 0.1 : 0.04,
+                        ),
                       ),
                       boxShadow: AppElevation.level1,
                     ),
                     alignment: Alignment.center,
-                    child: const Icon(
-                      Icons.check_rounded,
-                      size: 12,
-                      color: AppColors.onPrimary,
+                    child: Icon(
+                      icon,
+                      size: 32,
+                      color: selected
+                          ? AppColors.primary
+                          : AppColors.onSurfaceVariant,
                     ),
                   ),
+                  if (selected)
+                    Positioned(
+                      top: -4,
+                      right: -4,
+                      child: Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppColors.riceWhite,
+                            width: 2,
+                          ),
+                          boxShadow: AppElevation.level1,
+                        ),
+                        alignment: Alignment.center,
+                        child: const Icon(
+                          Icons.check_rounded,
+                          size: 12,
+                          color: AppColors.onPrimary,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.caption.copyWith(
+                  color: selected
+                      ? AppColors.onSurface
+                      : AppColors.onSurfaceVariant,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                 ),
+              ),
             ],
           ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            label,
-            style: AppTypography.caption.copyWith(
-              color: selected
-                  ? AppColors.onSurface
-                  : AppColors.onSurfaceVariant,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

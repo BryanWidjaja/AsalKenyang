@@ -14,8 +14,9 @@ class BahanCard extends StatelessWidget {
     required this.amount,
     required this.price,
     required this.icon,
-  })  : _wide = false,
-        gaugePercent = null;
+    this.unitPrice,
+  }) : _wide = false,
+       gaugePercent = null;
 
   const BahanCard.wide({
     super.key,
@@ -24,12 +25,14 @@ class BahanCard extends StatelessWidget {
     required this.price,
     required this.icon,
     this.gaugePercent = 1.0,
+    this.unitPrice,
   }) : _wide = true;
 
   final bool _wide;
   final String name;
   final String amount;
   final String price;
+  final String? unitPrice;
   final IconData icon;
   final double? gaugePercent;
 
@@ -75,11 +78,16 @@ class BahanCard extends StatelessWidget {
           children: [
             _iconCircle(40),
             const Spacer(),
-            Text(
-              amount,
-              style: AppTypography.label.copyWith(
-                color: AppColors.onSurfaceVariant,
-                fontFeatures: AppTypography.tnum,
+            Flexible(
+              child: Text(
+                amount,
+                style: AppTypography.label.copyWith(
+                  color: AppColors.onSurfaceVariant,
+                  fontFeatures: AppTypography.tnum,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.end,
               ),
             ),
           ],
@@ -100,7 +108,19 @@ class BahanCard extends StatelessWidget {
               style: AppTypography.caption.copyWith(
                 fontFeatures: AppTypography.tnum,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
+            if (unitPrice != null)
+              Text(
+                unitPrice!,
+                style: AppTypography.caption.copyWith(
+                  color: AppColors.onSurfaceVariant,
+                  fontFeatures: AppTypography.tnum,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
           ],
         ),
       ],
@@ -125,11 +145,23 @@ class BahanCard extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
-                '$amount • $price',
+                '$amount / $price',
                 style: AppTypography.caption.copyWith(
                   fontFeatures: AppTypography.tnum,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
+              if (unitPrice != null)
+                Text(
+                  unitPrice!,
+                  style: AppTypography.caption.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                    fontFeatures: AppTypography.tnum,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
             ],
           ),
         ),

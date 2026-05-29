@@ -28,6 +28,7 @@ class MatchResultRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final canCookNow = missing.isEmpty;
     final shown = missing.take(maxMissingShown).toList();
     final overflow = missing.length - shown.length;
 
@@ -59,8 +60,16 @@ class MatchResultRow extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (missing.isNotEmpty) ...[
-                      const SizedBox(height: AppSpacing.xs),
+                    const SizedBox(height: AppSpacing.xs),
+                    if (canCookNow)
+                      Text(
+                        'Bisa dimasak sekarang',
+                        style: AppTypography.caption.copyWith(
+                          color: AppColors.secondary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )
+                    else
                       Wrap(
                         spacing: AppSpacing.xs,
                         runSpacing: AppSpacing.xs,
@@ -68,10 +77,10 @@ class MatchResultRow extends StatelessWidget {
                         children: [
                           Text('Kurang:', style: AppTypography.caption),
                           for (final m in shown) MissingChip(label: m),
-                          if (overflow > 0) MissingChip(label: '+$overflow lagi'),
+                          if (overflow > 0)
+                            MissingChip(label: '+$overflow lagi'),
                         ],
                       ),
-                    ],
                   ],
                 ),
               ),
