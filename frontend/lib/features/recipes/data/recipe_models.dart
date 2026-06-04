@@ -10,6 +10,7 @@ abstract class Bahan with _$Bahan {
     required String jumlah,
     required int harga,
     required String key,
+    double? gram,
   }) = _Bahan;
 
   factory Bahan.fromJson(Map<String, dynamic> json) => _$BahanFromJson(json);

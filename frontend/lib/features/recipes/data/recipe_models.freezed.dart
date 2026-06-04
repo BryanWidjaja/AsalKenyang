@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Bahan {
 
- String get nama; String get jumlah; int get harga; String get key;
+ String get nama; String get jumlah; int get harga; String get key; double? get gram;
 /// Create a copy of Bahan
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $BahanCopyWith<Bahan> get copyWith => _$BahanCopyWithImpl<Bahan>(this as Bahan, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Bahan&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.jumlah, jumlah) || other.jumlah == jumlah)&&(identical(other.harga, harga) || other.harga == harga)&&(identical(other.key, key) || other.key == key));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Bahan&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.jumlah, jumlah) || other.jumlah == jumlah)&&(identical(other.harga, harga) || other.harga == harga)&&(identical(other.key, key) || other.key == key)&&(identical(other.gram, gram) || other.gram == gram));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,nama,jumlah,harga,key);
+int get hashCode => Object.hash(runtimeType,nama,jumlah,harga,key,gram);
 
 @override
 String toString() {
-  return 'Bahan(nama: $nama, jumlah: $jumlah, harga: $harga, key: $key)';
+  return 'Bahan(nama: $nama, jumlah: $jumlah, harga: $harga, key: $key, gram: $gram)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $BahanCopyWith<$Res>  {
   factory $BahanCopyWith(Bahan value, $Res Function(Bahan) _then) = _$BahanCopyWithImpl;
 @useResult
 $Res call({
- String nama, String jumlah, int harga, String key
+ String nama, String jumlah, int harga, String key, double? gram
 });
 
 
@@ -65,13 +65,14 @@ class _$BahanCopyWithImpl<$Res>
 
 /// Create a copy of Bahan
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? nama = null,Object? jumlah = null,Object? harga = null,Object? key = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? nama = null,Object? jumlah = null,Object? harga = null,Object? key = null,Object? gram = freezed,}) {
   return _then(_self.copyWith(
 nama: null == nama ? _self.nama : nama // ignore: cast_nullable_to_non_nullable
 as String,jumlah: null == jumlah ? _self.jumlah : jumlah // ignore: cast_nullable_to_non_nullable
 as String,harga: null == harga ? _self.harga : harga // ignore: cast_nullable_to_non_nullable
 as int,key: null == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
-as String,
+as String,gram: freezed == gram ? _self.gram : gram // ignore: cast_nullable_to_non_nullable
+as double?,
   ));
 }
 
@@ -156,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String nama,  String jumlah,  int harga,  String key)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String nama,  String jumlah,  int harga,  String key,  double? gram)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Bahan() when $default != null:
-return $default(_that.nama,_that.jumlah,_that.harga,_that.key);case _:
+return $default(_that.nama,_that.jumlah,_that.harga,_that.key,_that.gram);case _:
   return orElse();
 
 }
@@ -177,10 +178,10 @@ return $default(_that.nama,_that.jumlah,_that.harga,_that.key);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String nama,  String jumlah,  int harga,  String key)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String nama,  String jumlah,  int harga,  String key,  double? gram)  $default,) {final _that = this;
 switch (_that) {
 case _Bahan():
-return $default(_that.nama,_that.jumlah,_that.harga,_that.key);case _:
+return $default(_that.nama,_that.jumlah,_that.harga,_that.key,_that.gram);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +198,10 @@ return $default(_that.nama,_that.jumlah,_that.harga,_that.key);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String nama,  String jumlah,  int harga,  String key)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String nama,  String jumlah,  int harga,  String key,  double? gram)?  $default,) {final _that = this;
 switch (_that) {
 case _Bahan() when $default != null:
-return $default(_that.nama,_that.jumlah,_that.harga,_that.key);case _:
+return $default(_that.nama,_that.jumlah,_that.harga,_that.key,_that.gram);case _:
   return null;
 
 }
@@ -212,13 +213,14 @@ return $default(_that.nama,_that.jumlah,_that.harga,_that.key);case _:
 @JsonSerializable()
 
 class _Bahan implements Bahan {
-  const _Bahan({required this.nama, required this.jumlah, required this.harga, required this.key});
+  const _Bahan({required this.nama, required this.jumlah, required this.harga, required this.key, this.gram});
   factory _Bahan.fromJson(Map<String, dynamic> json) => _$BahanFromJson(json);
 
 @override final  String nama;
 @override final  String jumlah;
 @override final  int harga;
 @override final  String key;
+@override final  double? gram;
 
 /// Create a copy of Bahan
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +235,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Bahan&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.jumlah, jumlah) || other.jumlah == jumlah)&&(identical(other.harga, harga) || other.harga == harga)&&(identical(other.key, key) || other.key == key));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Bahan&&(identical(other.nama, nama) || other.nama == nama)&&(identical(other.jumlah, jumlah) || other.jumlah == jumlah)&&(identical(other.harga, harga) || other.harga == harga)&&(identical(other.key, key) || other.key == key)&&(identical(other.gram, gram) || other.gram == gram));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,nama,jumlah,harga,key);
+int get hashCode => Object.hash(runtimeType,nama,jumlah,harga,key,gram);
 
 @override
 String toString() {
-  return 'Bahan(nama: $nama, jumlah: $jumlah, harga: $harga, key: $key)';
+  return 'Bahan(nama: $nama, jumlah: $jumlah, harga: $harga, key: $key, gram: $gram)';
 }
 
 
@@ -253,7 +255,7 @@ abstract mixin class _$BahanCopyWith<$Res> implements $BahanCopyWith<$Res> {
   factory _$BahanCopyWith(_Bahan value, $Res Function(_Bahan) _then) = __$BahanCopyWithImpl;
 @override @useResult
 $Res call({
- String nama, String jumlah, int harga, String key
+ String nama, String jumlah, int harga, String key, double? gram
 });
 
 
@@ -270,13 +272,14 @@ class __$BahanCopyWithImpl<$Res>
 
 /// Create a copy of Bahan
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? nama = null,Object? jumlah = null,Object? harga = null,Object? key = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? nama = null,Object? jumlah = null,Object? harga = null,Object? key = null,Object? gram = freezed,}) {
   return _then(_Bahan(
 nama: null == nama ? _self.nama : nama // ignore: cast_nullable_to_non_nullable
 as String,jumlah: null == jumlah ? _self.jumlah : jumlah // ignore: cast_nullable_to_non_nullable
 as String,harga: null == harga ? _self.harga : harga // ignore: cast_nullable_to_non_nullable
 as int,key: null == key ? _self.key : key // ignore: cast_nullable_to_non_nullable
-as String,
+as String,gram: freezed == gram ? _self.gram : gram // ignore: cast_nullable_to_non_nullable
+as double?,
   ));
 }
 

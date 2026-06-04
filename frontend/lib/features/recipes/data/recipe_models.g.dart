@@ -9,8 +9,9 @@ part of 'recipe_models.dart';
 _Bahan _$BahanFromJson(Map<String, dynamic> json) => _Bahan(
   nama: json['nama'] as String,
   jumlah: json['jumlah'] as String,
-  harga: (json['harga'] as num?)?.toInt() ?? 0,
+  harga: (json['harga'] as num).toInt(),
   key: json['key'] as String,
+  gram: (json['gram'] as num?)?.toDouble(),
 );
 
 Map<String, dynamic> _$BahanToJson(_Bahan instance) => <String, dynamic>{
@@ -18,6 +19,7 @@ Map<String, dynamic> _$BahanToJson(_Bahan instance) => <String, dynamic>{
   'jumlah': instance.jumlah,
   'harga': instance.harga,
   'key': instance.key,
+  'gram': instance.gram,
 };
 
 _Recipe _$RecipeFromJson(Map<String, dynamic> json) => _Recipe(
