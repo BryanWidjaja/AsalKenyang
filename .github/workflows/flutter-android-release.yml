@@ -1,0 +1,119 @@
+name: Asal Kenyang APK Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      create_github_release:
+        description: Create a GitHub Release with the APK and AAB
+        required: true
+        default: true
+        type: boolean
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    name: Build signed Android release
+    runs-on: ubuntu-latest
+
+    env:
+      PROD_API_URL: ${{ secrets.PROD_API_URL }}
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate release secrets
+        shell: bash
+        run: |
+          missing=0
+          for name in PROD_API_URL ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing GitHub secret: ${name}"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: "17"
+          cache: gradle
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install Flutter dependencies
+        working-directory: frontend
+        run: flutter pub get
+
+      - name: Run Flutter tests
+        working-directory: frontend
+        run: flutter test
+
+      - name: Create Android signing files
+        working-directory: frontend
+        shell: bash
+        run: |
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+          {
+            echo "storePassword=$ANDROID_KEYSTORE_PASSWORD"
+            echo "keyPassword=$ANDROID_KEY_PASSWORD"
+            echo "keyAlias=$ANDROID_KEY_ALIAS"
+            echo "storeFile=upload-keystore.jks"
+          } > android/key.properties
+
+      - name: Build release APK
+        working-directory: frontend
+        run: flutter build apk --release --dart-define=API_URL="$PROD_API_URL"
+
+      - name: Build release app bundle
+        working-directory: frontend
+        run: flutter build appbundle --release --dart-define=API_URL="$PROD_API_URL"
+
+      - name: Upload Android artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: asalkenyang-android-release
+          path: |
+            frontend/build/app/outputs/flutter-apk/app-release.apk
+            frontend/build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+
+      - name: Compute release tag
+        id: release
+        working-directory: frontend
+        shell: bash
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            echo "tag=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+          else
+            app_version="$(awk '/^version:/{print $2; exit}' pubspec.yaml)"
+            safe_version="${app_version/+/-}"
+            echo "tag=android-v${safe_version}-build.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push' || inputs.create_github_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.release.outputs.tag }}" \
+            frontend/build/app/outputs/flutter-apk/app-release.apk \
+            frontend/build/app/outputs/bundle/release/app-release.aab \
+            --target "$GITHUB_SHA" \
+            --title "AsalKenyang Android ${{ steps.release.outputs.tag }}" \
+            --notes "Signed Android release built from commit $GITHUB_SHA."
