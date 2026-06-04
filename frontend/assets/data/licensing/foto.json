@@ -1,0 +1,142 @@
+{
+  "_meta": {
+    "description": "Per-recipe photo attribution. tools/build_recipes.py requires one item per recipe before strict export.",
+    "requiredFields": [
+      "source",
+      "author",
+      "license",
+      "url",
+      "attributionText"
+    ]
+  },
+  "items": {
+    "junwatu-ikan-asin-peda-goreng-tepung-13744": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-ikan-asin-peda-goreng-tepung-13744.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-indomie-goreng-rasa-bayam-telur-daun-kelor-48593": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-indomie-goreng-rasa-bayam-telur-daun-kelor-48593.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-scrambled-egg-super-simple-11606": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-scrambled-egg-super-simple-11606.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-telur-dadar-kenyal-25246": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-telur-dadar-kenyal-25246.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-telur-rebus-5-menit-25990": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-telur-rebus-5-menit-25990.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-abon-ikan-kenyar-69225": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-abon-ikan-kenyar-69225.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-balado-ikan-asin-bulu-ayam-29967": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-balado-ikan-asin-bulu-ayam-29967.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-balado-terong-telur-puyuh-32240": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-balado-terong-telur-puyuh-32240.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-daging-goreng-14413": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-daging-goreng-14413.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-egg-chicken-roll-goreng-24316": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-egg-chicken-roll-goreng-24316.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-ikan-asin-layur-goreng-kriuk-38611": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-ikan-asin-layur-goreng-kriuk-38611.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-ikan-bilis-petai-06581": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-ikan-bilis-petai-06581.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-ikan-goreng-airfryer-02656": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-ikan-goreng-airfryer-02656.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-ikan-goreng-garit-05274": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-ikan-goreng-garit-05274.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-kulit-pangsit-tabur-bumbu-ayam-bawang-16150": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-kulit-pangsit-tabur-bumbu-ayam-bawang-16150.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    },
+    "junwatu-lumpia-kulit-tahu-mini-isi-ayam-53977": {
+      "source": "local-import",
+      "author": "local asset",
+      "license": "local-use",
+      "url": "assets/images/recipes/junwatu-lumpia-kulit-tahu-mini-isi-ayam-53977.jpeg",
+      "attributionText": "Local recipe image asset.",
+      "importedAt": "2026-06-01T20:16:13+07:00"
+    }
+  }
+}
