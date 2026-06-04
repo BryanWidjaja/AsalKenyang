@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../shared/utils/ingredient_groups.dart';
+
 class IngredientDef {
   const IngredientDef(
     this.label,
@@ -34,13 +36,7 @@ const ingredientCatalog = <IngredientDef>[
     'Protein',
     '1 potong',
   ),
-  IngredientDef(
-    'Tahu',
-    'tahu',
-    Icons.lunch_dining_rounded,
-    'Protein',
-    '1 buah',
-  ),
+  IngredientDef('Tahu', 'tahu', Icons.rectangle, 'Protein', '1 buah'),
   IngredientDef(
     'Tempe',
     'tempe',
@@ -50,13 +46,7 @@ const ingredientCatalog = <IngredientDef>[
   ),
   IngredientDef('Sawi', 'sawi hijau', Icons.eco_rounded, 'Sayur', '1 ikat'),
   IngredientDef('Kangkung', 'kangkung', Icons.eco_rounded, 'Sayur', '1 ikat'),
-  IngredientDef(
-    'Wortel',
-    'wortel',
-    Icons.local_florist_rounded,
-    'Sayur',
-    '1 buah',
-  ),
+  IngredientDef('Wortel', 'wortel', Icons.eco_rounded, 'Sayur', '1 buah'),
   IngredientDef('Tomat', 'tomat', Icons.circle_rounded, 'Sayur', '1 buah'),
   IngredientDef(
     'Daun Bawang',
@@ -81,32 +71,19 @@ const ingredientCatalog = <IngredientDef>[
   ),
   IngredientDef(
     'Cabai',
-    'cabai rawit',
-    Icons.local_fire_department_rounded,
-    'Bumbu',
-    '1 buah',
-  ),
-  IngredientDef(
-    'Cabai Merah',
-    'cabai merah',
+    'cabai',
     Icons.local_fire_department_rounded,
     'Bumbu',
     '1 buah',
   ),
   IngredientDef('Kecap', 'kecap', Icons.water_drop_rounded, 'Bumbu', '1 sdm'),
+  IngredientDef('Garam', 'garam', Icons.grain_rounded, 'Bumbu', '1 sdt'),
   IngredientDef(
     'Nasi',
     'nasi',
     Icons.rice_bowl_rounded,
     'Karbohidrat',
     '1 piring',
-  ),
-  IngredientDef(
-    'Beras',
-    'beras',
-    Icons.rice_bowl_rounded,
-    'Karbohidrat',
-    '1 cup',
   ),
   IngredientDef(
     'Mie',
@@ -137,7 +114,7 @@ String defaultQuantityForIngredient(String key) {
 
   final lower = key.toLowerCase();
   if (lower.contains('telur')) return '1 butir';
-  if (lower.contains('ikan')) return '1 ekor';
+  if (isFishIngredient(key)) return '1 ekor';
   if (lower.contains('ayam')) return '1 potong';
   if (lower.contains('tahu')) return '1 buah';
   if (lower.contains('tempe')) return '1 papan';
@@ -145,12 +122,12 @@ String defaultQuantityForIngredient(String key) {
     return '1 siung';
   }
   if (lower.contains('cabai') || lower.contains('cabe')) return '1 buah';
+  if (lower.contains('garam')) return '1 sdt';
   if (lower.contains('daun bawang')) return '1 batang';
   if (lower.contains('daun')) return '1 lembar';
   if (lower.contains('kangkung') || lower.contains('sawi')) return '1 ikat';
   if (lower.contains('wortel') || lower.contains('tomat')) return '1 buah';
-  if (lower.contains('nasi')) return '1 piring';
-  if (lower.contains('beras')) return '1 cup';
+  if (lower.contains('nasi') || lower.contains('beras')) return '1 piring';
   if (lower.contains('mie')) return '1 bungkus';
   if (lower.contains('roti')) return '1 lembar';
   if (lower.contains('kecap') ||

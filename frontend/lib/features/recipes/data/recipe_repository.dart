@@ -12,11 +12,14 @@ class RecipeRepository {
 
   Future<List<Recipe>> getAllRecipes() async {
     if (_cachedRecipes != null) return _cachedRecipes!;
-    
+
     final jsonString = await rootBundle.loadString('assets/data/recipes.json');
     final List<dynamic> jsonList = jsonDecode(jsonString);
-    
-    _cachedRecipes = jsonList.map((json) => Recipe.fromJson(json)).toList();
+
+    _cachedRecipes = jsonList
+        .map((json) => Recipe.fromJson(json))
+        .where((recipe) => recipe.imageUrl.trim().isNotEmpty)
+        .toList();
     return _cachedRecipes!;
   }
 

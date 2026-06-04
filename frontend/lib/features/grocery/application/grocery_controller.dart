@@ -51,7 +51,11 @@ List<GroceryAggregatedItem> aggregateGroceryItems(
       groupedBahan
           .putIfAbsent(bKey, () => [])
           .add(
-            _BahanNeed(name: bahan.nama, quantity: bahan.jumlah, price: price),
+            _BahanNeed(
+              name: bahan.nama,
+              quantity: _shoppingQuantityLabel(bahan.jumlah, bahan.gram),
+              price: price,
+            ),
           );
     }
   }
@@ -115,6 +119,37 @@ class GroceryController {
           .addItem(bahanKey, quantity: qty);
     }
   }
+}
+
+String _shoppingQuantityLabel(String quantity, double? grams) {
+  final trimmed = quantity.trim();
+  if (!_needsEstimatedQuantity(trimmed)) return trimmed;
+  final estimate = _gramQuantityLabel(grams);
+  return estimate ?? (trimmed.isEmpty ? '1 item' : trimmed);
+}
+
+bool _needsEstimatedQuantity(String quantity) {
+  final normalized = quantity.trim().toLowerCase();
+  if (normalized.isEmpty) return true;
+  if (normalized == 'secukupnya' || normalized == 'sesuai selera') return true;
+  if (normalized.contains('secukupnya')) return true;
+  if (normalized.contains('sesuai selera')) return true;
+  return !RegExp(r'\d').hasMatch(normalized);
+}
+
+String? _gramQuantityLabel(double? grams) {
+  if (grams == null || grams <= 0) return null;
+  if (grams >= 1000) {
+    final kg = grams / 1000;
+    final amount = kg % 1 == 0
+        ? kg.toStringAsFixed(0)
+        : kg.toStringAsFixed(1).replaceAll('.', ',');
+    return '$amount kg';
+  }
+  final amount = grams % 1 == 0
+      ? grams.toStringAsFixed(0)
+      : grams.toStringAsFixed(1).replaceAll('.', ',');
+  return '$amount g';
 }
 
 class _BahanNeed {

@@ -1,3 +1,4 @@
+import '../../../shared/utils/ingredient_groups.dart';
 import '../data/recipe_models.dart';
 
 class MatchedRecipe {
@@ -38,7 +39,10 @@ List<MatchedRecipe> matchRecipes({
 
   for (final recipe in allRecipes) {
     if (selectedPantrySet.isNotEmpty &&
-        !recipe.bahanKey.any(selectedPantrySet.contains)) {
+        !recipe.bahanKey.any(
+          (bKey) =>
+              selectedPantrySet.any((pKey) => ingredientKeysMatch(pKey, bKey)),
+        )) {
       continue;
     }
 
@@ -62,7 +66,7 @@ List<MatchedRecipe> matchRecipes({
         .where((bKey) => !staples.contains(bKey))
         .toList(growable: false);
     for (final bKey in recipe.bahanKey) {
-      if (pantrySet.contains(bKey)) {
+      if (pantrySet.any((pKey) => ingredientKeysMatch(pKey, bKey))) {
         matched.add(bKey);
       } else {
         missing.add(bKey);
@@ -70,7 +74,10 @@ List<MatchedRecipe> matchRecipes({
     }
 
     final scoredMatched = scoredKeys
-        .where((bKey) => selectedPantrySet.contains(bKey))
+        .where(
+          (bKey) =>
+              selectedPantrySet.any((pKey) => ingredientKeysMatch(pKey, bKey)),
+        )
         .length;
     final total = scoredKeys.length;
     final pct = total == 0 ? 1.0 : (scoredMatched / total);

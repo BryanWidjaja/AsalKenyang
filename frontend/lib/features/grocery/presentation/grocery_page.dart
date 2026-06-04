@@ -10,6 +10,7 @@ import '../../../shared/widgets/budget_summary_strip.dart';
 import '../../../shared/widgets/grocery_item.dart';
 import '../../../shared/widgets/section_header.dart';
 import '../../../shared/widgets/top_bar.dart';
+import '../../../shared/utils/ingredient_groups.dart';
 import '../../budget/application/budget_controller.dart';
 
 import '../application/grocery_controller.dart';
@@ -162,7 +163,7 @@ Map<String, List<GroceryAggregatedItem>> _groupItems(
 String _categoryFor(String name) {
   final lower = name.toLowerCase();
   if (lower.contains('ayam') ||
-      lower.contains('ikan') ||
+      isFishIngredient(name) ||
       lower.contains('telur') ||
       lower.contains('tahu') ||
       lower.contains('tempe') ||
