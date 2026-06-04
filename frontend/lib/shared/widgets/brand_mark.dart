@@ -46,71 +46,77 @@ class _AsalKenyangLogoPainter extends CustomPainter {
     final primary = Paint()..color = AppColors.primary;
     final primaryAccent = Paint()..color = AppColors.primaryContainer;
     final rice = Paint()..color = AppColors.riceWhite;
-    final pandan = Paint()..color = AppColors.secondary;
-    final pandanLight = AppColors.pandanContainer;
-    final kunyit = Paint()..color = AppColors.kunyitContainer;
-    final tertiary = Paint()..color = AppColors.tertiaryContainer;
+    final surface = Paint()..color = AppColors.surfaceContainerLowest;
+    final warmSurface = Paint()..color = AppColors.surfaceContainer;
+    final display = Paint()..color = AppColors.pandanContainer;
     final strokePrimary = Paint()
       ..color = AppColors.primary
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
 
-    final checkLeaf = Paint()
-      ..color = AppColors.secondary
+    strokePrimary.strokeWidth = 3;
+
+    final spoonHandle = Paint()
+      ..color = AppColors.primaryContainer
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round
-      ..strokeWidth = 7;
-    final leafPath = Path()
-      ..moveTo(32, 45)
-      ..lineTo(43, 56)
-      ..lineTo(68, 29);
-    canvas.drawPath(leafPath, checkLeaf);
-
-    final leaf = Path()
-      ..moveTo(50, 21)
-      ..cubicTo(64, 20, 74, 29, 75, 45)
-      ..cubicTo(61, 45, 51, 36, 50, 21)
+      ..strokeWidth = 5;
+    canvas.drawLine(const Offset(62, 30), const Offset(54, 54), spoonHandle);
+    final spoonBowl = Path()
+      ..moveTo(65, 11)
+      ..cubicTo(74, 12, 79, 21, 75, 31)
+      ..cubicTo(71, 41, 61, 42, 56, 33)
+      ..cubicTo(51, 24, 55, 10, 65, 11)
       ..close();
-    canvas.drawPath(leaf, pandan);
-    canvas.drawPath(
-      Path()
-        ..moveTo(56, 28)
-        ..cubicTo(61, 33, 65, 37, 70, 42),
-      Paint()
-        ..color = pandanLight
-        ..style = PaintingStyle.stroke
-        ..strokeCap = StrokeCap.round
-        ..strokeWidth = 2.5,
-    );
+    canvas.drawPath(spoonBowl, rice);
+    canvas.drawPath(spoonBowl, strokePrimary);
 
-    canvas
-      ..drawCircle(const Offset(70, 35), 10, kunyit)
-      ..drawCircle(const Offset(70, 35), 4.5, tertiary);
-
-    final riceMound = Path()
-      ..moveTo(27, 51)
-      ..cubicTo(33, 40, 42, 35, 52, 35)
-      ..cubicTo(65, 35, 74, 43, 77, 51)
-      ..close();
-    canvas.drawPath(riceMound, rice);
-
-    strokePrimary.strokeWidth = 3;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        const Rect.fromLTWH(20, 47, 60, 17),
+        const Rect.fromLTWH(16, 53, 12, 20),
+        const Radius.circular(7),
+      ),
+      primary,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(72, 53, 12, 20),
+        const Radius.circular(7),
+      ),
+      primary,
+    );
+
+    final cookerBody = RRect.fromRectAndRadius(
+      const Rect.fromLTWH(18, 43, 64, 40),
+      const Radius.circular(15),
+    );
+    canvas.drawRRect(cookerBody, surface);
+    canvas.drawRRect(cookerBody, strokePrimary);
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(24, 38, 52, 18),
         const Radius.circular(10),
       ),
-      rice,
+      warmSurface,
     );
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        const Rect.fromLTWH(20, 47, 60, 17),
+        const Rect.fromLTWH(24, 38, 52, 18),
         const Radius.circular(10),
       ),
       strokePrimary,
     );
+
+    final riceMound = Path()
+      ..moveTo(24, 48)
+      ..cubicTo(31, 36, 42, 31, 52, 34)
+      ..cubicTo(65, 31, 76, 39, 79, 49)
+      ..cubicTo(66, 55, 37, 55, 24, 48)
+      ..close();
+    canvas.drawPath(riceMound, rice);
+    canvas.drawPath(riceMound, strokePrimary);
 
     final grainPaint = Paint()
       ..color = AppColors.primaryContainer
@@ -118,32 +124,38 @@ class _AsalKenyangLogoPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 2.5;
     canvas
-      ..drawLine(const Offset(39, 47), const Offset(45, 44), grainPaint)
-      ..drawLine(const Offset(51, 44), const Offset(57, 47), grainPaint)
-      ..drawLine(const Offset(61, 50), const Offset(67, 48), grainPaint);
-
-    final bowl = Path()
-      ..moveTo(23, 56)
-      ..cubicTo(32, 61, 68, 61, 77, 56)
-      ..cubicTo(75, 73, 64, 82, 50, 82)
-      ..cubicTo(36, 82, 25, 73, 23, 56)
-      ..close();
-    canvas.drawPath(bowl, primary);
-
-    canvas.drawPath(
-      Path()
-        ..moveTo(34, 66)
-        ..cubicTo(42, 71, 58, 72, 66, 66),
-      Paint()
-        ..color = AppColors.primaryFixedDim
-        ..style = PaintingStyle.stroke
-        ..strokeCap = StrokeCap.round
-        ..strokeWidth = 4,
-    );
+      ..drawLine(const Offset(36, 46), const Offset(42, 43), grainPaint)
+      ..drawLine(const Offset(49, 42), const Offset(56, 45), grainPaint)
+      ..drawLine(const Offset(61, 48), const Offset(69, 46), grainPaint);
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        const Rect.fromLTWH(37, 79, 26, 6),
+        const Rect.fromLTWH(30, 61, 40, 13),
+        const Radius.circular(7),
+      ),
+      warmSurface,
+    );
+    strokePrimary.strokeWidth = 2.5;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(30, 61, 40, 13),
+        const Radius.circular(7),
+      ),
+      strokePrimary,
+    );
+    canvas
+      ..drawCircle(const Offset(40, 67.5), 3.5, display)
+      ..drawRRect(
+        RRect.fromRectAndRadius(
+          const Rect.fromLTWH(48, 64.5, 13, 6),
+          const Radius.circular(3),
+        ),
+        primaryAccent,
+      );
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(34, 80, 32, 6),
         const Radius.circular(3),
       ),
       primaryAccent,

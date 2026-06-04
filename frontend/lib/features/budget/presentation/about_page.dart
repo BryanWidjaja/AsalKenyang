@@ -4,7 +4,6 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../../shared/widgets/attribution_card.dart';
 import '../../../shared/widgets/brand_mark.dart';
 import '../../../shared/widgets/top_bar.dart';
 
@@ -22,8 +21,9 @@ class AboutPage extends StatelessWidget {
         top: false,
         child: Center(
           child: ConstrainedBox(
-            constraints:
-                const BoxConstraints(maxWidth: AppSpacing.screenMaxWidth),
+            constraints: const BoxConstraints(
+              maxWidth: AppSpacing.screenMaxWidth,
+            ),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.edge,
@@ -34,34 +34,8 @@ class AboutPage extends StatelessWidget {
               children: const [
                 _AppInfoCard(),
                 SizedBox(height: AppSpacing.md),
-                AttributionCard(
-                  icon: Icons.dataset_rounded,
-                  iconColor: AppColors.primary,
-                  title: 'Sumber Data',
-                  body:
-                      'Informasi nilai gizi dan komposisi bahan makanan berbasis '
-                      'pada Tabel Komposisi Pangan Indonesia (TKPI) yang '
-                      'diterbitkan oleh Kementerian Kesehatan Republik Indonesia.',
-                ),
-                SizedBox(height: AppSpacing.sm),
-                AttributionCard(
-                  icon: Icons.interests_rounded,
-                  iconColor: AppColors.secondary,
-                  title: 'Ikonografi',
-                  body:
-                      'Menggunakan Material Symbols oleh Google, dilisensikan di '
-                      'bawah Apache License Version 2.0.',
-                ),
-                SizedBox(height: AppSpacing.sm),
-                AttributionCard(
-                  icon: Icons.photo_camera_rounded,
-                  iconColor: AppColors.tertiary,
-                  title: 'Fotografi',
-                  body:
-                      'Gambar resep dan bahan makanan bersumber dari kontributor '
-                      'komunitas dan platform lisensi terbuka (Unsplash, Pexels).',
-                ),
-                SizedBox(height: AppSpacing.lg),
+                _DescriptionCard(),
+                SizedBox(height: AppSpacing.md),
                 _Disclaimer(),
               ],
             ),
@@ -99,12 +73,34 @@ class _AppInfoCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            'Teman setia di dapur kosan saat tanggal tua. Membantu '
-            'merencanakan, memasak, dan berhemat dengan cerdas dan hangat.',
+            'Aplikasi masak hemat untuk anak kos: cocokkan bahan yang ada, '
+            'temukan resep, susun rencana makan, dan pantau belanja bulanan.',
             style: AppTypography.body,
             textAlign: TextAlign.center,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _DescriptionCard extends StatelessWidget {
+  const _DescriptionCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainer,
+        borderRadius: AppRadii.brMd,
+      ),
+      child: Text(
+        'AsalKenyang membantu memilih menu dari bahan tersimpan, menyaring '
+        'resep sesuai sisa anggaran, membuat daftar belanja, dan menyimpan '
+        'menu favorit agar masak harian lebih terencana.',
+        style: AppTypography.body,
+        textAlign: TextAlign.center,
       ),
     );
   }

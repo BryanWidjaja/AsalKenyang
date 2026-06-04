@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 
 import 'package:intl/intl.dart';
 
@@ -155,8 +156,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 }
 
 void _showBudgetDialog(BuildContext context, WidgetRef ref, int currentBudget) {
+  final inputFormatter = _RupiahInputFormatter();
   final controller = TextEditingController(
-    text: currentBudget > 0 ? currentBudget.toString() : '',
+    text: currentBudget > 0 ? inputFormatter.formatInt(currentBudget) : '',
   );
 
   showDialog<void>(
@@ -168,6 +170,10 @@ void _showBudgetDialog(BuildContext context, WidgetRef ref, int currentBudget) {
           controller: controller,
           autofocus: true,
           keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            inputFormatter,
+          ],
           decoration: const InputDecoration(
             labelText: 'Anggaran bulanan',
             prefixText: 'Rp ',
@@ -218,6 +224,28 @@ void _showBudgetDialog(BuildContext context, WidgetRef ref, int currentBudget) {
       );
     },
   ).whenComplete(controller.dispose);
+}
+
+class _RupiahInputFormatter extends TextInputFormatter {
+  final NumberFormat _formatter = NumberFormat.decimalPattern('id_ID');
+
+  String formatInt(int value) => _formatter.format(value);
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digits = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (digits.isEmpty) return const TextEditingValue();
+
+    final number = int.parse(digits);
+    final formatted = formatInt(number);
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
 }
 
 void _showProfileDialog(
@@ -323,8 +351,8 @@ class _SettingsGrid extends StatelessWidget {
             SizedBox(
               width: colWidth,
               child: SettingsTile(
-                icon: Icons.help_rounded,
-                label: 'Bantuan',
+                icon: Icons.info_rounded,
+                label: 'Tentang Aplikasi',
                 onTap: () => Navigator.of(context).pushNamed(AboutPage.route),
               ),
             ),

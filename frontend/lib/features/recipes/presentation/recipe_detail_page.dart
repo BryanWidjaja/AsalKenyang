@@ -7,7 +7,7 @@ import '../../../core/theme/app_elevation.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../../shared/widgets/bahan_card.dart';
+import '../../../shared/widgets/app_image.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../../shared/widgets/secondary_button.dart';
 import '../../../shared/widgets/step_card.dart';
@@ -141,21 +141,10 @@ class _Hero extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Container(
-            color: AppColors.surfaceVariant,
-            alignment: Alignment.center,
-            // Fallback for missing images in MVP
-            child: imageUrl.isEmpty
-                ? const Icon(
-                    Icons.restaurant_rounded,
-                    size: 48,
-                    color: AppColors.outline,
-                  )
-                : Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (c, e, s) => const Icon(Icons.broken_image),
-                  ),
+          AppImage(
+            imageUrl: imageUrl,
+            placeholderIcon: Icons.restaurant_rounded,
+            placeholderIconSize: 48,
           ),
           DecoratedBox(
             decoration: BoxDecoration(
@@ -315,7 +304,9 @@ class _BahanSection extends StatelessWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               const gap = AppSpacing.sm;
-              final colWidth = (constraints.maxWidth - gap) / 2;
+              final columns = constraints.maxWidth < 430 ? 1 : 2;
+              final colWidth =
+                  (constraints.maxWidth - gap * (columns - 1)) / columns;
               return Wrap(
                 spacing: gap,
                 runSpacing: gap,
@@ -323,14 +314,11 @@ class _BahanSection extends StatelessWidget {
                   for (final b in bahan)
                     SizedBox(
                       width: colWidth,
-                      child: BahanCard(
+                      child: _CompactBahanTile(
                         name: b.nama,
-                        amount: b.jumlah,
-                        price: b.harga > 0
-                            ? '${fmt.format(b.harga)} total'
-                            : 'Gratis',
+                        amount: _amountLabel(b),
+                        price: b.harga > 0 ? fmt.format(b.harga) : 'Gratis',
                         unitPrice: _unitPriceLabel(b, fmt),
-                        icon: Icons.kitchen_rounded,
                       ),
                     ),
                 ],
@@ -343,14 +331,145 @@ class _BahanSection extends StatelessWidget {
   }
 }
 
+class _CompactBahanTile extends StatelessWidget {
+  const _CompactBahanTile({
+    required this.name,
+    required this.amount,
+    required this.price,
+    this.unitPrice,
+  });
+
+  final String name;
+  final String amount;
+  final String price;
+  final String? unitPrice;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 72),
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainerLowest,
+        borderRadius: AppRadii.brMd,
+        border: Border.all(
+          color: AppColors.outlineVariant.withValues(alpha: 0.35),
+        ),
+        boxShadow: AppElevation.level1,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: const BoxDecoration(
+              color: AppColors.surfaceContainer,
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: const Icon(
+              Icons.kitchen_rounded,
+              size: 18,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  name,
+                  style: AppTypography.label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  amount,
+                  style: AppTypography.caption.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                    fontFeatures: AppTypography.tnum,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (unitPrice != null)
+                  Text(
+                    unitPrice!,
+                    style: AppTypography.overline.copyWith(
+                      color: AppColors.onSurfaceVariant,
+                      fontFeatures: AppTypography.tnum,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Text(
+            price,
+            style: AppTypography.caption.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w700,
+              fontFeatures: AppTypography.tnum,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 String? _unitPriceLabel(Bahan bahan, NumberFormat fmt) {
   if (bahan.harga <= 0) return null;
 
   final parsed = _parseQuantity(bahan.jumlah);
-  if (parsed == null || parsed.amount <= 0) return null;
+  if (parsed == null || parsed.amount <= 0) {
+    final grams = bahan.gram;
+    if (grams == null || grams <= 0) return null;
+    final unitPrice = (bahan.harga / grams).round();
+    return '${fmt.format(unitPrice)}/g estimasi';
+  }
 
   final unitPrice = (bahan.harga / parsed.amount).round();
   return '${fmt.format(unitPrice)}/${parsed.unit}';
+}
+
+String _amountLabel(Bahan bahan) {
+  final quantity = bahan.jumlah.trim();
+  final estimate = _gramEstimateLabel(bahan.gram);
+
+  if (!_needsEstimatedQuantity(quantity)) return quantity;
+  if (estimate == null) {
+    return quantity.isEmpty ? 'Estimasi belum ada' : quantity;
+  }
+
+  return estimate;
+}
+
+bool _needsEstimatedQuantity(String quantity) {
+  final normalized = quantity.trim().toLowerCase();
+  if (normalized.isEmpty) return true;
+  if (normalized == 'secukupnya' || normalized == 'sesuai selera') return true;
+  if (normalized.contains('secukupnya')) return true;
+  if (normalized.contains('sesuai selera')) return true;
+  return !RegExp(r'\d').hasMatch(normalized);
+}
+
+String? _gramEstimateLabel(double? grams) {
+  if (grams == null || grams <= 0) return null;
+  final rounded = grams >= 1000 ? grams / 1000 : grams;
+  final unit = grams >= 1000 ? 'kg' : 'g';
+  final amount = rounded % 1 == 0
+      ? rounded.toStringAsFixed(0)
+      : rounded.toStringAsFixed(1).replaceAll('.', ',');
+  return '~$amount $unit';
 }
 
 _ParsedQuantity? _parseQuantity(String quantity) {

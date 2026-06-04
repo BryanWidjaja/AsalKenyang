@@ -109,48 +109,8 @@ class RecipeBrowsePage extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                RecipeCard.feature(
-                  title: 'Nasi Goreng Kosan',
-                  priceText: 'Rp 5.440/porsi',
-                  priceState: _priceStateFor(5440, budgetState.remainingBudget),
-                  timeText: '10 mnt',
-                  equipmentIcon: Icons.soup_kitchen_rounded,
-                  dotsFilled: 2,
-                  onTap: () async {
-                    if (selectForDate != null) {
-                      final waktu = await _showWaktuMakanSheet(context);
-                      if (waktu == null) return;
-                      try {
-                        await ref
-                            .read(planControllerProvider)
-                            .addMeal(selectForDate, 'mock_01', waktu);
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Berhasil menambahkan ke rencana!'),
-                          ),
-                        );
-                        Navigator.of(context).pop();
-                      } catch (error) {
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Gagal menambahkan ke rencana: $error',
-                            ),
-                          ),
-                        );
-                      }
-                    } else {
-                      Navigator.of(
-                        context,
-                      ).pushNamed(RecipeDetailPage.route, arguments: 'mock_01');
-                    }
-                  },
-                ),
-                const SizedBox(height: AppSpacing.md),
                 recipesAsync.when(
-                  data: (recipes) => _RecipeGrid(
+                  data: (recipes) => _RecipeResults(
                     recipes: recipes,
                     selectForDate: selectForDate,
                     remainingBudget: budgetState.remainingBudget,
@@ -164,6 +124,59 @@ class RecipeBrowsePage extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _RecipeResults extends ConsumerWidget {
+  const _RecipeResults({
+    required this.recipes,
+    required this.remainingBudget,
+    this.selectForDate,
+  });
+
+  final List<Recipe> recipes;
+  final int remainingBudget;
+  final DateTime? selectForDate;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (recipes.isEmpty) {
+      return const Center(child: Text('Tidak ada resep yang cocok'));
+    }
+
+    final featured = recipes.first;
+    final rest = recipes.skip(1).toList();
+    final fmt = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        RecipeCard.feature(
+          title: featured.name,
+          priceText: '${fmt.format(_perServingPrice(featured)).trim()}/porsi',
+          priceState: _priceStateFor(featured.estPrice, remainingBudget),
+          imageUrl: featured.imageUrl,
+          timeText: '${featured.cookTime} mnt',
+          equipmentIcon: _equipmentIconFor(featured),
+          dotsFilled: 2,
+          onTap: () =>
+              _openOrSelectRecipe(context, ref, featured, selectForDate),
+        ),
+        if (rest.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          _RecipeGrid(
+            recipes: rest,
+            selectForDate: selectForDate,
+            remainingBudget: remainingBudget,
+          ),
+        ],
+      ],
     );
   }
 }
@@ -204,43 +217,15 @@ class _RecipeGrid extends ConsumerWidget {
                   title: r.name,
                   priceText: '${fmt.format(_perServingPrice(r)).trim()}/porsi',
                   priceState: _priceStateFor(r.estPrice, remainingBudget),
+                  imageUrl: r.imageUrl,
                   timeText: '${r.cookTime} mnt',
                   pedas: r.tags.contains('pedas'),
                   favorite: favoriteIds.contains(r.id),
                   onFavoriteToggle: () => ref
                       .read(favoritesControllerProvider.notifier)
                       .toggleFavorite(r.id),
-                  onTap: () async {
-                    if (selectForDate != null) {
-                      final waktu = await _showWaktuMakanSheet(context);
-                      if (waktu == null) return;
-                      try {
-                        await ref
-                            .read(planControllerProvider)
-                            .addMeal(selectForDate!, r.id, waktu);
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Berhasil menambahkan ke rencana!'),
-                          ),
-                        );
-                        Navigator.of(context).pop();
-                      } catch (error) {
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Gagal menambahkan ke rencana: $error',
-                            ),
-                          ),
-                        );
-                      }
-                    } else {
-                      Navigator.of(
-                        context,
-                      ).pushNamed(RecipeDetailPage.route, arguments: r.id);
-                    }
-                  },
+                  onTap: () =>
+                      _openOrSelectRecipe(context, ref, r, selectForDate),
                 ),
               ),
           ],
@@ -261,6 +246,53 @@ PriceState _priceStateFor(int price, int remainingBudget) {
 int _perServingPrice(Recipe recipe) {
   if (recipe.porsi <= 0) return recipe.estPrice;
   return (recipe.estPrice / recipe.porsi).round();
+}
+
+IconData? _equipmentIconFor(Recipe recipe) {
+  final alat = recipe.alat.map((item) => item.toLowerCase()).toList();
+  if (alat.any((item) => item.contains('rice cooker'))) {
+    return Icons.rice_bowl_rounded;
+  }
+  if (alat.any((item) => item.contains('airfryer'))) {
+    return Icons.air_rounded;
+  }
+  if (alat.any((item) => item.contains('kompor'))) {
+    return Icons.soup_kitchen_rounded;
+  }
+  return alat.isEmpty ? null : Icons.kitchen_rounded;
+}
+
+Future<void> _openOrSelectRecipe(
+  BuildContext context,
+  WidgetRef ref,
+  Recipe recipe,
+  DateTime? selectForDate,
+) async {
+  if (selectForDate == null) {
+    Navigator.of(
+      context,
+    ).pushNamed(RecipeDetailPage.route, arguments: recipe.id);
+    return;
+  }
+
+  final waktu = await _showWaktuMakanSheet(context);
+  if (waktu == null) return;
+
+  try {
+    await ref
+        .read(planControllerProvider)
+        .addMeal(selectForDate, recipe.id, waktu);
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Berhasil menambahkan ke rencana!')),
+    );
+    Navigator.of(context).pop();
+  } catch (error) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Gagal menambahkan ke rencana: $error')),
+    );
+  }
 }
 
 Future<String?> _showWaktuMakanSheet(BuildContext context) {
