@@ -5,6 +5,7 @@ import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_radii.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import 'app_image.dart';
 import 'tag_pill.dart';
 
 enum PriceState { affordable, mid, unaffordable }
@@ -22,10 +23,10 @@ class RecipeCard extends StatelessWidget {
     this.equipmentIcon,
     this.dotsFilled = 2,
     this.onTap,
-  })  : _variant = _RecipeCardVariant.feature,
-        pedas = false,
-        favorite = null,
-        onFavoriteToggle = null;
+  }) : _variant = _RecipeCardVariant.feature,
+       pedas = false,
+       favorite = null,
+       onFavoriteToggle = null;
 
   const RecipeCard.compact({
     super.key,
@@ -38,9 +39,9 @@ class RecipeCard extends StatelessWidget {
     this.favorite,
     this.onFavoriteToggle,
     this.onTap,
-  })  : _variant = _RecipeCardVariant.compact,
-        equipmentIcon = null,
-        dotsFilled = 0;
+  }) : _variant = _RecipeCardVariant.compact,
+       equipmentIcon = null,
+       dotsFilled = 0;
 
   final _RecipeCardVariant _variant;
   final String title;
@@ -97,7 +98,8 @@ class RecipeCard extends StatelessWidget {
           overlayBottomLeft: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (timeText != null) _OverlayChip(icon: Icons.schedule_rounded, label: timeText),
+              if (timeText != null)
+                _OverlayChip(icon: Icons.schedule_rounded, label: timeText),
               if (timeText != null && equipmentIcon != null)
                 const SizedBox(width: AppSpacing.xs),
               if (equipmentIcon != null) _OverlayChip(icon: equipmentIcon!),
@@ -110,12 +112,7 @@ class RecipeCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                title,
-                style: AppTypography.titleMd,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+              Text(title, style: AppTypography.titleMd),
               const SizedBox(height: AppSpacing.xs),
               Row(
                 children: [
@@ -155,12 +152,7 @@ class RecipeCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                title,
-                style: AppTypography.label.copyWith(height: 1.2),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
+              Text(title, style: AppTypography.label.copyWith(height: 1.2)),
               const SizedBox(height: AppSpacing.sm),
               Row(
                 children: [
@@ -206,30 +198,11 @@ class _Photo extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (imageUrl == null)
-            Container(
-              color: AppColors.surfaceVariant,
-              alignment: Alignment.center,
-              child: const Icon(
-                Icons.restaurant_rounded,
-                size: 40,
-                color: AppColors.outline,
-              ),
-            )
-          else
-            Image.network(
-              imageUrl!,
-              fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => Container(
-                color: AppColors.surfaceVariant,
-                alignment: Alignment.center,
-                child: const Icon(
-                  Icons.restaurant_rounded,
-                  size: 40,
-                  color: AppColors.outline,
-                ),
-              ),
-            ),
+          AppImage(
+            imageUrl: imageUrl,
+            placeholderIcon: Icons.restaurant_rounded,
+            placeholderIconSize: 40,
+          ),
           DecoratedBox(
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: 0.04),

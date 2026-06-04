@@ -49,13 +49,39 @@ class IngredientTile extends StatelessWidget {
                       ),
                       boxShadow: AppElevation.level1,
                     ),
-                    alignment: Alignment.center,
-                    child: Icon(
-                      icon,
-                      size: 32,
-                      color: selected
-                          ? AppColors.primary
-                          : AppColors.onSurfaceVariant,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xs,
+                      vertical: AppSpacing.sm,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          icon,
+                          size: 22,
+                          color: selected
+                              ? AppColors.primary
+                              : AppColors.onSurfaceVariant,
+                        ),
+                        const SizedBox(height: 3),
+                        Flexible(
+                          child: Text(
+                            label,
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.caption.copyWith(
+                              color: selected
+                                  ? AppColors.primary
+                                  : AppColors.onSurfaceVariant,
+                              fontWeight: selected
+                                  ? FontWeight.w700
+                                  : FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   if (selected)
@@ -83,19 +109,6 @@ class IngredientTile extends StatelessWidget {
                       ),
                     ),
                 ],
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: AppTypography.caption.copyWith(
-                  color: selected
-                      ? AppColors.onSurface
-                      : AppColors.onSurfaceVariant,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                ),
               ),
             ],
           ),

@@ -5,6 +5,7 @@ import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_radii.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import 'app_image.dart';
 import 'match_ring.dart';
 import 'missing_chip.dart';
 
@@ -54,12 +55,7 @@ class MatchResultRow extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: AppTypography.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    Text(title, style: AppTypography.label),
                     const SizedBox(height: AppSpacing.xs),
                     if (canCookNow)
                       Text(
@@ -106,29 +102,11 @@ class _Thumb extends StatelessWidget {
       child: SizedBox(
         width: 56,
         height: 56,
-        child: imageUrl == null
-            ? Container(
-                color: AppColors.surfaceVariant,
-                alignment: Alignment.center,
-                child: const Icon(
-                  Icons.restaurant_rounded,
-                  size: 24,
-                  color: AppColors.outline,
-                ),
-              )
-            : Image.network(
-                imageUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => Container(
-                  color: AppColors.surfaceVariant,
-                  alignment: Alignment.center,
-                  child: const Icon(
-                    Icons.restaurant_rounded,
-                    size: 24,
-                    color: AppColors.outline,
-                  ),
-                ),
-              ),
+        child: AppImage(
+          imageUrl: imageUrl,
+          placeholderIcon: Icons.restaurant_rounded,
+          placeholderIconSize: 24,
+        ),
       ),
     );
   }

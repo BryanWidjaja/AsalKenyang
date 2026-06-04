@@ -7,6 +7,7 @@ import '../../../core/theme/app_elevation.dart';
 import '../../../core/theme/app_radii.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../shared/widgets/app_image.dart';
 import '../../../shared/widgets/top_bar.dart';
 import '../../grocery/application/grocery_controller.dart';
 import '../../plan/application/plan_controller.dart';
@@ -306,28 +307,22 @@ class _MealCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: imageUrl.isNotEmpty
-                ? Image.network(
-                    imageUrl,
-                    width: 64,
-                    height: 64,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        _imagePlaceholder(),
-                  )
-                : _imagePlaceholder(),
+            child: SizedBox(
+              width: 64,
+              height: 64,
+              child: AppImage(
+                imageUrl: imageUrl,
+                placeholderIcon: Icons.restaurant_rounded,
+                placeholderIconSize: 24,
+              ),
+            ),
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  recipeName,
-                  style: AppTypography.subtitle,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                Text(recipeName, style: AppTypography.subtitle),
                 const SizedBox(height: AppSpacing.xs),
                 Row(
                   children: [
@@ -351,22 +346,6 @@ class _MealCard extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _imagePlaceholder() {
-    return Container(
-      width: 64,
-      height: 64,
-      decoration: const BoxDecoration(
-        color: AppColors.surfaceContainer,
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-      ),
-      alignment: Alignment.center,
-      child: const Icon(
-        Icons.restaurant_rounded,
-        color: AppColors.onSurfaceVariant,
       ),
     );
   }

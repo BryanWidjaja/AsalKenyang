@@ -148,6 +148,7 @@ class _SavedGrid extends StatelessWidget {
                   title: r.name,
                   priceText: '${fmt.format(_perServingPrice(r)).trim()}/porsi',
                   priceState: PriceState.affordable,
+                  imageUrl: r.imageUrl,
                   timeText: '${r.cookTime} mnt',
                   favorite: true,
                   pedas: r.tags.contains('pedas'),

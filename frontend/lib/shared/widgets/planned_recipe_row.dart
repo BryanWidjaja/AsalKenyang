@@ -4,6 +4,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radii.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import 'app_image.dart';
 
 class PlannedRecipeRow extends StatelessWidget {
   const PlannedRecipeRow({
@@ -49,12 +50,7 @@ class PlannedRecipeRow extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      title,
-                      style: AppTypography.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    Text(title, style: AppTypography.label),
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
@@ -78,29 +74,11 @@ class PlannedRecipeRow extends StatelessWidget {
       child: SizedBox(
         width: 48,
         height: 48,
-        child: imageUrl == null
-            ? Container(
-                color: AppColors.surfaceVariant,
-                alignment: Alignment.center,
-                child: const Icon(
-                  Icons.restaurant_rounded,
-                  size: 20,
-                  color: AppColors.outline,
-                ),
-              )
-            : Image.network(
-                imageUrl!,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => Container(
-                  color: AppColors.surfaceVariant,
-                  alignment: Alignment.center,
-                  child: const Icon(
-                    Icons.restaurant_rounded,
-                    size: 20,
-                    color: AppColors.outline,
-                  ),
-                ),
-              ),
+        child: AppImage(
+          imageUrl: imageUrl,
+          placeholderIcon: Icons.restaurant_rounded,
+          placeholderIconSize: 20,
+        ),
       ),
     );
   }
