@@ -1,3 +1,3 @@
 # AsalKenyang
 
-AsalKenyang - survive-on-your-allowance kitchen for anak kos
+AsalKenyang - survive-on-your-allowance kitchen for anak kos yang punya uang jajannya terbatas
