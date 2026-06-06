@@ -120,16 +120,17 @@ class _CategoryCard extends StatelessWidget {
         borderRadius: AppRadii.brMd,
         child: Column(
           children: [
-            for (var i = 0; i < items.length; i++) ...[
+            for (var index = 0; index < items.length; index++) ...[
               GroceryItem(
-                name: items[i].name,
-                quantity: items[i].quantity,
-                note: 'Total estimasi: ${fmt.format(items[i].price)}',
-                price: '${fmt.format(items[i].unitPrice)}/${items[i].unitName}',
-                checked: items[i].isChecked,
-                onChanged: (val) => onToggle(items[i].bahanKey, val),
+                name: items[index].name,
+                quantity: items[index].quantity,
+                note: 'Total estimasi: ${fmt.format(items[index].price)}',
+                price:
+                    '${fmt.format(items[index].unitPrice)}/${items[index].unitName}',
+                checked: items[index].isChecked,
+                onChanged: (value) => onToggle(items[index].bahanKey, value),
               ),
-              if (i != items.length - 1)
+              if (index != items.length - 1)
                 const Divider(
                   height: 1,
                   indent: AppSpacing.md,

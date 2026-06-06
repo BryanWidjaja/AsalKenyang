@@ -54,7 +54,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     await ref
         .read(authControllerProvider.notifier)
         .register(email, password);
-    if (!mounted) return;
+
+    if (!mounted) {
+      return;
+    }
+
     final state = ref.read(authControllerProvider);
     if (state.hasError) {
       _showSnack(authErrorMessage(state.error!));

@@ -30,8 +30,13 @@ class _CookPageState extends ConsumerState<CookPage> {
   String _category = 'Semua';
 
   List<IngredientDef> get _visible {
-    if (_category == 'Semua') return ingredientCatalog;
-    return ingredientCatalog.where((i) => i.category == _category).toList();
+    if (_category == 'Semua') {
+      return ingredientCatalog;
+    }
+
+    return ingredientCatalog
+        .where((ingredient) => ingredient.category == _category)
+        .toList();
   }
 
   @override
@@ -40,7 +45,7 @@ class _CookPageState extends ConsumerState<CookPage> {
     final cookState = ref.watch(cookControllerProvider);
     final budgetState = ref.watch(budgetControllerProvider);
 
-    final savedKeys = pantryState.items.map((e) => e.bahanKey).toSet();
+    final savedKeys = pantryState.items.map((item) => item.bahanKey).toSet();
     final selectedKeys = cookState.selectedIngredientKeys ?? savedKeys;
     final fmt = NumberFormat.currency(
       locale: 'id_ID',
@@ -67,20 +72,20 @@ class _CookPageState extends ConsumerState<CookPage> {
               children: [
                 _BudgetToggleCard(
                   value: cookState.useBudgetFilter,
-                  onChanged: (v) => ref
+                  onChanged: (value) => ref
                       .read(cookControllerProvider.notifier)
-                      .toggleBudgetFilter(v),
+                      .toggleBudgetFilter(value),
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      for (final c in ingredientCategories) ...[
+                      for (final category in ingredientCategories) ...[
                         FilterPill(
-                          label: c,
-                          selected: _category == c,
-                          onTap: () => setState(() => _category = c),
+                          label: category,
+                          selected: _category == category,
+                          onTap: () => setState(() => _category = category),
                         ),
                         const SizedBox(width: AppSpacing.sm),
                       ],
@@ -178,14 +183,14 @@ class _IngredientsGrid extends StatelessWidget {
           spacing: gap,
           runSpacing: AppSpacing.md,
           children: [
-            for (final ing in ingredients)
+            for (final ingredient in ingredients)
               SizedBox(
                 width: tileWidth,
                 child: IngredientTile(
-                  label: ing.label,
-                  icon: ing.icon,
-                  selected: selected.contains(ing.key),
-                  onTap: () => onToggle(ing.key),
+                  label: ingredient.label,
+                  icon: ingredient.icon,
+                  selected: selected.contains(ingredient.key),
+                  onTap: () => onToggle(ingredient.key),
                 ),
               ),
           ],

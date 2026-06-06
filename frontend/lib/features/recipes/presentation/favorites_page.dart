@@ -63,11 +63,11 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      for (final s in _segments) ...[
+                      for (final segment in _segments) ...[
                         FilterPill(
-                          label: s,
-                          selected: _segment == s,
-                          onTap: () => setState(() => _segment = s),
+                          label: segment,
+                          selected: _segment == segment,
+                          onTap: () => setState(() => _segment = segment),
                         ),
                         const SizedBox(width: AppSpacing.sm),
                       ],
@@ -83,13 +83,15 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
                 const SizedBox(height: AppSpacing.lg),
                 favoritesAsync.when(
                   data: (recipes) {
-                    final visible = recipes.where((r) {
+                    final visible = recipes.where((recipe) {
                       final matchesSegment =
                           _segment == 'Semua' ||
-                          r.tags.contains(_segment.toLowerCase());
+                          recipe.tags.contains(_segment.toLowerCase());
                       final matchesQuery =
                           _query.trim().isEmpty ||
-                          r.name.toLowerCase().contains(_query.toLowerCase());
+                          recipe.name.toLowerCase().contains(
+                            _query.toLowerCase(),
+                          );
                       return matchesSegment && matchesQuery;
                     }).toList();
 
@@ -108,7 +110,7 @@ class _FavoritesPageState extends ConsumerState<FavoritesPage> {
                   },
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
-                  error: (e, _) => Center(child: Text('Error: $e')),
+                  error: (error, _) => Center(child: Text('Error: $error')),
                 ),
               ],
             ),
@@ -141,21 +143,22 @@ class _SavedGrid extends StatelessWidget {
           spacing: gap,
           runSpacing: gap,
           children: [
-            for (final r in saved)
+            for (final recipe in saved)
               SizedBox(
                 width: colWidth,
                 child: RecipeCard.compact(
-                  title: r.name,
-                  priceText: '${fmt.format(_perServingPrice(r)).trim()}/porsi',
+                  title: recipe.name,
+                  priceText:
+                      '${fmt.format(_perServingPrice(recipe)).trim()}/porsi',
                   priceState: PriceState.affordable,
-                  imageUrl: r.imageUrl,
-                  timeText: '${r.cookTime} mnt',
+                  imageUrl: recipe.imageUrl,
+                  timeText: '${recipe.cookTime} mnt',
                   favorite: true,
-                  pedas: r.tags.contains('pedas'),
-                  onFavoriteToggle: () => onToggle(r.id),
+                  pedas: recipe.tags.contains('pedas'),
+                  onFavoriteToggle: () => onToggle(recipe.id),
                   onTap: () => Navigator.of(
                     context,
-                  ).pushNamed(RecipeDetailPage.route, arguments: r.id),
+                  ).pushNamed(RecipeDetailPage.route, arguments: recipe.id),
                 ),
               ),
           ],
@@ -166,6 +169,9 @@ class _SavedGrid extends StatelessWidget {
 }
 
 int _perServingPrice(Recipe recipe) {
-  if (recipe.porsi <= 0) return recipe.estPrice;
+  if (recipe.porsi <= 0) {
+    return recipe.estPrice;
+  }
+
   return (recipe.estPrice / recipe.porsi).round();
 }

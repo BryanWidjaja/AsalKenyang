@@ -7,8 +7,9 @@ import type {
 } from "../../schemas/spending.js";
 
 function currentMonth(): string {
-  const d = new Date();
-  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+  const now = new Date();
+
+  return `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
 }
 
 function monthRange(month: string): { start: Date; end: Date } {
@@ -43,18 +44,20 @@ export const spendingService = {
     userId: string,
     month: string | undefined,
   ): Promise<SpendingListDto> {
-    const m = month ?? currentMonth();
-    const { start, end } = monthRange(m);
-    const [entries, agg] = await Promise.all([
+    const resolvedMonth = month ?? currentMonth();
+    const { start, end } = monthRange(resolvedMonth);
+    const [entries, aggregate] = await Promise.all([
       spendingRepository.listByMonth(userId, start, end),
       spendingRepository.totalByMonth(userId, start, end),
     ]);
+
     return {
-      month: m,
-      total: agg._sum.amount ?? 0,
+      month: resolvedMonth,
+      total: aggregate._sum.amount ?? 0,
       entries: entries.map(toDto),
     };
   },
+
   async create(
     userId: string,
     input: CreateSpendingInput,
@@ -65,6 +68,7 @@ export const spendingService = {
       recipeId: input.recipeId ?? null,
       note: input.note ?? null,
     });
+
     return toDto(entry);
   },
 };

@@ -11,7 +11,9 @@ class RecipeRepository {
   List<Recipe>? _cachedRecipes;
 
   Future<List<Recipe>> getAllRecipes() async {
-    if (_cachedRecipes != null) return _cachedRecipes!;
+    if (_cachedRecipes != null) {
+      return _cachedRecipes!;
+    }
 
     final jsonString = await rootBundle.loadString('assets/data/recipes.json');
     final List<dynamic> jsonList = jsonDecode(jsonString);
@@ -26,7 +28,7 @@ class RecipeRepository {
   Future<Recipe?> getRecipeById(String id) async {
     final recipes = await getAllRecipes();
     try {
-      return recipes.firstWhere((r) => r.id == id);
+      return recipes.firstWhere((recipe) => recipe.id == id);
     } catch (_) {
       return null;
     }

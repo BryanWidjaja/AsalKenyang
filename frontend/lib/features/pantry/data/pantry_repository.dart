@@ -75,12 +75,12 @@ class PantryRepository {
     final entries = await _db.select(_db.pantryTable).get();
     return entries
         .map(
-          (e) => PantryItem(
-            id: e.id,
-            userId: e.userId,
-            bahanKey: e.bahanKey,
-            quantity: e.quantity,
-            createdAt: e.createdAt,
+          (entry) => PantryItem(
+            id: entry.id,
+            userId: entry.userId,
+            bahanKey: entry.bahanKey,
+            quantity: entry.quantity,
+            createdAt: entry.createdAt,
           ),
         )
         .toList();
@@ -108,25 +108,24 @@ class PantryRepository {
 
   Future<void> refreshItems() async {
     try {
-      if (await _hasPendingPantryOutbox()) return;
+      if (await _hasPendingPantryOutbox()) {
+        return;
+      }
 
       final remoteItems = await _remote.getItems();
       await setLocalItems(remoteItems);
-    } catch (_) {
-      // Offline, ignore
-    }
+    } catch (_) {}
   }
 
   Future<void> upsertPantryItem(String bahanKey, String quantity) async {
     final item = PantryItem(
       id: bahanKey,
-      userId: 'local', // will be overwritten by remote
+      userId: 'local',
       bahanKey: bahanKey,
       quantity: quantity,
       createdAt: DateTime.now(),
     );
 
-    // Optimistic
     await _db
         .into(_db.pantryTable)
         .insertOnConflictUpdate(
@@ -140,7 +139,6 @@ class PantryRepository {
           ),
         );
 
-    // Queue
     final allItems = await getLocalItems();
     final outboxId = await _queueOutbox('pantry', 'replace', {
       'items': allItems
@@ -148,7 +146,6 @@ class PantryRepository {
           .toList(),
     });
 
-    // Push in the background
     _enqueuePush(allItems, outboxId);
   }
 
@@ -157,10 +154,9 @@ class PantryRepository {
   }
 
   Future<void> deletePantryItem(String id) async {
-    // Optimistic
-    await (_db.delete(_db.pantryTable)..where((t) => t.id.equals(id))).go();
+    await (_db.delete(_db.pantryTable)..where((table) => table.id.equals(id)))
+        .go();
 
-    // Queue
     final allItems = await getLocalItems();
     final outboxId = await _queueOutbox('pantry', 'replace', {
       'items': allItems
@@ -168,7 +164,6 @@ class PantryRepository {
           .toList(),
     });
 
-    // Push in the background
     _enqueuePush(allItems, outboxId);
   }
 
@@ -181,14 +176,12 @@ class PantryRepository {
     try {
       await _remote.replaceItems(items);
       await _markPantryOutboxDoneThrough(outboxId);
-      // Don't overwrite local DB with server response — local is authoritative.
-      // The outbox + refreshItems() on next app start will reconcile.
     } catch (_) {}
   }
 
   Future<int> _queueOutbox(
     String entity,
-    String op,
+    String operation,
     Map<String, dynamic> payload,
   ) async {
     return _db
@@ -196,7 +189,7 @@ class PantryRepository {
         .insert(
           OutboxTableCompanion.insert(
             entity: entity,
-            operation: op,
+            operation: operation,
             payloadJson: jsonEncode(payload),
           ),
         );
@@ -206,10 +199,10 @@ class PantryRepository {
     final pending =
         await (_db.select(_db.outboxTable)
               ..where(
-                (t) =>
-                    t.entity.equals('pantry') &
-                    t.operation.equals('replace') &
-                    t.status.equals('pending'),
+                (table) =>
+                    table.entity.equals('pantry') &
+                    table.operation.equals('replace') &
+                    table.status.equals('pending'),
               )
               ..limit(1))
             .get();
@@ -218,11 +211,11 @@ class PantryRepository {
 
   Future<void> _markPantryOutboxDoneThrough(int outboxId) async {
     await (_db.update(_db.outboxTable)..where(
-          (t) =>
-              t.id.isSmallerOrEqualValue(outboxId) &
-              t.entity.equals('pantry') &
-              t.operation.equals('replace') &
-              t.status.equals('pending'),
+          (table) =>
+              table.id.isSmallerOrEqualValue(outboxId) &
+              table.entity.equals('pantry') &
+              table.operation.equals('replace') &
+              table.status.equals('pending'),
         ))
         .write(
           OutboxTableCompanion(

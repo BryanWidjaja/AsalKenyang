@@ -49,7 +49,9 @@ String normalizeIngredientKey(String key) {
 
 bool isFishIngredient(String key) {
   final normalized = normalizeIngredientKey(key);
-  if (normalized.isEmpty) return false;
+  if (normalized.isEmpty) {
+    return false;
+  }
 
   return _fishTerms.any((term) {
     return normalized == term ||
@@ -65,7 +67,9 @@ bool isGenericFishIngredient(String key) {
 
 bool isChiliIngredient(String key) {
   final normalized = normalizeIngredientKey(key);
-  if (normalized.isEmpty) return false;
+  if (normalized.isEmpty) {
+    return false;
+  }
 
   return _chiliTerms.any((term) {
     return normalized == term ||
@@ -77,7 +81,9 @@ bool isChiliIngredient(String key) {
 
 bool isRiceIngredient(String key) {
   final normalized = normalizeIngredientKey(key);
-  if (normalized.isEmpty) return false;
+  if (normalized.isEmpty) {
+    return false;
+  }
 
   return _riceTerms.any((term) {
     return normalized == term ||
@@ -91,7 +97,10 @@ bool ingredientKeysMatch(String availableKey, String requiredKey) {
   final available = normalizeIngredientKey(availableKey);
   final required = normalizeIngredientKey(requiredKey);
 
-  if (available == required) return true;
+  if (available == required) {
+    return true;
+  }
+
   if (isGenericFishIngredient(availableKey) && isFishIngredient(requiredKey)) {
     return true;
   }

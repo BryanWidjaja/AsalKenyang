@@ -74,9 +74,9 @@ class RecipeBrowsePage extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: SearchField(
-                        onChanged: (val) => ref
+                        onChanged: (value) => ref
                             .read(recipeSearchQueryProvider.notifier)
-                            .updateState(val),
+                            .updateState(value),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
@@ -94,14 +94,14 @@ class RecipeBrowsePage extends ConsumerWidget {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      for (final f in _filters) ...[
+                      for (final filterOption in _filters) ...[
                         FilterPill(
-                          label: f.label,
-                          icon: f.icon,
-                          selected: filter == f.label,
+                          label: filterOption.label,
+                          icon: filterOption.icon,
+                          selected: filter == filterOption.label,
                           onTap: () => ref
                               .read(recipeFilterProvider.notifier)
-                              .updateState(f.label),
+                              .updateState(filterOption.label),
                         ),
                         const SizedBox(width: AppSpacing.sm),
                       ],
@@ -117,7 +117,7 @@ class RecipeBrowsePage extends ConsumerWidget {
                   ),
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
-                  error: (e, _) => Center(child: Text('Error: $e')),
+                  error: (error, _) => Center(child: Text('Error: $error')),
                 ),
               ],
             ),
@@ -210,22 +210,23 @@ class _RecipeGrid extends ConsumerWidget {
           spacing: gap,
           runSpacing: gap,
           children: [
-            for (final r in recipes)
+            for (final recipe in recipes)
               SizedBox(
                 width: colWidth,
                 child: RecipeCard.compact(
-                  title: r.name,
-                  priceText: '${fmt.format(_perServingPrice(r)).trim()}/porsi',
-                  priceState: _priceStateFor(r.estPrice, remainingBudget),
-                  imageUrl: r.imageUrl,
-                  timeText: '${r.cookTime} mnt',
-                  pedas: r.tags.contains('pedas'),
-                  favorite: favoriteIds.contains(r.id),
+                  title: recipe.name,
+                  priceText:
+                      '${fmt.format(_perServingPrice(recipe)).trim()}/porsi',
+                  priceState: _priceStateFor(recipe.estPrice, remainingBudget),
+                  imageUrl: recipe.imageUrl,
+                  timeText: '${recipe.cookTime} mnt',
+                  pedas: recipe.tags.contains('pedas'),
+                  favorite: favoriteIds.contains(recipe.id),
                   onFavoriteToggle: () => ref
                       .read(favoritesControllerProvider.notifier)
-                      .toggleFavorite(r.id),
+                      .toggleFavorite(recipe.id),
                   onTap: () =>
-                      _openOrSelectRecipe(context, ref, r, selectForDate),
+                      _openOrSelectRecipe(context, ref, recipe, selectForDate),
                 ),
               ),
           ],
@@ -239,12 +240,19 @@ PriceState _priceStateFor(int price, int remainingBudget) {
   if (remainingBudget <= 0 || price <= remainingBudget) {
     return PriceState.affordable;
   }
-  if (price <= remainingBudget * 1.2) return PriceState.mid;
+
+  if (price <= remainingBudget * 1.2) {
+    return PriceState.mid;
+  }
+
   return PriceState.unaffordable;
 }
 
 int _perServingPrice(Recipe recipe) {
-  if (recipe.porsi <= 0) return recipe.estPrice;
+  if (recipe.porsi <= 0) {
+    return recipe.estPrice;
+  }
+
   return (recipe.estPrice / recipe.porsi).round();
 }
 
@@ -276,19 +284,29 @@ Future<void> _openOrSelectRecipe(
   }
 
   final waktu = await _showWaktuMakanSheet(context);
-  if (waktu == null) return;
+
+  if (waktu == null) {
+    return;
+  }
 
   try {
     await ref
         .read(planControllerProvider)
         .addMeal(selectForDate, recipe.id, waktu);
-    if (!context.mounted) return;
+
+    if (!context.mounted) {
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Berhasil menambahkan ke rencana!')),
     );
     Navigator.of(context).pop();
   } catch (error) {
-    if (!context.mounted) return;
+    if (!context.mounted) {
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Gagal menambahkan ke rencana: $error')),
     );

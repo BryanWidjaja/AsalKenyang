@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 
 @DataClassName('BudgetEntry')
 class BudgetTable extends Table {
-  TextColumn get id => text()(); // Server-assigned UUID, or local placeholder until sync
+  TextColumn get id => text()();
   TextColumn get userId => text()();
   IntColumn get totalBudget => integer()();
   BoolColumn get monthlyReset => boolean().withDefault(const Constant(true))();

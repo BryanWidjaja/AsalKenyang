@@ -46,10 +46,10 @@ List<GroceryAggregatedItem> aggregateGroceryItems(
         ? 0
         : (detail.recipe.estPrice / detail.recipe.bahan.length).round();
     for (final bahan in detail.recipe.bahan) {
-      final bKey = bahan.key;
+      final bahanKey = bahan.key;
       final price = bahan.harga > 0 ? bahan.harga : fallbackPrice;
       groupedBahan
-          .putIfAbsent(bKey, () => [])
+          .putIfAbsent(bahanKey, () => [])
           .add(
             _BahanNeed(
               name: bahan.nama,
@@ -62,7 +62,7 @@ List<GroceryAggregatedItem> aggregateGroceryItems(
 
   return groupedBahan.entries.map((entry) {
     final state = groceryStates.firstWhere(
-      (s) => s.bahanKey == entry.key,
+      (candidate) => candidate.bahanKey == entry.key,
       orElse: () => GroceryItemState(bahanKey: entry.key, isChecked: false),
     );
     final needs = entry.value;
@@ -110,35 +110,55 @@ class GroceryController {
     if (isChecked) {
       final items = _ref.read(groceryListProvider);
       final groceryItem = items
-          .where((i) => i.bahanKey == bahanKey)
+          .where((item) => item.bahanKey == bahanKey)
           .firstOrNull;
-      final qty = groceryItem?.quantity ?? '1';
+      final quantity = groceryItem?.quantity ?? '1';
 
       await _ref
           .read(pantryControllerProvider.notifier)
-          .addItem(bahanKey, quantity: qty);
+          .addItem(bahanKey, quantity: quantity);
     }
   }
 }
 
 String _shoppingQuantityLabel(String quantity, double? grams) {
   final trimmed = quantity.trim();
-  if (!_needsEstimatedQuantity(trimmed)) return trimmed;
+
+  if (!_needsEstimatedQuantity(trimmed)) {
+    return trimmed;
+  }
+
   final estimate = _gramQuantityLabel(grams);
   return estimate ?? (trimmed.isEmpty ? '1 item' : trimmed);
 }
 
 bool _needsEstimatedQuantity(String quantity) {
   final normalized = quantity.trim().toLowerCase();
-  if (normalized.isEmpty) return true;
-  if (normalized == 'secukupnya' || normalized == 'sesuai selera') return true;
-  if (normalized.contains('secukupnya')) return true;
-  if (normalized.contains('sesuai selera')) return true;
+
+  if (normalized.isEmpty) {
+    return true;
+  }
+
+  if (normalized == 'secukupnya' || normalized == 'sesuai selera') {
+    return true;
+  }
+
+  if (normalized.contains('secukupnya')) {
+    return true;
+  }
+
+  if (normalized.contains('sesuai selera')) {
+    return true;
+  }
+
   return !RegExp(r'\d').hasMatch(normalized);
 }
 
 String? _gramQuantityLabel(double? grams) {
-  if (grams == null || grams <= 0) return null;
+  if (grams == null || grams <= 0) {
+    return null;
+  }
+
   if (grams >= 1000) {
     final kg = grams / 1000;
     final amount = kg % 1 == 0
@@ -188,7 +208,9 @@ String _quantityLabel(List<String> quantities) {
 }
 
 _ParsedQuantity? _summedQuantity(List<String> quantities) {
-  if (quantities.isEmpty) return null;
+  if (quantities.isEmpty) {
+    return null;
+  }
 
   final parsed = <_ParsedQuantity>[];
   for (final quantity in quantities) {
@@ -196,16 +218,25 @@ _ParsedQuantity? _summedQuantity(List<String> quantities) {
       r'^\s*(\d+(?:[,.]\d+)?)\s*(.*)$',
       caseSensitive: false,
     ).firstMatch(quantity);
-    if (match == null) return null;
+
+    if (match == null) {
+      return null;
+    }
 
     final amount = double.tryParse(match.group(1)!.replaceAll(',', '.'));
     final unit = match.group(2)!.trim().toLowerCase();
-    if (amount == null || unit.isEmpty) return null;
+
+    if (amount == null || unit.isEmpty) {
+      return null;
+    }
+
     parsed.add(_ParsedQuantity(amount, unit));
   }
 
   final unit = parsed.first.unit;
-  if (parsed.any((item) => item.unit != unit)) return null;
+  if (parsed.any((item) => item.unit != unit)) {
+    return null;
+  }
 
   return _ParsedQuantity(
     parsed.fold<double>(0, (sum, item) => sum + item.amount),

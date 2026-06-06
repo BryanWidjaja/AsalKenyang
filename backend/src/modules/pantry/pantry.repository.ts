@@ -5,18 +5,20 @@ export const pantryRepository = {
     return prisma.pantryItem.findMany({ where: { userId } });
   },
   async upsert(userId: string, items: { bahanKey: string; quantity: string | null }[]) {
-    return prisma.$transaction(async (tx) => {
-      await tx.pantryItem.deleteMany({ where: { userId } });
+    return prisma.$transaction(async (transaction) => {
+      await transaction.pantryItem.deleteMany({ where: { userId } });
+
       if (items.length > 0) {
-        await tx.pantryItem.createMany({
-          data: items.map((i) => ({
+        await transaction.pantryItem.createMany({
+          data: items.map((item) => ({
             userId,
-            bahanKey: i.bahanKey,
-            quantity: i.quantity,
+            bahanKey: item.bahanKey,
+            quantity: item.quantity,
           })),
         });
       }
-      return tx.pantryItem.findMany({ where: { userId } });
+
+      return transaction.pantryItem.findMany({ where: { userId } });
     });
   },
 };

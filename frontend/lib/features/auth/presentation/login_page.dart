@@ -42,7 +42,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       return;
     }
     await ref.read(authControllerProvider.notifier).login(email, password);
-    if (!mounted) return;
+
+    if (!mounted) {
+      return;
+    }
+
     final state = ref.read(authControllerProvider);
     if (state.hasError) {
       _showSnack(authErrorMessage(state.error!));

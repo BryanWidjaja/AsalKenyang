@@ -15,7 +15,6 @@ class MatchedRecipe {
   final List<String> missingKeys;
 }
 
-/// Pure function to match recipes against pantry and budget.
 List<MatchedRecipe> matchRecipes({
   required List<Recipe> allRecipes,
   required List<String> pantryKeys,
@@ -40,66 +39,78 @@ List<MatchedRecipe> matchRecipes({
   for (final recipe in allRecipes) {
     if (selectedPantrySet.isNotEmpty &&
         !recipe.bahanKey.any(
-          (bKey) =>
-              selectedPantrySet.any((pKey) => ingredientKeysMatch(pKey, bKey)),
+          (bahanKey) => selectedPantrySet.any(
+            (pantryKey) => ingredientKeysMatch(pantryKey, bahanKey),
+          ),
         )) {
       continue;
     }
 
-    // 1. Budget check
     if (maxBudget != null && recipe.estPrice > maxBudget) {
       continue;
     }
 
-    // 1.5 Equipment check
     if (ownedEquipment != null) {
       final canCook = recipe.alat.every(
         (alat) => ownedEquipment.contains(alat),
       );
-      if (!canCook) continue;
+
+      if (!canCook) {
+        continue;
+      }
     }
 
-    // 2. Ingredients match
     final matched = <String>[];
     final missing = <String>[];
     final scoredKeys = recipe.bahanKey
-        .where((bKey) => !staples.contains(bKey))
+        .where((bahanKey) => !staples.contains(bahanKey))
         .toList(growable: false);
-    for (final bKey in recipe.bahanKey) {
-      if (pantrySet.any((pKey) => ingredientKeysMatch(pKey, bKey))) {
-        matched.add(bKey);
+
+    for (final bahanKey in recipe.bahanKey) {
+      if (pantrySet.any((pantryKey) => ingredientKeysMatch(pantryKey, bahanKey))) {
+        matched.add(bahanKey);
       } else {
-        missing.add(bKey);
+        missing.add(bahanKey);
       }
     }
 
     final scoredMatched = scoredKeys
         .where(
-          (bKey) =>
-              selectedPantrySet.any((pKey) => ingredientKeysMatch(pKey, bKey)),
+          (bahanKey) => selectedPantrySet.any(
+            (pantryKey) => ingredientKeysMatch(pantryKey, bahanKey),
+          ),
         )
         .length;
     final total = scoredKeys.length;
-    final pct = total == 0 ? 1.0 : (scoredMatched / total);
+    final percentage = total == 0 ? 1.0 : (scoredMatched / total);
 
     matchedList.add(
       MatchedRecipe(
         recipe: recipe,
-        matchPercentage: pct,
+        matchPercentage: percentage,
         matchedKeys: matched,
         missingKeys: missing,
       ),
     );
   }
 
-  // 3. Sort by match percentage
   if (sortDesc) {
-    matchedList.sort((a, b) {
-      final byMatch = b.matchPercentage.compareTo(a.matchPercentage);
-      if (byMatch != 0) return byMatch;
-      final byMissing = a.missingKeys.length.compareTo(b.missingKeys.length);
-      if (byMissing != 0) return byMissing;
-      return a.recipe.estPrice.compareTo(b.recipe.estPrice);
+    matchedList.sort((first, second) {
+      final byMatch = second.matchPercentage.compareTo(first.matchPercentage);
+
+      if (byMatch != 0) {
+        return byMatch;
+      }
+
+      final byMissing = first.missingKeys.length.compareTo(
+        second.missingKeys.length,
+      );
+
+      if (byMissing != 0) {
+        return byMissing;
+      }
+
+      return first.recipe.estPrice.compareTo(second.recipe.estPrice);
     });
   }
 

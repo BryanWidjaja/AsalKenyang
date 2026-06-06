@@ -26,13 +26,16 @@ class FavoritesController
   }
 
   bool isFavorited(String recipeId) {
-    return state.value?.any((f) => f.recipeId == recipeId) ?? false;
+    return state.value?.any((favorite) => favorite.recipeId == recipeId) ??
+        false;
   }
 
   Future<void> toggleFavorite(String recipeId) async {
     final repo = ref.read(favoritesRepositoryProvider);
     final currentFavorites = state.value ?? [];
-    final isFavorited = currentFavorites.any((f) => f.recipeId == recipeId);
+    final isFavorited = currentFavorites.any(
+      (favorite) => favorite.recipeId == recipeId,
+    );
 
     try {
       if (isFavorited) {
@@ -40,8 +43,8 @@ class FavoritesController
       } else {
         await repo.addFavorite(recipeId);
       }
-    } catch (e, stack) {
-      state = AsyncValue.error(e, stack);
+    } catch (error, stack) {
+      state = AsyncValue.error(error, stack);
     }
   }
 }

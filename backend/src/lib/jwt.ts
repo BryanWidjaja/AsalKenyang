@@ -12,6 +12,10 @@ export function signAccessToken(userId: string): string {
 
 export function verifyAccessToken(token: string): string {
   const payload = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
-  if (typeof payload.sub !== "string") throw new Error("Token missing subject");
+
+  if (typeof payload.sub !== "string") {
+    throw new Error("Token missing subject");
+  }
+
   return payload.sub;
 }

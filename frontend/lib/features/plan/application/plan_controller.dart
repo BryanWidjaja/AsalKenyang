@@ -21,7 +21,7 @@ final planDetailsProvider = Provider<List<PlannedMealDetail>>((ref) {
 
   return meals.map((meal) {
     final recipe = recipes.firstWhere(
-      (r) => r.id == meal.recipeId,
+      (candidate) => candidate.id == meal.recipeId,
       orElse: () => const Recipe(
         id: '',
         name: 'Unknown Recipe',

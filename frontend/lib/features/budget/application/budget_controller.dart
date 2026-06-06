@@ -15,17 +15,22 @@ class BudgetState {
   final bool isLoading;
 
   int get totalSpendings {
-    // In a real app, filter by current month/startDay. For MVP, sum all.
     return spendings.fold(0, (sum, item) => sum + item.amount);
   }
 
   int get remainingBudget {
-    if (wallet == null) return 0;
+    if (wallet == null) {
+      return 0;
+    }
+
     return wallet!.totalBudget - totalSpendings;
   }
 
   double get remainingPercent {
-    if (wallet == null || wallet!.totalBudget == 0) return 0;
+    if (wallet == null || wallet!.totalBudget == 0) {
+      return 0;
+    }
+
     return (remainingBudget / wallet!.totalBudget).clamp(0, 1).toDouble();
   }
 

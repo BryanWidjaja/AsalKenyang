@@ -33,10 +33,12 @@ class _SplashPageState extends ConsumerState<SplashPage> {
       repo.hasSession(),
       Future<void>.delayed(const Duration(milliseconds: 800)),
     ]);
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
+
     final hasSession = results[0] as bool;
     if (hasSession) {
-      // Fire and forget sync
       ref.read(syncEngineProvider).syncOutbox();
     }
     Navigator.of(context).pushReplacementNamed(

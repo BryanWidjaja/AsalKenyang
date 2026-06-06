@@ -14,14 +14,14 @@ export const mealPlanRepository = {
     });
   },
   async upsert(userId: string, weekStart: string, entries: EntryData[]) {
-    return prisma.$transaction(async (tx) => {
-      const existing = await tx.mealPlan.findUnique({
+    return prisma.$transaction(async (transaction) => {
+      const existing = await transaction.mealPlan.findUnique({
         where: { userId_weekStart: { userId, weekStart } },
       });
 
       if (existing) {
-        await tx.mealPlanEntry.deleteMany({ where: { planId: existing.id } });
-        return tx.mealPlan.update({
+        await transaction.mealPlanEntry.deleteMany({ where: { planId: existing.id } });
+        return transaction.mealPlan.update({
           where: { id: existing.id },
           data: {
             entries: { create: entries },
@@ -30,7 +30,7 @@ export const mealPlanRepository = {
         });
       }
 
-      return tx.mealPlan.create({
+      return transaction.mealPlan.create({
         data: {
           userId,
           weekStart,

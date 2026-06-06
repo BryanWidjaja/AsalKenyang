@@ -63,8 +63,8 @@ class DayPlanCard extends StatelessWidget {
             if (recipes.isEmpty)
               _AddSlot(label: 'Pilih resep', onAdd: onAdd)
             else ...[
-              for (var i = 0; i < recipes.length; i++) ...[
-                recipes[i],
+              for (var index = 0; index < recipes.length; index++) ...[
+                recipes[index],
                 const SizedBox(height: AppSpacing.sm),
               ],
               _AddSlot(label: 'Tambah resep', onAdd: onAdd),

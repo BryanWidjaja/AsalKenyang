@@ -40,8 +40,8 @@ class SyncEngine {
 
   Future<void> syncOutbox() async {
     final pending = await (_db.select(_db.outboxTable)
-          ..where((t) => t.status.equals('pending'))
-          ..orderBy([(t) => drift.OrderingTerm(expression: t.createdAt)]))
+          ..where((table) => table.status.equals('pending'))
+          ..orderBy([(table) => drift.OrderingTerm(expression: table.createdAt)]))
         .get();
 
     for (final entry in pending) {
@@ -59,8 +59,8 @@ class SyncEngine {
         } else if (entry.entity == 'pantry') {
           if (payload['items'] is List) {
             final itemsList = payload['items'] as List;
-            final items = itemsList.map((e) {
-              final map = e as Map<String, dynamic>;
+            final items = itemsList.map((rawItem) {
+              final map = rawItem as Map<String, dynamic>;
               return PantryItem(
                 id: map['bahanKey'] as String,
                 userId: 'local',
@@ -89,11 +89,9 @@ class SyncEngine {
           await _favoritesRemote.removeFavorite(payload['recipeId'] as String);
         }
 
-        // Mark as done
-        await (_db.update(_db.outboxTable)..where((t) => t.id.equals(entry.id)))
+        await (_db.update(_db.outboxTable)..where((table) => table.id.equals(entry.id)))
             .write(OutboxTableCompanion(status: const drift.Value('done'), updatedAt: drift.Value(DateTime.now())));
-      } catch (e) {
-        // Stop on first error to preserve order, retry next time
+      } catch (error) {
         break;
       }
     }
@@ -102,9 +100,9 @@ class SyncEngine {
   Future<void> _syncPlanWeek(DateTime date) async {
     final weekStart = _startOfWeek(date);
     final rows = await _db.select(_db.planTable).get();
-    
+
     final uniqueEntries = <String, Map<String, Object?>>{};
-    for (final row in rows.where((r) => _startOfWeek(r.date) == weekStart)) {
+    for (final row in rows.where((row) => _startOfWeek(row.date) == weekStart)) {
       final dayIndex = row.date.difference(weekStart).inDays;
       final key = '${dayIndex}_${row.mealSlot}';
       uniqueEntries[key] = {

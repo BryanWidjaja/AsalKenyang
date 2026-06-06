@@ -48,9 +48,19 @@ final authControllerProvider = AsyncNotifierProvider<AuthController, User?>(
 String authErrorMessage(Object error) {
   if (error is DioException) {
     final code = error.response?.statusCode;
-    if (code == 401) return 'Email atau kata sandi salah.';
-    if (code == 409) return 'Email sudah terdaftar.';
-    if (code == 400) return 'Periksa kembali data yang dimasukkan.';
+
+    if (code == 401) {
+      return 'Email atau kata sandi salah.';
+    }
+
+    if (code == 409) {
+      return 'Email sudah terdaftar.';
+    }
+
+    if (code == 400) {
+      return 'Periksa kembali data yang dimasukkan.';
+    }
+
     if (error.type == DioExceptionType.connectionError ||
         error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.receiveTimeout ||
@@ -58,5 +68,6 @@ String authErrorMessage(Object error) {
       return 'Tidak dapat terhubung ke server.';
     }
   }
+
   return 'Terjadi kesalahan. Coba lagi.';
 }

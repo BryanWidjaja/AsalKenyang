@@ -30,18 +30,17 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-    onCreate: (m) => m.createAll(),
-    onUpgrade: (m, from, to) async {
-      // v3 → v4: add quantity column to pantry_table
+    onCreate: (migrator) => migrator.createAll(),
+    onUpgrade: (migrator, from, to) async {
       if (from < 4) {
-        await m.addColumn(pantryTable, pantryTable.quantity);
+        await migrator.addColumn(pantryTable, pantryTable.quantity);
       }
-      // v4 → v5: add mealSlot column to plan_table
+
       if (from < 5) {
-        await m.addColumn(planTable, planTable.mealSlot);
+        await migrator.addColumn(planTable, planTable.mealSlot);
       }
-      // Also create any tables that might be missing entirely
-      await m.createAll();
+
+      await migrator.createAll();
     },
     beforeOpen: (details) async {
       await createMigrator().createAll();
@@ -58,7 +57,7 @@ LazyDatabase _openConnection() {
         driftWorker: Uri.parse('drift_worker.js'),
       ),
       native: const DriftNativeOptions(
-        databaseDirectory: null, // Let drift_flutter choose
+        databaseDirectory: null,
       ),
     );
   });

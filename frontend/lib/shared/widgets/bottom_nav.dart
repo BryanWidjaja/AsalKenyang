@@ -80,11 +80,11 @@ class BottomNav extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    for (var i = 0; i < destinations.length; i++)
+                    for (var index = 0; index < destinations.length; index++)
                       _NavItem(
-                        destination: destinations[i],
-                        active: i == currentIndex,
-                        onTap: () => onTap(i),
+                        destination: destinations[index],
+                        active: index == currentIndex,
+                        onTap: () => onTap(index),
                       ),
                   ],
                 ),

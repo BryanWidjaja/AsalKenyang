@@ -30,16 +30,20 @@ export const authService = {
     if (await authRepository.findByEmail(email)) {
       throw conflict("Email already registered");
     }
+
     const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
     const user = await authRepository.createUser(email, passwordHash);
+
     return toAuthResponse(user);
   },
 
   async login({ email, password }: LoginInput): Promise<AuthResponse> {
     const user = await authRepository.findByEmail(email);
+
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
       throw unauthorized("Invalid email or password");
     }
+
     return toAuthResponse(user);
   },
 };

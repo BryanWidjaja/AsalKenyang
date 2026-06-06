@@ -209,7 +209,10 @@ class _CalendarPanel extends StatelessWidget {
         ),
         calendarBuilders: CalendarBuilders<PlannedMealDetail>(
           markerBuilder: (context, day, events) {
-            if (events.isEmpty) return null;
+            if (events.isEmpty) {
+              return null;
+            }
+
             return Positioned(
               bottom: 4,
               child: Container(
@@ -314,7 +317,10 @@ String _dateLabel(DateTime date) {
   return '${date.day} ${months[date.month - 1]}';
 }
 
-String _capitalize(String s) {
-  if (s.isEmpty) return s;
-  return s[0].toUpperCase() + s.substring(1);
+String _capitalize(String text) {
+  if (text.isEmpty) {
+    return text;
+  }
+
+  return text[0].toUpperCase() + text.substring(1);
 }

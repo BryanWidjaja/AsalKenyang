@@ -72,7 +72,8 @@ class MatchResultRow extends StatelessWidget {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Text('Kurang:', style: AppTypography.caption),
-                          for (final m in shown) MissingChip(label: m),
+                          for (final missing in shown)
+                            MissingChip(label: missing),
                           if (overflow > 0)
                             MissingChip(label: '+$overflow lagi'),
                         ],

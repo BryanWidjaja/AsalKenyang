@@ -18,8 +18,14 @@ class MatchRing extends StatelessWidget {
   final double stroke;
 
   Color _tierColor(AppStateColors state) {
-    if (percent >= 0.8) return state.matchHigh;
-    if (percent >= 0.5) return state.matchMid;
+    if (percent >= 0.8) {
+      return state.matchHigh;
+    }
+
+    if (percent >= 0.5) {
+      return state.matchMid;
+    }
+
     return state.matchLow;
   }
 

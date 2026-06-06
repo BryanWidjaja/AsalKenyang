@@ -9,12 +9,13 @@ const envSchema = z.object({
 });
 
 const parsed = envSchema.safeParse(process.env);
+
 if (!parsed.success) {
-  console.error("❌ Invalid environment variables:\n", parsed.error.flatten().fieldErrors);
+  console.error("Invalid environment variables:\n", parsed.error.flatten().fieldErrors);
   process.exit(1);
 }
 
 export const env = {
   ...parsed.data,
-  corsOrigins: parsed.data.CORS_ORIGINS.split(",").map((o) => o.trim()),
+  corsOrigins: parsed.data.CORS_ORIGINS.split(",").map((origin) => origin.trim()),
 };

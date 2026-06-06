@@ -7,7 +7,11 @@ class BudgetRemoteSource {
 
   Future<Wallet?> getWallet() async {
     final res = await _dio.get('/budget');
-    if (res.data == null) return null;
+
+    if (res.data == null) {
+      return null;
+    }
+
     return _walletFromBudgetDto(Map<String, dynamic>.from(res.data as Map));
   }
 
@@ -23,7 +27,8 @@ class BudgetRemoteSource {
     final entries = data['entries'] as List? ?? const [];
     return entries
         .map(
-          (e) => _spendingFromDto(Map<String, dynamic>.from(e as Map), month),
+          (entry) =>
+              _spendingFromDto(Map<String, dynamic>.from(entry as Map), month),
         )
         .toList();
   }

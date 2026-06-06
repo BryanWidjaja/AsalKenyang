@@ -6,19 +6,20 @@ import type {
 } from "../../schemas/meal-plan.js";
 
 function currentWeekStart(): string {
-  const d = new Date();
-  const day = d.getUTCDay();
+  const now = new Date();
+  const day = now.getUTCDay();
   const diff = day === 0 ? -6 : 1 - day;
-  const monday = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + diff));
+  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + diff));
+
   return monday.toISOString().slice(0, 10);
 }
 
-function toEntryDto(e: {
+function toEntryDto(entry: {
   dayIndex: number;
   mealSlot: string;
   recipeId: string;
 }): MealPlanEntryDto {
-  return { dayIndex: e.dayIndex, mealSlot: e.mealSlot as MealPlanEntryDto["mealSlot"], recipeId: e.recipeId };
+  return { dayIndex: entry.dayIndex, mealSlot: entry.mealSlot as MealPlanEntryDto["mealSlot"], recipeId: entry.recipeId };
 }
 
 function toDto(plan: {
@@ -35,13 +36,16 @@ function toDto(plan: {
 
 export const mealPlanService = {
   async get(userId: string, weekStart: string | undefined): Promise<MealPlanDto | null> {
-    const ws = weekStart ?? currentWeekStart();
-    const row = await mealPlanRepository.find(userId, ws);
+    const resolvedWeekStart = weekStart ?? currentWeekStart();
+    const row = await mealPlanRepository.find(userId, resolvedWeekStart);
+
     return row ? toDto(row) : null;
   },
+
   async replace(userId: string, input: PutMealPlanInput): Promise<MealPlanDto> {
-    const ws = input.weekStart ?? currentWeekStart();
-    const row = await mealPlanRepository.upsert(userId, ws, input.entries);
+    const resolvedWeekStart = input.weekStart ?? currentWeekStart();
+    const row = await mealPlanRepository.upsert(userId, resolvedWeekStart, input.entries);
+
     return toDto(row);
   },
 };

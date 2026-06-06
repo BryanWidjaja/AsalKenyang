@@ -23,14 +23,12 @@ final pantryControllerProvider =
     NotifierProvider<PantryController, PantryState>(PantryController.new);
 
 class PantryController extends Notifier<PantryState> {
-  /// Bumped on every user mutation. Prevents background refreshes from
-  /// clobbering local changes that haven't been pushed yet.
-  int _gen = 0;
+  int _generation = 0;
 
   @override
   PantryState build() {
     debugPrint('[Pantry] build() called');
-    _gen = 0;
+    _generation = 0;
     Future.microtask(() async {
       await _initialLoad();
     });
@@ -40,13 +38,11 @@ class PantryController extends Notifier<PantryState> {
   Future<void> _initialLoad() async {
     final repository = ref.read(pantryRepositoryProvider);
 
-    // 1. Show local items immediately
     final localItems = await repository.getLocalItems();
     state = state.copyWith(items: localItems, isLoading: false);
     debugPrint('[Pantry] loaded ${localItems.length} local items');
 
-    // 2. Try to refresh from server — but guard with _gen
-    final genBefore = _gen;
+    final generationBefore = _generation;
     try {
       await repository.refreshItems();
     } catch (_) {
@@ -54,8 +50,7 @@ class PantryController extends Notifier<PantryState> {
       return;
     }
 
-    // Only overwrite state if no user mutations happened while waiting
-    if (_gen != genBefore) {
+    if (_generation != generationBefore) {
       debugPrint('[Pantry] skipping server refresh — user mutated during load');
       return;
     }
@@ -66,44 +61,40 @@ class PantryController extends Notifier<PantryState> {
   }
 
   Future<void> addItem(String bahanKey, {String? quantity}) async {
-    _gen++;
-    debugPrint('[Pantry] addItem($bahanKey) gen=$_gen');
+    _generation++;
+    debugPrint('[Pantry] addItem($bahanKey) gen=$_generation');
 
-    // Skip if already in the list
-    if (state.items.any((e) => e.bahanKey == bahanKey)) {
+    if (state.items.any((item) => item.bahanKey == bahanKey)) {
       debugPrint('[Pantry] addItem: already exists, skipping');
       return;
     }
 
-    final qtyToUse = quantity ?? defaultQuantityForIngredient(bahanKey);
+    final quantityToUse = quantity ?? defaultQuantityForIngredient(bahanKey);
 
-    // Optimistic in-memory update
     final newItem = PantryItem(
       id: bahanKey,
       userId: 'local',
       bahanKey: bahanKey,
-      quantity: qtyToUse,
+      quantity: quantityToUse,
       createdAt: DateTime.now(),
     );
     state = state.copyWith(items: [...state.items, newItem]);
     debugPrint('[Pantry] addItem: state now has ${state.items.length} items');
 
-    // Persist — don't re-read from DB afterwards
     try {
       final repository = ref.read(pantryRepositoryProvider);
-      await repository.addPantryItem(bahanKey, quantity: qtyToUse);
+      await repository.addPantryItem(bahanKey, quantity: quantityToUse);
       debugPrint('[Pantry] addItem: DB write OK');
-    } catch (e) {
-      debugPrint('[Pantry] addItem: DB FAILED $e');
-      // Revert
+    } catch (error) {
+      debugPrint('[Pantry] addItem: DB FAILED $error');
       state = state.copyWith(
-        items: state.items.where((i) => i.bahanKey != bahanKey).toList(),
+        items: state.items.where((item) => item.bahanKey != bahanKey).toList(),
       );
     }
   }
 
   Future<void> updateQuantity(String bahanKey, String quantity) async {
-    _gen++;
+    _generation++;
     debugPrint('[Pantry] updateQuantity($bahanKey, $quantity)');
 
     final updated = state.items.map((item) {
@@ -123,8 +114,8 @@ class PantryController extends Notifier<PantryState> {
     try {
       final repository = ref.read(pantryRepositoryProvider);
       await repository.upsertPantryItem(bahanKey, quantity);
-    } catch (e) {
-      debugPrint('[Pantry] updateQuantity FAILED: $e');
+    } catch (error) {
+      debugPrint('[Pantry] updateQuantity FAILED: $error');
       final repository = ref.read(pantryRepositoryProvider);
       final dbItems = await repository.getLocalItems();
       state = state.copyWith(items: dbItems);
@@ -132,18 +123,20 @@ class PantryController extends Notifier<PantryState> {
   }
 
   Future<void> removeItem(String bahanKey) async {
-    _gen++;
-    debugPrint('[Pantry] removeItem($bahanKey) gen=$_gen');
+    _generation++;
+    debugPrint('[Pantry] removeItem($bahanKey) gen=$_generation');
 
-    final filtered = state.items.where((e) => e.bahanKey != bahanKey).toList();
+    final filtered = state.items
+        .where((item) => item.bahanKey != bahanKey)
+        .toList();
     state = state.copyWith(items: filtered);
     debugPrint('[Pantry] removeItem: state now has ${filtered.length} items');
 
     try {
       final repository = ref.read(pantryRepositoryProvider);
       await repository.deletePantryItem(bahanKey);
-    } catch (e) {
-      debugPrint('[Pantry] removeItem FAILED: $e');
+    } catch (error) {
+      debugPrint('[Pantry] removeItem FAILED: $error');
       final repository = ref.read(pantryRepositoryProvider);
       final dbItems = await repository.getLocalItems();
       state = state.copyWith(items: dbItems);

@@ -123,11 +123,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                for (final s in budgetState.spendings.take(3)) ...[
+                for (final spending in budgetState.spendings.take(3)) ...[
                   SpendingHistoryRow(
-                    title: s.title,
-                    subtitle: DateFormat('dd MMM yyyy').format(s.date),
-                    amount: '- ${fmt.format(s.amount)}',
+                    title: spending.title,
+                    subtitle: DateFormat('dd MMM yyyy').format(spending.date),
+                    amount: '- ${fmt.format(spending.amount)}',
                     icon: Icons.receipt_long_rounded,
                   ),
                   const SizedBox(height: AppSpacing.md),
@@ -136,7 +136,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 TextButton(
                   onPressed: () async {
                     await ref.read(authControllerProvider.notifier).logout();
-                    if (!context.mounted) return;
+                    if (!context.mounted) {
+                      return;
+                    }
                     Navigator.of(
                       context,
                     ).pushNamedAndRemoveUntil(LoginPage.route, (_) => false);
@@ -201,7 +203,9 @@ void _showBudgetDialog(BuildContext context, WidgetRef ref, int currentBudget) {
                 await ref
                     .read(budgetControllerProvider.notifier)
                     .updateBudget(value);
-                if (ctx.mounted) Navigator.pop(ctx);
+                if (ctx.mounted) {
+                  Navigator.pop(ctx);
+                }
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -210,7 +214,9 @@ void _showBudgetDialog(BuildContext context, WidgetRef ref, int currentBudget) {
                   );
                 }
               } catch (_) {
-                if (!context.mounted) return;
+                if (!context.mounted) {
+                  return;
+                }
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Gagal menyimpan anggaran. Coba lagi.'),
@@ -237,7 +243,10 @@ class _RupiahInputFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     final digits = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
-    if (digits.isEmpty) return const TextEditingValue();
+
+    if (digits.isEmpty) {
+      return const TextEditingValue();
+    }
 
     final number = int.parse(digits);
     final formatted = formatInt(number);

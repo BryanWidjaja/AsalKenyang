@@ -19,7 +19,10 @@ class AppImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final source = imageUrl?.trim();
-    if (source == null || source.isEmpty) return _placeholder();
+
+    if (source == null || source.isEmpty) {
+      return _placeholder();
+    }
 
     if (_isAssetPath(source)) {
       return Image.asset(source, fit: fit, errorBuilder: _errorBuilder);

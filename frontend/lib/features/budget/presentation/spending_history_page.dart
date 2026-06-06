@@ -70,14 +70,14 @@ class SpendingHistoryPage extends ConsumerWidget {
                     padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                     child: Text('Belum ada riwayat belanja.', textAlign: TextAlign.center),
                   ),
-                for (var i = 0; i < budgetState.spendings.length; i++) ...[
+                for (var index = 0; index < budgetState.spendings.length; index++) ...[
                   SpendingHistoryRow(
-                    title: budgetState.spendings[i].title,
-                    subtitle: DateFormat('dd MMM yyyy').format(budgetState.spendings[i].date),
-                    amount: '- ${fmt.format(budgetState.spendings[i].amount)}',
+                    title: budgetState.spendings[index].title,
+                    subtitle: DateFormat('dd MMM yyyy').format(budgetState.spendings[index].date),
+                    amount: '- ${fmt.format(budgetState.spendings[index].amount)}',
                     icon: Icons.receipt_long_rounded,
                   ),
-                  if (i != budgetState.spendings.length - 1)
+                  if (index != budgetState.spendings.length - 1)
                     const SizedBox(height: AppSpacing.md),
                 ],
               ],

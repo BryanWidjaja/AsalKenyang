@@ -30,10 +30,10 @@ class NotificationsPage extends ConsumerWidget {
     };
 
     final todayMeals = allMeals.where((meal) {
-      final d = meal.meal.date;
-      return d.year == today.year &&
-          d.month == today.month &&
-          d.day == today.day;
+      final date = meal.meal.date;
+      return date.year == today.year &&
+          date.month == today.month &&
+          date.day == today.day;
     }).toList();
 
     final todayGroceryItems = aggregateGroceryItems(todayMeals, groceryStates);
@@ -62,7 +62,6 @@ class NotificationsPage extends ConsumerWidget {
             vertical: AppSpacing.md,
           ),
           children: [
-            // ── Today's Meals ────────────────────────────────
             _SectionHeader(
               icon: Icons.restaurant_rounded,
               title: 'Menu Hari Ini',
@@ -89,7 +88,6 @@ class NotificationsPage extends ConsumerWidget {
 
             const SizedBox(height: AppSpacing.lg),
 
-            // ── Shopping Reminder ────────────────────────────
             _SectionHeader(
               icon: Icons.shopping_cart_rounded,
               title: 'Perlu Dibeli',
@@ -114,13 +112,13 @@ class NotificationsPage extends ConsumerWidget {
                 ),
                 child: Column(
                   children: [
-                    for (int i = 0; i < toBuy.length; i++) ...[
+                    for (var index = 0; index < toBuy.length; index++) ...[
                       _GroceryRow(
-                        name: toBuy[i].name,
-                        quantity: toBuy[i].quantity,
-                        price: fmt.format(toBuy[i].price),
+                        name: toBuy[index].name,
+                        quantity: toBuy[index].quantity,
+                        price: fmt.format(toBuy[index].price),
                       ),
-                      if (i < toBuy.length - 1)
+                      if (index < toBuy.length - 1)
                         Divider(
                           height: 1,
                           indent: AppSpacing.edge,
@@ -144,13 +142,21 @@ bool _hasEnoughPantryQuantity(
   GroceryAggregatedItem item,
   Map<String, String?> pantryQuantities,
 ) {
-  if (!pantryQuantities.containsKey(item.bahanKey)) return false;
+  if (!pantryQuantities.containsKey(item.bahanKey)) {
+    return false;
+  }
 
   final pantryQuantity = pantryQuantities[item.bahanKey];
   final pantryParsed = _parseQuantity(pantryQuantity ?? '1');
   final neededParsed = _parseQuantity(item.quantity);
-  if (pantryParsed == null || neededParsed == null) return true;
-  if (pantryParsed.unit != neededParsed.unit) return true;
+
+  if (pantryParsed == null || neededParsed == null) {
+    return true;
+  }
+
+  if (pantryParsed.unit != neededParsed.unit) {
+    return true;
+  }
 
   return pantryParsed.amount >= neededParsed.amount;
 }
@@ -160,10 +166,16 @@ _ParsedQuantity? _parseQuantity(String quantity) {
     r'^\s*(\d+(?:[,.]\d+)?)\s*(.*)$',
     caseSensitive: false,
   ).firstMatch(quantity);
-  if (match == null) return null;
+
+  if (match == null) {
+    return null;
+  }
 
   final amount = double.tryParse(match.group(1)!.replaceAll(',', '.'));
-  if (amount == null) return null;
+
+  if (amount == null) {
+    return null;
+  }
 
   return _ParsedQuantity(amount, match.group(2)!.trim().toLowerCase());
 }
@@ -193,8 +205,6 @@ String _formatIndonesianDate(DateTime date) {
   ];
   return '${days[date.weekday - 1]}, ${date.day} ${months[date.month - 1]} ${date.year}';
 }
-
-// ─── Section Header ──────────────────────────────────────────────────────────
 
 class _SectionHeader extends StatelessWidget {
   const _SectionHeader({
@@ -236,8 +246,6 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-// ─── Empty State Card ────────────────────────────────────────────────────────
-
 class _EmptyCard extends StatelessWidget {
   const _EmptyCard({required this.icon, required this.message});
 
@@ -273,8 +281,6 @@ class _EmptyCard extends StatelessWidget {
     );
   }
 }
-
-// ─── Meal Card ───────────────────────────────────────────────────────────────
 
 class _MealCard extends StatelessWidget {
   const _MealCard({
@@ -351,8 +357,6 @@ class _MealCard extends StatelessWidget {
   }
 }
 
-// ─── Info Chip ───────────────────────────────────────────────────────────────
-
 class _InfoChip extends StatelessWidget {
   const _InfoChip({required this.icon, required this.label});
 
@@ -371,8 +375,6 @@ class _InfoChip extends StatelessWidget {
     );
   }
 }
-
-// ─── Grocery Row ─────────────────────────────────────────────────────────────
 
 class _GroceryRow extends StatelessWidget {
   const _GroceryRow({

@@ -27,13 +27,18 @@ class PlanRepository {
 
   Future<void> addMeal(PlannedMeal meal) async {
     await _db.transaction(() async {
-      // Enforce unique slot per day locally
-      final existing = await (_db.select(_db.planTable)
-            ..where((t) => t.date.equals(meal.date) & t.mealSlot.equals(meal.mealSlot)))
-          .get();
-          
-      for (final e in existing) {
-        await (_db.delete(_db.planTable)..where((t) => t.id.equals(e.id))).go();
+      final existing =
+          await (_db.select(_db.planTable)..where(
+                (table) =>
+                    table.date.equals(meal.date) &
+                    table.mealSlot.equals(meal.mealSlot),
+              ))
+              .get();
+
+      for (final entry in existing) {
+        await (_db.delete(
+          _db.planTable,
+        )..where((table) => table.id.equals(entry.id))).go();
       }
 
       await _db.into(_db.planTable).insert(
@@ -63,10 +68,13 @@ class PlanRepository {
 
   Future<void> removeMeal(String id) async {
     await _db.transaction(() async {
-      final existing = await (_db.select(_db.planTable)
-            ..where((t) => t.id.equals(id)))
-          .getSingleOrNull();
-      await (_db.delete(_db.planTable)..where((t) => t.id.equals(id))).go();
+      final existing =
+          await (_db.select(_db.planTable)
+                ..where((table) => table.id.equals(id)))
+              .getSingleOrNull();
+      await (_db.delete(
+        _db.planTable,
+      )..where((table) => table.id.equals(id))).go();
 
       await _db.into(_db.outboxTable).insert(
         OutboxTableCompanion.insert(

@@ -102,38 +102,89 @@ const ingredientCatalog = <IngredientDef>[
 ];
 
 IngredientDef? findIngredientByKey(String key) {
-  for (final i in ingredientCatalog) {
-    if (i.key == key) return i;
+  for (final ingredient in ingredientCatalog) {
+    if (ingredient.key == key) {
+      return ingredient;
+    }
   }
+
   return null;
 }
 
 String defaultQuantityForIngredient(String key) {
-  final def = findIngredientByKey(key);
-  if (def != null) return def.defaultQuantity;
+  final definition = findIngredientByKey(key);
+
+  if (definition != null) {
+    return definition.defaultQuantity;
+  }
 
   final lower = key.toLowerCase();
-  if (lower.contains('telur')) return '1 butir';
-  if (isFishIngredient(key)) return '1 ekor';
-  if (lower.contains('ayam')) return '1 potong';
-  if (lower.contains('tahu')) return '1 buah';
-  if (lower.contains('tempe')) return '1 papan';
+
+  if (lower.contains('telur')) {
+    return '1 butir';
+  }
+
+  if (isFishIngredient(key)) {
+    return '1 ekor';
+  }
+
+  if (lower.contains('ayam')) {
+    return '1 potong';
+  }
+
+  if (lower.contains('tahu')) {
+    return '1 buah';
+  }
+
+  if (lower.contains('tempe')) {
+    return '1 papan';
+  }
+
   if (lower.contains('bawang merah') || lower.contains('bawang putih')) {
     return '1 siung';
   }
-  if (lower.contains('cabai') || lower.contains('cabe')) return '1 buah';
-  if (lower.contains('garam')) return '1 sdt';
-  if (lower.contains('daun bawang')) return '1 batang';
-  if (lower.contains('daun')) return '1 lembar';
-  if (lower.contains('kangkung') || lower.contains('sawi')) return '1 ikat';
-  if (lower.contains('wortel') || lower.contains('tomat')) return '1 buah';
-  if (lower.contains('nasi') || lower.contains('beras')) return '1 piring';
-  if (lower.contains('mie')) return '1 bungkus';
-  if (lower.contains('roti')) return '1 lembar';
+
+  if (lower.contains('cabai') || lower.contains('cabe')) {
+    return '1 buah';
+  }
+
+  if (lower.contains('garam')) {
+    return '1 sdt';
+  }
+
+  if (lower.contains('daun bawang')) {
+    return '1 batang';
+  }
+
+  if (lower.contains('daun')) {
+    return '1 lembar';
+  }
+
+  if (lower.contains('kangkung') || lower.contains('sawi')) {
+    return '1 ikat';
+  }
+
+  if (lower.contains('wortel') || lower.contains('tomat')) {
+    return '1 buah';
+  }
+
+  if (lower.contains('nasi') || lower.contains('beras')) {
+    return '1 piring';
+  }
+
+  if (lower.contains('mie')) {
+    return '1 bungkus';
+  }
+
+  if (lower.contains('roti')) {
+    return '1 lembar';
+  }
+
   if (lower.contains('kecap') ||
       lower.contains('saus') ||
       lower.contains('minyak')) {
     return '1 sdm';
   }
+
   return '1';
 }

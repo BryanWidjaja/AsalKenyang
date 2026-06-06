@@ -34,7 +34,7 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
     ];
     if (_sort == 'Waktu Singkat') {
       visibleMatches.sort(
-        (a, b) => a.recipe.cookTime.compareTo(b.recipe.cookTime),
+        (first, second) => first.recipe.cookTime.compareTo(second.recipe.cookTime),
       );
     }
 
@@ -63,7 +63,7 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    '${matchedRecipes.where((m) => m.missingKeys.isEmpty).length} bisa dimasak sekarang. Sisanya perlu belanja bahan.',
+                    '${matchedRecipes.where((match) => match.missingKeys.isEmpty).length} bisa dimasak sekarang. Sisanya perlu belanja bahan.',
                     style: AppTypography.body.copyWith(
                       color: AppColors.onSurfaceVariant,
                     ),
@@ -152,7 +152,7 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
                 ],
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('Error: $e')),
+              error: (error, _) => Center(child: Text('Error: $error')),
             ),
           ),
         ),

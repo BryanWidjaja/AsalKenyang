@@ -49,7 +49,7 @@ class FavoritesRepository {
     await _db.transaction(() async {
       await (_db.delete(
         _db.favoritesTable,
-      )..where((t) => t.recipeId.equals(recipeId))).go();
+      )..where((table) => table.recipeId.equals(recipeId))).go();
       await _db
           .into(_db.outboxTable)
           .insert(

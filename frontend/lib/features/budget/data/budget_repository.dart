@@ -8,7 +8,7 @@ import 'budget_models.dart';
 import 'budget_remote_source.dart';
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
-  return AppDatabase(); // Typically singleton across app
+  return AppDatabase();
 });
 
 final budgetRemoteSourceProvider = Provider<BudgetRemoteSource>((ref) {
@@ -28,11 +28,14 @@ class BudgetRepository {
   final AppDatabase _db;
   final BudgetRemoteSource _remote;
 
-  // Wallet
   Future<Wallet?> getLocalWallet() async {
     final rows = await _db.select(_db.budgetTable).get();
     final entry = rows.isEmpty ? null : rows.first;
-    if (entry == null) return null;
+
+    if (entry == null) {
+      return null;
+    }
+
     return Wallet(
       id: entry.id,
       userId: entry.userId,
@@ -67,13 +70,10 @@ class BudgetRepository {
       if (remoteWallet != null) {
         await setLocalWallet(remoteWallet);
       }
-    } catch (_) {
-      // Offline, ignore
-    }
+    } catch (_) {}
   }
 
   Future<void> updateBudget(int totalBudget) async {
-    // 1. Optimistic update
     final current = await getLocalWallet();
     final updated =
         (current ??
@@ -85,26 +85,23 @@ class BudgetRepository {
             .copyWith(totalBudget: totalBudget);
     await setLocalWallet(updated);
 
-    // 2. Queue in outbox
     await _queueOutbox('wallet', 'update', updated.toJson());
 
-    // 3. Push in the background so the UI does not feel stuck when offline.
     unawaited(_pushBudgetUpdate(totalBudget));
   }
 
-  // Spendings
   Future<List<Spending>> getLocalSpendings() async {
     final entries = await _db.select(_db.spendingTable).get();
     return entries
         .map(
-          (e) => Spending(
-            id: e.id,
-            userId: e.userId,
-            walletId: e.walletId,
-            amount: e.amount,
-            date: e.date,
-            title: e.title,
-            tags: List<String>.from(jsonDecode(e.tags)),
+          (entry) => Spending(
+            id: entry.id,
+            userId: entry.userId,
+            walletId: entry.walletId,
+            amount: entry.amount,
+            date: entry.date,
+            title: entry.title,
+            tags: List<String>.from(jsonDecode(entry.tags)),
           ),
         )
         .toList();
@@ -112,19 +109,19 @@ class BudgetRepository {
 
   Future<void> setLocalSpendings(List<Spending> spendings) async {
     await _db.transaction(() async {
-      await _db.delete(_db.spendingTable).go(); // Naive replace for now
-      for (final s in spendings) {
+      await _db.delete(_db.spendingTable).go();
+      for (final spending in spendings) {
         await _db
             .into(_db.spendingTable)
             .insert(
               SpendingEntry(
-                id: s.id,
-                userId: s.userId,
-                walletId: s.walletId,
-                amount: s.amount,
-                date: s.date,
-                title: s.title,
-                tags: jsonEncode(s.tags),
+                id: spending.id,
+                userId: spending.userId,
+                walletId: spending.walletId,
+                amount: spending.amount,
+                date: spending.date,
+                title: spending.title,
+                tags: jsonEncode(spending.tags),
                 createdAt: DateTime.now(),
                 updatedAt: DateTime.now(),
               ),
@@ -137,9 +134,7 @@ class BudgetRepository {
     try {
       final remoteSpendings = await _remote.getSpendings();
       await setLocalSpendings(remoteSpendings);
-    } catch (_) {
-      // Offline, ignore
-    }
+    } catch (_) {}
   }
 
   Future<void> addSpending(int amount, String title, List<String> tags) async {
@@ -158,7 +153,6 @@ class BudgetRepository {
       tags: tags,
     );
 
-    // 1. Optimistic write
     await _db
         .into(_db.spendingTable)
         .insert(
@@ -175,10 +169,8 @@ class BudgetRepository {
           ),
         );
 
-    // 2. Queue
     await _queueOutbox('spending', 'insert', spending.toJson());
 
-    // 3. Push in the background so the Masak action completes immediately.
     unawaited(_pushSpending(amount, title, tags, tempId));
   }
 
@@ -199,7 +191,7 @@ class BudgetRepository {
       final remote = await _remote.addSpending(amount, title, tags);
       await (_db.update(
         _db.spendingTable,
-      )..where((t) => t.id.equals(tempId))).write(
+      )..where((table) => table.id.equals(tempId))).write(
         SpendingEntry(
           id: remote.id,
           userId: remote.userId,
@@ -217,7 +209,7 @@ class BudgetRepository {
 
   Future<void> _queueOutbox(
     String entity,
-    String op,
+    String operation,
     Map<String, dynamic> payload,
   ) async {
     await _db
@@ -225,7 +217,7 @@ class BudgetRepository {
         .insert(
           OutboxTableCompanion.insert(
             entity: entity,
-            operation: op,
+            operation: operation,
             payloadJson: jsonEncode(payload),
           ),
         );

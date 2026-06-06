@@ -27,7 +27,10 @@ class RecipeDetailPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final args = ModalRoute.of(context)?.settings.arguments;
-    if (args is Recipe) return _RecipeDetailBody(recipe: args);
+
+    if (args is Recipe) {
+      return _RecipeDetailBody(recipe: args);
+    }
 
     final recipesAsync = ref.watch(allRecipesProvider);
     return recipesAsync.when(
@@ -40,7 +43,8 @@ class RecipeDetailPage extends ConsumerWidget {
       },
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
+      error: (error, _) =>
+          Scaffold(body: Center(child: Text('Error: $error'))),
     );
   }
 }
@@ -48,10 +52,14 @@ class RecipeDetailPage extends ConsumerWidget {
 Recipe? _findRecipe(List<Recipe> recipes, Object? args) {
   if (args is String) {
     for (final recipe in recipes) {
-      if (recipe.id == args) return recipe;
+      if (recipe.id == args) {
+        return recipe;
+      }
     }
+
     return null;
   }
+
   return recipes.isEmpty ? null : recipes.first;
 }
 
@@ -311,14 +319,16 @@ class _BahanSection extends StatelessWidget {
                 spacing: gap,
                 runSpacing: gap,
                 children: [
-                  for (final b in bahan)
+                  for (final ingredient in bahan)
                     SizedBox(
                       width: colWidth,
                       child: _CompactBahanTile(
-                        name: b.nama,
-                        amount: _amountLabel(b),
-                        price: b.harga > 0 ? fmt.format(b.harga) : 'Gratis',
-                        unitPrice: _unitPriceLabel(b, fmt),
+                        name: ingredient.nama,
+                        amount: _amountLabel(ingredient),
+                        price: ingredient.harga > 0
+                            ? fmt.format(ingredient.harga)
+                            : 'Gratis',
+                        unitPrice: _unitPriceLabel(ingredient, fmt),
                       ),
                     ),
                 ],
@@ -427,12 +437,18 @@ class _CompactBahanTile extends StatelessWidget {
 }
 
 String? _unitPriceLabel(Bahan bahan, NumberFormat fmt) {
-  if (bahan.harga <= 0) return null;
+  if (bahan.harga <= 0) {
+    return null;
+  }
 
   final parsed = _parseQuantity(bahan.jumlah);
   if (parsed == null || parsed.amount <= 0) {
     final grams = bahan.gram;
-    if (grams == null || grams <= 0) return null;
+
+    if (grams == null || grams <= 0) {
+      return null;
+    }
+
     final unitPrice = (bahan.harga / grams).round();
     return '${fmt.format(unitPrice)}/g estimasi';
   }
@@ -445,7 +461,10 @@ String _amountLabel(Bahan bahan) {
   final quantity = bahan.jumlah.trim();
   final estimate = _gramEstimateLabel(bahan.gram);
 
-  if (!_needsEstimatedQuantity(quantity)) return quantity;
+  if (!_needsEstimatedQuantity(quantity)) {
+    return quantity;
+  }
+
   if (estimate == null) {
     return quantity.isEmpty ? 'Estimasi belum ada' : quantity;
   }
@@ -455,15 +474,31 @@ String _amountLabel(Bahan bahan) {
 
 bool _needsEstimatedQuantity(String quantity) {
   final normalized = quantity.trim().toLowerCase();
-  if (normalized.isEmpty) return true;
-  if (normalized == 'secukupnya' || normalized == 'sesuai selera') return true;
-  if (normalized.contains('secukupnya')) return true;
-  if (normalized.contains('sesuai selera')) return true;
+
+  if (normalized.isEmpty) {
+    return true;
+  }
+
+  if (normalized == 'secukupnya' || normalized == 'sesuai selera') {
+    return true;
+  }
+
+  if (normalized.contains('secukupnya')) {
+    return true;
+  }
+
+  if (normalized.contains('sesuai selera')) {
+    return true;
+  }
+
   return !RegExp(r'\d').hasMatch(normalized);
 }
 
 String? _gramEstimateLabel(double? grams) {
-  if (grams == null || grams <= 0) return null;
+  if (grams == null || grams <= 0) {
+    return null;
+  }
+
   final rounded = grams >= 1000 ? grams / 1000 : grams;
   final unit = grams >= 1000 ? 'kg' : 'g';
   final amount = rounded % 1 == 0
@@ -477,11 +512,17 @@ _ParsedQuantity? _parseQuantity(String quantity) {
     r'^\s*(\d+(?:[,.]\d+)?)\s*(.*)$',
     caseSensitive: false,
   ).firstMatch(quantity);
-  if (match == null) return null;
+
+  if (match == null) {
+    return null;
+  }
 
   final amount = double.tryParse(match.group(1)!.replaceAll(',', '.'));
   final unit = match.group(2)!.trim().toLowerCase();
-  if (amount == null || unit.isEmpty) return null;
+
+  if (amount == null || unit.isEmpty) {
+    return null;
+  }
 
   return _ParsedQuantity(amount, unit);
 }
@@ -509,9 +550,10 @@ class _StepsSection extends StatelessWidget {
         children: [
           Text('Cara Memasak', style: AppTypography.titleMd),
           const SizedBox(height: AppSpacing.md),
-          for (var i = 0; i < steps.length; i++) ...[
-            StepCard(index: i + 1, text: steps[i]),
-            if (i != steps.length - 1) const SizedBox(height: AppSpacing.md),
+          for (var index = 0; index < steps.length; index++) ...[
+            StepCard(index: index + 1, text: steps[index]),
+            if (index != steps.length - 1)
+              const SizedBox(height: AppSpacing.md),
           ],
         ],
       ),
@@ -585,7 +627,11 @@ class _ActionBar extends ConsumerWidget {
                                   'Masak: ${recipe.name}',
                                   ['cook', 'recipe:${recipe.id}'],
                                 );
-                            if (!context.mounted) return;
+
+                            if (!context.mounted) {
+                              return;
+                            }
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text(
@@ -597,7 +643,10 @@ class _ActionBar extends ConsumerWidget {
                               context,
                             ).popUntil((route) => route.isFirst);
                           } catch (error) {
-                            if (!context.mounted) return;
+                            if (!context.mounted) {
+                              return;
+                            }
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
@@ -623,12 +672,20 @@ class _ActionBar extends ConsumerWidget {
                           );
                           if (date != null && context.mounted) {
                             final waktu = await _showWaktuMakanSheet(context);
-                            if (waktu == null) return;
+
+                            if (waktu == null) {
+                              return;
+                            }
+
                             try {
                               await ref
                                   .read(planControllerProvider)
                                   .addMeal(date, recipe.id, waktu);
-                              if (!context.mounted) return;
+
+                              if (!context.mounted) {
+                                return;
+                              }
+
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
@@ -637,7 +694,10 @@ class _ActionBar extends ConsumerWidget {
                                 ),
                               );
                             } catch (error) {
-                              if (!context.mounted) return;
+                              if (!context.mounted) {
+                                return;
+                              }
+
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(

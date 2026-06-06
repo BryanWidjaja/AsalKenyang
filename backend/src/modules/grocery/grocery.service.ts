@@ -2,19 +2,22 @@ import { groceryRepository } from "./grocery.repository.js";
 import type { GroceryItemDto, GroceryListDto } from "../../schemas/grocery.js";
 
 function currentWeekStart(): string {
-  const d = new Date();
-  const day = d.getUTCDay();
+  const now = new Date();
+  const day = now.getUTCDay();
   const diff = day === 0 ? -6 : 1 - day;
-  const monday = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + diff));
+  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + diff));
+
   return monday.toISOString().slice(0, 10);
 }
 
 export const groceryService = {
   async get(userId: string, weekStart: string | undefined): Promise<GroceryListDto> {
-    const ws = weekStart ?? currentWeekStart();
-    const plan = await groceryRepository.findEntries(userId, ws);
+    const resolvedWeekStart = weekStart ?? currentWeekStart();
+    const plan = await groceryRepository.findEntries(userId, resolvedWeekStart);
 
-    if (!plan) return { weekStart: ws, items: [] };
+    if (!plan) {
+      return { weekStart: resolvedWeekStart, items: [] };
+    }
 
     const counts = new Map<string, number>();
     for (const entry of plan.entries) {
@@ -25,6 +28,6 @@ export const groceryService = {
       ([recipeId, count]) => ({ recipeId, count }),
     );
 
-    return { weekStart: ws, items };
+    return { weekStart: resolvedWeekStart, items };
   },
 };

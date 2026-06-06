@@ -181,7 +181,10 @@ class AppStateColors extends ThemeExtension<AppStateColors> {
 
   @override
   AppStateColors lerp(ThemeExtension<AppStateColors>? other, double t) {
-    if (other is! AppStateColors) return this;
+    if (other is! AppStateColors) {
+      return this;
+    }
+
     return AppStateColors(
       affordable: Color.lerp(affordable, other.affordable, t)!,
       affordableContainer:

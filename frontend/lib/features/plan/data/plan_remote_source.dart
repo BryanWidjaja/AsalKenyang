@@ -21,10 +21,7 @@ class PlanRemoteSource {
     ]);
   }
 
-  Future<void> removeMeal(String id) async {
-    // The backend owns meal plans as whole-week resources. Deletes are synced
-    // by SyncEngine using the local week snapshot.
-  }
+  Future<void> removeMeal(String id) async {}
 
   Future<void> replaceWeek(
     DateTime weekStart,

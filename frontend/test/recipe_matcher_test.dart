@@ -22,10 +22,10 @@ void main() {
       sortDesc: false,
     );
 
-    expect(results.map((r) => r.recipe.id), containsAll(['ikan-peda', 'teri']));
-    expect(results.map((r) => r.recipe.id), isNot(contains('ayam')));
+    expect(results.map((matched) => matched.recipe.id), containsAll(['ikan-peda', 'teri']));
+    expect(results.map((matched) => matched.recipe.id), isNot(contains('ayam')));
 
-    final peda = results.singleWhere((r) => r.recipe.id == 'ikan-peda');
+    final peda = results.singleWhere((matched) => matched.recipe.id == 'ikan-peda');
     expect(peda.matchedKeys, contains('ikan peda'));
     expect(peda.missingKeys, isNot(contains('ikan peda')));
   });
@@ -40,8 +40,8 @@ void main() {
       sortDesc: false,
     );
 
-    expect(results.map((r) => r.recipe.id), contains('sambal'));
-    final sambal = results.singleWhere((r) => r.recipe.id == 'sambal');
+    expect(results.map((matched) => matched.recipe.id), contains('sambal'));
+    final sambal = results.singleWhere((matched) => matched.recipe.id == 'sambal');
     expect(sambal.matchedKeys, containsAll(['cabai', 'nasi']));
     expect(sambal.missingKeys, isNot(contains('cabai')));
     expect(sambal.missingKeys, isNot(contains('nasi')));

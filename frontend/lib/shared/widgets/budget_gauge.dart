@@ -16,9 +16,18 @@ class BudgetGauge extends StatelessWidget {
   final bool animate;
 
   Color _fillColor(AppStateColors state) {
-    if (percent > 0.5) return state.gauge1;
-    if (percent >= 0.2) return state.gauge2;
-    if (percent > 0) return state.gauge3;
+    if (percent > 0.5) {
+      return state.gauge1;
+    }
+
+    if (percent >= 0.2) {
+      return state.gauge2;
+    }
+
+    if (percent > 0) {
+      return state.gauge3;
+    }
+
     return state.gauge4;
   }
 

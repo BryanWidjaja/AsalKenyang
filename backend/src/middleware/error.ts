@@ -11,10 +11,12 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
     });
     return;
   }
+
   if (err instanceof AppError) {
     res.status(err.statusCode).json({ error: err.code, message: err.message });
     return;
   }
+
   console.error("Unhandled error:", err);
   res.status(500).json({ error: "INTERNAL", message: "Internal server error" });
 };

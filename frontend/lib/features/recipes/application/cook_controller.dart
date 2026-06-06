@@ -44,12 +44,12 @@ class CookController extends Notifier<CookState> {
     return const CookState();
   }
 
-  void toggleBudgetFilter(bool val) {
-    state = state.copyWith(useBudgetFilter: val);
+  void toggleBudgetFilter(bool value) {
+    state = state.copyWith(useBudgetFilter: value);
   }
 
-  void toggleCookableFilter(bool val) {
-    state = state.copyWith(showOnlyCookable: val);
+  void toggleCookableFilter(bool value) {
+    state = state.copyWith(showOnlyCookable: value);
   }
 
   void toggleIngredient(String bahanKey, Iterable<String> fallbackKeys) {
@@ -72,14 +72,16 @@ final matchedRecipesProvider = Provider<List<MatchedRecipe>>((ref) {
   final cookState = ref.watch(cookControllerProvider);
 
   final recipes = recipesAsync.value ?? [];
-  final pantryKeys = pantryState.items.map((e) => e.bahanKey).toList();
+  final pantryKeys = pantryState.items.map((item) => item.bahanKey).toList();
   final selectedKeys = cookState.selectedIngredientKeys ?? pantryKeys;
 
   int? maxBudget;
   if (cookState.useBudgetFilter) {
     maxBudget = budgetState.remainingBudget;
-    // Don't set negative budget filter
-    if (maxBudget < 0) maxBudget = 0;
+
+    if (maxBudget < 0) {
+      maxBudget = 0;
+    }
   }
 
   return matchRecipes(

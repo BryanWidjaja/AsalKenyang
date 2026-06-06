@@ -63,9 +63,9 @@ class PantryPage extends ConsumerWidget {
                 ),
                 itemBuilder: (context, index) {
                   final item = items[index];
-                  final def = findIngredientByKey(item.bahanKey);
-                  final label = def?.label ?? item.bahanKey;
-                  final icon = def?.icon ?? Icons.eco_rounded;
+                  final definition = findIngredientByKey(item.bahanKey);
+                  final label = definition?.label ?? item.bahanKey;
+                  final icon = definition?.icon ?? Icons.eco_rounded;
 
                   return _PantryItemTile(
                     label: label,
@@ -95,8 +95,6 @@ class PantryPage extends ConsumerWidget {
     );
   }
 }
-
-// ─── Single item row ────────────────────────────────────────────────────────
 
 class _PantryItemTile extends ConsumerStatefulWidget {
   const _PantryItemTile({
@@ -170,7 +168,6 @@ class _PantryItemTileState extends ConsumerState<_PantryItemTile> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Icon circle
         Container(
           width: 48,
           height: 48,
@@ -183,11 +180,9 @@ class _PantryItemTileState extends ConsumerState<_PantryItemTile> {
         ),
         const SizedBox(width: AppSpacing.md),
 
-        // Name
         Expanded(child: Text(widget.label, style: AppTypography.subtitle)),
         const SizedBox(width: AppSpacing.sm),
 
-        // Editable quantity field
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -250,7 +245,6 @@ class _PantryItemTileState extends ConsumerState<_PantryItemTile> {
         ),
         const SizedBox(width: AppSpacing.xs),
 
-        // Delete
         IconButton(
           onPressed: () {
             ref
@@ -266,8 +260,6 @@ class _PantryItemTileState extends ConsumerState<_PantryItemTile> {
     );
   }
 }
-
-// ─── Bottom sheet for adding new ingredients ─────────────────────────────────
 
 String _unitFrom(String quantity) {
   final match = RegExp(r'^\s*\d+(?:[,.]\d+)?\s*(.*)$').firstMatch(quantity);
@@ -286,14 +278,19 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
   String _category = 'Semua';
 
   List<IngredientDef> get _visible {
-    if (_category == 'Semua') return ingredientCatalog;
-    return ingredientCatalog.where((i) => i.category == _category).toList();
+    if (_category == 'Semua') {
+      return ingredientCatalog;
+    }
+
+    return ingredientCatalog
+        .where((ingredient) => ingredient.category == _category)
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
     final pantryState = ref.watch(pantryControllerProvider);
-    final selectedKeys = pantryState.items.map((e) => e.bahanKey).toSet();
+    final selectedKeys = pantryState.items.map((item) => item.bahanKey).toSet();
 
     return Container(
       decoration: const BoxDecoration(
@@ -309,7 +306,6 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
           return Column(
             children: [
               const SizedBox(height: AppSpacing.sm),
-              // Drag handle
               Container(
                 width: 40,
                 height: 4,
@@ -322,7 +318,6 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
               Text('Tambah Bahan', style: AppTypography.titleMd),
               const SizedBox(height: AppSpacing.md),
 
-              // Category filters
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(
@@ -330,11 +325,11 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
                 ),
                 child: Row(
                   children: [
-                    for (final c in ingredientCategories) ...[
+                    for (final category in ingredientCategories) ...[
                       FilterPill(
-                        label: c,
-                        selected: _category == c,
-                        onTap: () => setState(() => _category = c),
+                        label: category,
+                        selected: _category == category,
+                        onTap: () => setState(() => _category = category),
                       ),
                       const SizedBox(width: AppSpacing.sm),
                     ],
@@ -343,7 +338,6 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
               ),
               const SizedBox(height: AppSpacing.md),
 
-              // Ingredient list
               Expanded(
                 child: ListView.builder(
                   controller: scrollController,
@@ -353,8 +347,8 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
                   ),
                   itemCount: _visible.length,
                   itemBuilder: (context, index) {
-                    final def = _visible[index];
-                    final isSelected = selectedKeys.contains(def.key);
+                    final definition = _visible[index];
+                    final isSelected = selectedKeys.contains(definition.key);
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -366,11 +360,11 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
                             if (isSelected) {
                               await ref
                                   .read(pantryControllerProvider.notifier)
-                                  .removeItem(def.key);
+                                  .removeItem(definition.key);
                             } else {
                               await ref
                                   .read(pantryControllerProvider.notifier)
-                                  .addItem(def.key);
+                                  .addItem(definition.key);
                             }
                           },
                           child: Container(
@@ -407,7 +401,7 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
                                   ),
                                   alignment: Alignment.center,
                                   child: Icon(
-                                    def.icon,
+                                    definition.icon,
                                     color: isSelected
                                         ? AppColors.primary
                                         : AppColors.onSurfaceVariant,
@@ -417,7 +411,7 @@ class _AddIngredientSheetState extends ConsumerState<_AddIngredientSheet> {
                                 const SizedBox(width: AppSpacing.md),
                                 Expanded(
                                   child: Text(
-                                    def.label,
+                                    definition.label,
                                     style: AppTypography.label,
                                   ),
                                 ),

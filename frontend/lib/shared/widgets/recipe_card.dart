@@ -311,16 +311,16 @@ class _Dots extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        for (var i = 0; i < _total; i++) ...[
+        for (var index = 0; index < _total; index++) ...[
           Container(
             width: 6,
             height: 6,
             decoration: BoxDecoration(
-              color: i < filled ? color : AppColors.surfaceVariant,
+              color: index < filled ? color : AppColors.surfaceVariant,
               shape: BoxShape.circle,
             ),
           ),
-          if (i != _total - 1) const SizedBox(width: 4),
+          if (index != _total - 1) const SizedBox(width: 4),
         ],
       ],
     );

@@ -2,21 +2,22 @@ import { budgetRepository } from "./budget.repository.js";
 import type { BudgetDto, PutBudgetInput } from "../../schemas/budget.js";
 
 function currentMonth(): string {
-  const d = new Date();
-  const y = d.getUTCFullYear();
-  const m = String(d.getUTCMonth() + 1).padStart(2, "0");
-  return `${y}-${m}`;
+  const now = new Date();
+  const year = now.getUTCFullYear();
+  const month = String(now.getUTCMonth() + 1).padStart(2, "0");
+
+  return `${year}-${month}`;
 }
 
-function toDto(b: {
+function toDto(budget: {
   month: string;
   amount: number;
   updatedAt: Date;
 }): BudgetDto {
   return {
-    month: b.month,
-    amount: b.amount,
-    updatedAt: b.updatedAt.toISOString(),
+    month: budget.month,
+    amount: budget.amount,
+    updatedAt: budget.updatedAt.toISOString(),
   };
 }
 
@@ -25,13 +26,16 @@ export const budgetService = {
     userId: string,
     month: string | undefined,
   ): Promise<BudgetDto | null> {
-    const m = month ?? currentMonth();
-    const row = await budgetRepository.find(userId, m);
+    const resolvedMonth = month ?? currentMonth();
+    const row = await budgetRepository.find(userId, resolvedMonth);
+
     return row ? toDto(row) : null;
   },
+
   async upsert(userId: string, input: PutBudgetInput): Promise<BudgetDto> {
-    const m = input.month ?? currentMonth();
-    const row = await budgetRepository.upsert(userId, m, input.amount);
+    const resolvedMonth = input.month ?? currentMonth();
+    const row = await budgetRepository.upsert(userId, resolvedMonth, input.amount);
+
     return toDto(row);
   },
 };
