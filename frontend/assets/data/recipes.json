@@ -10,17 +10,17 @@
     "bahan": [
       {
         "nama": "ikan peda",
-        "jumlah": "ekor",
+        "jumlah": "1 ekor sedang (150 g)",
         "key": "ikan peda",
         "gram": 150,
-        "harga": 3000
+        "harga": 16650
       },
       {
         "nama": "Tepung beras/tepung terigu",
-        "jumlah": "secukupnya",
+        "jumlah": "2 sdm (20 g)",
         "key": "tepung beras/tepung terigu",
-        "gram": 5,
-        "harga": 100
+        "gram": 20,
+        "harga": 350
       }
     ],
     "langkah": [
@@ -32,7 +32,7 @@
       "ikan peda",
       "tepung beras/tepung terigu"
     ],
-    "estPrice": 3100,
+    "estPrice": 17000,
     "estCalories": 232,
     "alat": [
       "kompor",
@@ -55,17 +55,17 @@
     "bahan": [
       {
         "nama": "Indomie goreng bayam",
-        "jumlah": "bks",
+        "jumlah": "2 bungkus",
         "key": "indomie goreng bayam",
-        "gram": 80,
-        "harga": 1600
+        "gram": 160,
+        "harga": 6000
       },
       {
         "nama": "telur daun kelor semangkok",
-        "jumlah": "butir",
+        "jumlah": "1 butir telur + 1 mangkuk daun kelor",
         "key": "telur daun kelor semangkok",
-        "gram": 50,
-        "harga": 1000
+        "gram": 80,
+        "harga": 2500
       }
     ],
     "langkah": [
@@ -77,7 +77,7 @@
       "indomie goreng bayam",
       "telur daun kelor semangkok"
     ],
-    "estPrice": 2600,
+    "estPrice": 8500,
     "estCalories": 195,
     "alat": [
       "kompor",
@@ -101,16 +101,16 @@
     "bahan": [
       {
         "nama": "Telur",
-        "jumlah": "butir",
+        "jumlah": "2 butir",
         "key": "telur",
-        "gram": 50,
-        "harga": 1000
+        "gram": 110,
+        "harga": 3200
       },
       {
         "nama": "Lada garam",
-        "jumlah": "secukupnya",
+        "jumlah": "1/4 sdt",
         "key": "lada garam",
-        "gram": 5,
+        "gram": 2,
         "harga": 100
       }
     ],
@@ -123,7 +123,7 @@
       "telur",
       "lada garam"
     ],
-    "estPrice": 1100,
+    "estPrice": 3300,
     "estCalories": 82,
     "alat": [],
     "tags": [
@@ -145,66 +145,66 @@
     "bahan": [
       {
         "nama": "telur ayam",
-        "jumlah": "butir",
+        "jumlah": "2 butir",
         "key": "telur",
-        "gram": 50.0,
-        "harga": 2500
+        "gram": 110,
+        "harga": 3200
       },
       {
         "nama": "Tepung terigu",
-        "jumlah": "secukupnya",
+        "jumlah": "1 sdm (10 g)",
         "key": "tepung terigu",
-        "gram": 5.0,
-        "harga": 70
-      },
-      {
-        "nama": "Mentega",
-        "jumlah": "secukupnya",
-        "key": "mentega",
-        "gram": 5.0,
-        "harga": 325
-      },
-      {
-        "nama": "Daun bawang atau bawang merah",
-        "jumlah": "secukupnya",
-        "key": "daun bawang",
-        "gram": 5.0,
+        "gram": 10,
         "harga": 200
       },
       {
+        "nama": "Mentega",
+        "jumlah": "1 sdm (15 g)",
+        "key": "mentega",
+        "gram": 15,
+        "harga": 1200
+      },
+      {
+        "nama": "Daun bawang atau bawang merah",
+        "jumlah": "1 batang daun bawang / 2 siung bawang merah",
+        "key": "daun bawang",
+        "gram": 20,
+        "harga": 1000
+      },
+      {
         "nama": "Air",
-        "jumlah": "secukupnya",
+        "jumlah": "50 ml",
         "key": "air",
-        "gram": 5.0,
+        "gram": 50,
         "harga": 0
       },
       {
         "nama": "Garam",
-        "jumlah": "secukupnya",
+        "jumlah": "1/4 sdt",
         "key": "garam",
-        "gram": 5.0,
-        "harga": 100
+        "gram": 2,
+        "harga": 50
       },
       {
         "nama": "Penyedap rasa",
-        "jumlah": "secukupnya",
+        "jumlah": "1/4 sdt",
         "key": "penyedap rasa",
-        "gram": 5.0,
-        "harga": 400
+        "gram": 2,
+        "harga": 100
       },
       {
         "nama": "Kecap saos tiram",
-        "jumlah": "secukupnya",
+        "jumlah": "1 sdt",
         "key": "kecap saos tiram",
-        "gram": 5.0,
-        "harga": 0
+        "gram": 5,
+        "harga": 300
       },
       {
         "nama": "kecap manis",
-        "jumlah": "secukupnya",
+        "jumlah": "1 sdt",
         "key": "kecap",
-        "gram": 5.0,
-        "harga": 150
+        "gram": 5,
+        "harga": 200
       }
     ],
     "langkah": [
@@ -223,7 +223,7 @@
       "kecap saos tiram",
       "kecap"
     ],
-    "estPrice": 3745,
+    "estPrice": 6250,
     "estCalories": 148,
     "alat": [
       "kompor",
@@ -247,17 +247,17 @@
     "bahan": [
       {
         "nama": "air",
-        "jumlah": "ml",
+        "jumlah": "150 ml",
         "key": "air",
-        "gram": 1,
-        "harga": 20
+        "gram": 150,
+        "harga": 0
       },
       {
         "nama": "telur",
-        "jumlah": "butir",
+        "jumlah": "2 butir",
         "key": "telur",
-        "gram": 50,
-        "harga": 1000
+        "gram": 110,
+        "harga": 3200
       }
     ],
     "langkah": [
@@ -269,7 +269,7 @@
       "air",
       "telur"
     ],
-    "estPrice": 1020,
+    "estPrice": 3200,
     "estCalories": 76,
     "alat": [
       "kompor",
@@ -294,17 +294,17 @@
     "bahan": [
       {
         "nama": "Ikan kenyar bumbu merah",
-        "jumlah": "secukupnya",
+        "jumlah": "100 g",
         "key": "ikan kenyar bumbu merah",
-        "gram": 5.0,
-        "harga": 0
+        "gram": 100,
+        "harga": 10000
       },
       {
         "nama": "minyak goreng",
-        "jumlah": "secukupnya",
+        "jumlah": "1 sdm (15 ml)",
         "key": "minyak goreng",
-        "gram": 5.0,
-        "harga": 90
+        "gram": 14,
+        "harga": 350
       }
     ],
     "langkah": [
@@ -323,7 +323,7 @@
       "garam",
       "minyak goreng"
     ],
-    "estPrice": 90,
+    "estPrice": 10350,
     "estCalories": 44,
     "alat": [],
     "tags": [
@@ -344,14 +344,14 @@
     "bahan": [
       {
         "nama": "ikan asin bulu ayam",
-        "jumlah": "g",
+        "jumlah": "100 g",
         "key": "ikan asin bulu ayam",
-        "gram": 1,
-        "harga": 20
+        "gram": 100,
+        "harga": 9000
       },
       {
         "nama": "tomat ijo",
-        "jumlah": "butir",
+        "jumlah": "1 buah (50 g)",
         "key": "tomat ijo",
         "gram": 50,
         "harga": 1000
@@ -367,7 +367,7 @@
       "ikan asin bulu ayam",
       "tomat ijo"
     ],
-    "estPrice": 1020,
+    "estPrice": 10000,
     "estCalories": 76,
     "alat": [
       "kompor",
@@ -390,17 +390,17 @@
     "bahan": [
       {
         "nama": "terong ukuran sedang",
-        "jumlah": "buah",
+        "jumlah": "1 buah sedang (250 g)",
         "key": "terong ukuran sedang",
-        "gram": 10,
-        "harga": 200
+        "gram": 250,
+        "harga": 4500
       },
       {
         "nama": "telur puyuh rebus kupas kulitnya",
-        "jumlah": "butir",
+        "jumlah": "8 butir",
         "key": "telur puyuh rebus kupas kulitnya",
-        "gram": 50,
-        "harga": 1000
+        "gram": 88,
+        "harga": 4400
       }
     ],
     "langkah": [
@@ -413,7 +413,7 @@
       "terong ukuran sedang",
       "telur puyuh rebus kupas kulitnya"
     ],
-    "estPrice": 1200,
+    "estPrice": 8900,
     "estCalories": 90,
     "alat": [
       "kompor",
@@ -438,17 +438,17 @@
     "bahan": [
       {
         "nama": "daging sapi di iris tipis Minyak untuk menggoreng",
-        "jumlah": "300 gram",
+        "jumlah": "300 g daging sapi + 100 ml minyak goreng",
         "key": "daging sapi di iris tipis minyak untuk menggoreng",
-        "gram": 300.0,
-        "harga": 6000
+        "gram": 390,
+        "harga": 44700
       },
       {
         "nama": "merica bubuk 1 sdt gula merah iris 1 sdt ketumbar halus 1 siung bawang putih di parut 1 sdt garam 1 sdt merica bubuk 1/2 sdt biji pala parut 1 sdt garam Asam jawa Myk sayur",
-        "jumlah": "1 sdt",
+        "jumlah": "1 resep bumbu marinasi",
         "key": "merica bubuk 1 sdt gula merah iris 1 sdt ketumbar halus 1 siung bawang putih di parut 1 sdt garam 1 sdt merica bubuk 1/2 sdt biji pala parut 1 sdt garam asam jawa myk sayur",
-        "gram": 5.0,
-        "harga": 100
+        "gram": 25,
+        "harga": 3000
       }
     ],
     "langkah": [
@@ -461,7 +461,7 @@
       "daging sapi di iris tipis minyak untuk menggoreng",
       "merica bubuk 1 sdt gula merah iris 1 sdt ketumbar halus 1 siung bawang putih di parut 1 sdt garam 1 sdt merica bubuk 1/2 sdt biji pala parut 1 sdt garam asam jawa myk sayur"
     ],
-    "estPrice": 6100,
+    "estPrice": 47700,
     "estCalories": 457,
     "alat": [
       "kompor",
@@ -484,17 +484,17 @@
     "bahan": [
       {
         "nama": "egg Chicken Roll frozen",
-        "jumlah": "secukupnya",
+        "jumlah": "6 potong (200 g)",
         "key": "egg chicken roll frozen",
-        "gram": 5,
-        "harga": 100
+        "gram": 200,
+        "harga": 18000
       },
       {
         "nama": "minyak Goreng",
-        "jumlah": "secukupnya",
+        "jumlah": "100 ml",
         "key": "minyak goreng",
-        "gram": 5,
-        "harga": 100
+        "gram": 90,
+        "harga": 2200
       }
     ],
     "langkah": [
@@ -506,7 +506,7 @@
       "egg chicken roll frozen",
       "minyak goreng"
     ],
-    "estPrice": 200,
+    "estPrice": 20200,
     "estCalories": 15,
     "alat": [
       "kompor",
@@ -530,17 +530,17 @@
     "bahan": [
       {
         "nama": "ekor/secukupnya ikan asin layur",
-        "jumlah": "secukupnya",
+        "jumlah": "100 g",
         "key": "ekor/secukupnya ikan asin layur",
-        "gram": 5,
-        "harga": 100
+        "gram": 100,
+        "harga": 6000
       },
       {
-        "nama": "Minta goreng",
-        "jumlah": "secukupnya",
-        "key": "minta goreng",
-        "gram": 5,
-        "harga": 100
+        "nama": "minyak goreng",
+        "jumlah": "100 ml",
+        "key": "minyak goreng",
+        "gram": 90,
+        "harga": 2200
       }
     ],
     "langkah": [
@@ -551,9 +551,9 @@
     "_curated_at": "2026-06-01T04:03:24+07:00",
     "bahanKey": [
       "ekor/secukupnya ikan asin layur",
-      "minta goreng"
+      "minyak goreng"
     ],
-    "estPrice": 200,
+    "estPrice": 8200,
     "estCalories": 15,
     "alat": [
       "kompor",
@@ -576,17 +576,17 @@
     "bahan": [
       {
         "nama": "genggam ikan Bilis/teri",
-        "jumlah": "secukupnya",
+        "jumlah": "50 g",
         "key": "genggam ikan bilis/teri",
-        "gram": 5,
-        "harga": 100
+        "gram": 50,
+        "harga": 6000
       },
       {
         "nama": "genggam petai",
-        "jumlah": "secukupnya",
+        "jumlah": "70 g isi petai (1/2 papan)",
         "key": "genggam petai",
-        "gram": 5,
-        "harga": 100
+        "gram": 70,
+        "harga": 6000
       }
     ],
     "langkah": [
@@ -599,7 +599,7 @@
       "genggam ikan bilis/teri",
       "genggam petai"
     ],
-    "estPrice": 200,
+    "estPrice": 12000,
     "estCalories": 15,
     "alat": [
       "kompor",
@@ -622,17 +622,17 @@
     "bahan": [
       {
         "nama": "ikan kembung",
-        "jumlah": "kg",
+        "jumlah": "1 kg",
         "key": "ikan kembung",
         "gram": 1000,
-        "harga": 20000
+        "harga": 40000
       },
       {
         "nama": "Bumbu instan marinasi ikan, saya beli 5 rb di tukang bumbu",
-        "jumlah": "secukupnya",
+        "jumlah": "1 bungkus kecil",
         "key": "bumbu instan marinasi ikan, saya beli 5 rb di tukang bumbu",
-        "gram": 5,
-        "harga": 100
+        "gram": 25,
+        "harga": 5000
       }
     ],
     "langkah": [
@@ -645,7 +645,7 @@
       "ikan kembung",
       "bumbu instan marinasi ikan, saya beli 5 rb di tukang bumbu"
     ],
-    "estPrice": 20100,
+    "estPrice": 45000,
     "estCalories": 1507,
     "alat": [],
     "tags": [
@@ -665,17 +665,17 @@
     "bahan": [
       {
         "nama": "/2 kg ikan nila",
-        "jumlah": "secukupnya",
+        "jumlah": "1/2 kg",
         "key": "/2 kg ikan nila",
-        "gram": 5,
-        "harga": 100
+        "gram": 500,
+        "harga": 25000
       },
       {
         "nama": "bumbu Emaku varian Ulu Rub",
-        "jumlah": "sachet",
+        "jumlah": "1 sachet",
         "key": "bumbu emaku varian ulu rub",
-        "gram": 0,
-        "harga": 50
+        "gram": 20,
+        "harga": 3000
       }
     ],
     "langkah": [
@@ -688,7 +688,7 @@
       "/2 kg ikan nila",
       "bumbu emaku varian ulu rub"
     ],
-    "estPrice": 100,
+    "estPrice": 28000,
     "estCalories": 7,
     "alat": [
       "kompor",
@@ -711,17 +711,17 @@
     "bahan": [
       {
         "nama": "Kulit pangsit",
-        "jumlah": "secukupnya",
+        "jumlah": "20 lembar (200 g)",
         "key": "kulit pangsit",
-        "gram": 5,
-        "harga": 100
+        "gram": 200,
+        "harga": 8000
       },
       {
         "nama": "Bumbu tabur ayam bawang",
-        "jumlah": "secukupnya",
+        "jumlah": "1 sdm (10 g)",
         "key": "bumbu tabur ayam bawang",
-        "gram": 5,
-        "harga": 100
+        "gram": 10,
+        "harga": 1000
       }
     ],
     "langkah": [
@@ -734,7 +734,7 @@
       "kulit pangsit",
       "bumbu tabur ayam bawang"
     ],
-    "estPrice": 200,
+    "estPrice": 9000,
     "estCalories": 15,
     "alat": [
       "kompor",
@@ -757,17 +757,17 @@
     "bahan": [
       {
         "nama": "kulit tahu",
-        "jumlah": "gr",
+        "jumlah": "6 lembar (60 g)",
         "key": "kulit tahu",
-        "gram": 1,
-        "harga": 20
+        "gram": 60,
+        "harga": 6000
       },
       {
         "nama": "Isi Tahu Bakso Ayam",
-        "jumlah": "gr",
+        "jumlah": "150 g isian ayam",
         "key": "isi tahu bakso ayam",
-        "gram": 1,
-        "harga": 20
+        "gram": 150,
+        "harga": 18000
       }
     ],
     "langkah": [
@@ -780,7 +780,7 @@
       "kulit tahu",
       "isi tahu bakso ayam"
     ],
-    "estPrice": 40,
+    "estPrice": 24000,
     "estCalories": 3,
     "alat": [
       "kompor",
